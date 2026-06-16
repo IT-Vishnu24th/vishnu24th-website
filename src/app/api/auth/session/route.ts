@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 		cookieStore.set("session", sessionCookie, {
 			maxAge: SESSION_EXPIRES_IN_MS / 1000,
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
+			secure: true,
 			sameSite: "lax",
 			path: "/",
 		});

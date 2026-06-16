@@ -4,11 +4,7 @@ import { cookies } from "next/headers";
 export async function POST() {
 	try {
 		const cookieStore = await cookies();
-
-		cookieStore.set("session", "", {
-			path: "/",
-			expires: new Date(0),
-		});
+		cookieStore.delete("session");
 
 		return NextResponse.json(
 			{ message: "Logged out successfully" },
