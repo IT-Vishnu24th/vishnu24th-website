@@ -15,7 +15,7 @@ export async function getAuthenticatedUser(): Promise<User | null> {
 			return null;
 		}
 
-		// check revocation false for now?
+		// FIXME: check revocation `true` in production?
 		const decodedToken = await adminAuth.verifySessionCookie(
 			sessionCookie,
 			false,

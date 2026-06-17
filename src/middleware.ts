@@ -16,5 +16,5 @@ export function middleware(request: NextRequest) {
 
 // protected routes
 export const config = {
-	matcher: ["/profile/:path*"],
+	matcher: ["/profile/:path*", "/admin/:path*"],
 };
