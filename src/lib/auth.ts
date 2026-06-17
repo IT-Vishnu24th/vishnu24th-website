@@ -15,7 +15,8 @@ export async function getAuthenticatedUser(): Promise<User | null> {
       return null
     }
 
-    const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true)
+    // FIXME: check revocation false for now
+    const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, false)
     const email = decodedToken.email
 
     if (!email) {
