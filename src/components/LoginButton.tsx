@@ -12,31 +12,11 @@ export default function LoginButton() {
 		signInWithGoogle(callbackUrl);
 	};
 
-	const getErrorMessage = (code: string | null): string => {
-		if (!code) return "";
-		switch (code) {
-			case "INVALID_EMAIL_DOMAIN":
-				return "Please use your student email (@student.chula.ac.th) ending with '21'.";
-			case "PROFILE_NOT_FOUND":
-				return "Your student profile is not pre-registered.";
-			case "UID_MISMATCH":
-				return "This Google account is already linked to a different Student ID.";
-			case "MISSING_ID_TOKEN":
-				return "Authentication failed: missing identification token.";
-			case "EMAIL_NOT_PROVIDED":
-				return "Could not retrieve your email from Google.";
-			case "auth/network-request-failed":
-				return "Network connection issue. Please check your connection.";
-			default:
-				return `Sign-in failed: ${code}`;
-		}
-	};
-
 	return (
 		<div className="flex flex-col items-center w-full max-w-xs mx-auto space-y-2">
 			{error && (
 				<p className="text-red-500 text-sm text-center font-medium animate-in fade-in slide-in-from-top-1 duration-200">
-					{getErrorMessage(error)}
+					{error}
 				</p>
 			)}
 

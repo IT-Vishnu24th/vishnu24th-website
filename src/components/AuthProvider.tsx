@@ -1,9 +1,5 @@
 "use client";
-import React, {
-	createContext,
-	useState,
-	ReactNode,
-} from "react";
+import React, { createContext, useState, ReactNode } from "react";
 import {
 	GoogleAuthProvider,
 	signInWithPopup,
@@ -72,21 +68,17 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 			// Ensure Firebase is signed out on failure to prevent stale client state
 			await firebaseSignOut(auth).catch(() => {});
 
+			const code = err && typeof err === "object" && "code" in err && typeof err.code === "string"
+				? err.code
+				: null;
+
 			// Handle common Firebase Auth errors gracefully
-			if (err && typeof err === "object" && "code" in err) {
-				const code = (err as { code: string }).code;
-				if (
-					code === "auth/popup-closed-by-user" ||
-					code === "auth/cancelled-popup-request"
-				) {
-					return;
-				}
+			if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+				return;
 			}
 
-			const message =
-				err instanceof Error ? err.message : "Sign in failed";
 			console.error("Sign-in transaction failed:", err);
-			setError(message);
+			setError(code ? code.replace("auth/", "") : "sign-in-failed");
 		} finally {
 			setLoading(false);
 		}
