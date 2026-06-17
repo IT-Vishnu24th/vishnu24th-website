@@ -26,6 +26,10 @@ const groupService = {
       return vessel satisfies Vessel
     }
   },
+  async create(group: Group): Promise<string> {
+    await groupCollection.doc(group.label).set(group)
+    return group.label
+  },
 }
 
 export default groupService

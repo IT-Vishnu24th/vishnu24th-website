@@ -15,6 +15,10 @@ const featureFlagsService = {
     if (!data) return null
     return data.enabled
   },
+  async create(id: string, enabled: boolean = false): Promise<string> {
+    await featureFlagCollection.doc(id).set({ id, enabled })
+    return id
+  },
 }
 
 export default featureFlagsService

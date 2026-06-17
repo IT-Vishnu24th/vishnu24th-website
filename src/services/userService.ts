@@ -2,7 +2,7 @@ import { getAdminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
 import type { Name, User, UserRole } from "@/types/user"
 
-interface RawUser {
+export interface RawUser {
   id: string
   role: UserRole
   nameEn: Name
@@ -39,6 +39,10 @@ const userService = {
       ...data,
       group,
     }
+  },
+  async create(user: RawUser): Promise<string> {
+    await userCollection.doc(user.id).set(user)
+    return user.id
   },
 }
 
