@@ -3,24 +3,18 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
 	const session = request.cookies.get("session")?.value;
-	const { pathname } = request.nextUrl;
-
-	const protectedRoutes = ["/profile"];
-	const isProtectedRoute = protectedRoutes.some((route) =>
-		pathname.startsWith(route),
-	);
 
 	// Redirect to login with protected routes callbackUrl
-	if (!session && isProtectedRoute) {
+	if (!session) {
 		const loginUrl = new URL("/", request.url);
-
-		loginUrl.searchParams.set("callbackUrl", pathname);
+		loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
 		return NextResponse.redirect(loginUrl);
 	}
 
 	return NextResponse.next();
 }
 
+// protected routes
 export const config = {
 	matcher: ["/profile/:path*"],
 };

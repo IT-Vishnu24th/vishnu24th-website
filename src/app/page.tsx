@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import LoginButton from "@/components/LoginButton";
+import { Suspense } from "react";
 
 export default function HomePage() {
 	const { user } = useAuth();
@@ -21,7 +22,9 @@ export default function HomePage() {
 					</div>
 				</div>
 			) : (
-				<LoginButton />
+				<Suspense fallback={<div>Loading login...</div>}>
+					<LoginButton />
+				</Suspense>
 			)}
 		</div>
 	);

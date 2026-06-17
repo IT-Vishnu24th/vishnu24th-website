@@ -20,7 +20,5 @@ function initFirebaseAdmin() {
 
 const app = initFirebaseAdmin();
 
-const getAdminAuth = () => getAuth(app);
-const getAdminDb = () => getFirestore(app);
-
-export { getAdminAuth, getAdminDb };
+export const adminAuth = getAuth(app);
+export const adminDb = getFirestore(app);

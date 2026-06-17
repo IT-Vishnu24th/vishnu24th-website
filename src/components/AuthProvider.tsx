@@ -3,8 +3,6 @@ import React, {
 	createContext,
 	useState,
 	ReactNode,
-	Suspense,
-	useCallback,
 } from "react";
 import {
 	GoogleAuthProvider,
@@ -12,16 +10,15 @@ import {
 	signOut as firebaseSignOut,
 } from "firebase/auth";
 import { auth } from "@/firebase/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 
 interface AuthContextType {
 	user: User | null;
 	loading: boolean;
-	signInWithGoogle: () => Promise<void>;
+	signInWithGoogle: (callbackUrl?: string) => Promise<void>;
 	signOut: () => Promise<void>;
 	error: string | null;
-	clearError: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -33,7 +30,7 @@ interface AuthProviderProps {
 	initialUser: User | null;
 }
 
-function AuthProviderContent({ children, initialUser }: AuthProviderProps) {
+export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 	const [prevInitialUser, setPrevInitialUser] = useState<User | null>(
 		initialUser,
 	);
@@ -41,22 +38,17 @@ function AuthProviderContent({ children, initialUser }: AuthProviderProps) {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
-	const searchParams = useSearchParams();
 
 	if (initialUser !== prevInitialUser) {
 		setPrevInitialUser(initialUser);
 		setUser(initialUser);
 	}
 
-	const clearError = useCallback(() => setError(null), []);
-
-	const signInWithGoogle = async () => {
+	const signInWithGoogle = async (callbackUrl?: string) => {
 		setLoading(true);
 		setError(null);
 		try {
 			const provider = new GoogleAuthProvider();
-			provider.addScope("email");
-			provider.addScope("profile");
 			provider.setCustomParameters({ hd: "student.chula.ac.th" });
 			const result = await signInWithPopup(auth, provider);
 			const idToken = await result.user.getIdToken();
@@ -74,8 +66,7 @@ function AuthProviderContent({ children, initialUser }: AuthProviderProps) {
 				return;
 			}
 
-			const callbackUrl = searchParams?.get("callbackUrl") || "/";
-			router.push(callbackUrl);
+			router.push(callbackUrl || "/");
 			router.refresh();
 		} catch (err) {
 			// Ensure Firebase is signed out on failure to prevent stale client state
@@ -124,26 +115,9 @@ function AuthProviderContent({ children, initialUser }: AuthProviderProps) {
 				signInWithGoogle,
 				signOut,
 				error,
-				clearError,
 			}}
 		>
 			{children}
 		</AuthContext.Provider>
-	);
-}
-
-export function AuthProvider({ children, initialUser }: AuthProviderProps) {
-	return (
-		<Suspense
-			fallback={
-				<div className="flex flex-1 items-center justify-center min-h-screen">
-					Loading Auth...
-				</div>
-			}
-		>
-			<AuthProviderContent initialUser={initialUser}>
-				{children}
-			</AuthProviderContent>
-		</Suspense>
 	);
 }

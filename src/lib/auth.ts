@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getAdminAuth, getAdminDb } from "@/firebase/admin";
+import { adminAuth, adminDb } from "@/firebase/admin";
 import { User } from "@/types/user";
 
 /**
@@ -15,7 +15,6 @@ export async function getAuthenticatedUser(): Promise<User | null> {
 			return null;
 		}
 
-		const adminAuth = getAdminAuth();
 		// check revocation false for now?
 		const decodedToken = await adminAuth.verifySessionCookie(
 			sessionCookie,
@@ -28,7 +27,6 @@ export async function getAuthenticatedUser(): Promise<User | null> {
 		}
 
 		const studentId = email.split("@")[0];
-		const adminDb = getAdminDb();
 		const userDoc = await adminDb.collection("users").doc(studentId).get();
 
 		if (!userDoc.exists) {

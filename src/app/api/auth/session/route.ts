@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getAdminAuth, getAdminDb } from "@/firebase/admin";
+import { adminAuth, adminDb } from "@/firebase/admin";
 
 const STUDENT_EMAIL_PATTERN = /^6[89]\d{6}21@student\.chula\.ac\.th$/;
 const SESSION_EXPIRES_IN_MS = 1000 * 60 * 60 * 24 * 5; // 5 days
@@ -14,9 +14,6 @@ export async function POST(request: Request) {
 				{ status: 400 },
 			);
 		}
-
-		const adminAuth = getAdminAuth();
-		const adminDb = getAdminDb();
 
 		// Verify ID token
 		const decodedToken = await adminAuth.verifyIdToken(idToken);
@@ -65,8 +62,6 @@ export async function POST(request: Request) {
 			{ status: 200 },
 		);
 	} catch (error) {
-		// const message =
-		// 	error instanceof Error ? error.message : "Unknown error";
 		console.error("Session creation error:", error);
 
 		return NextResponse.json({ error: "Sign in failed" }, { status: 500 });
