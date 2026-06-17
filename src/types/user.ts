@@ -1,9 +1,11 @@
 import { Group, Vessel } from "@/types/group"
 
 export interface Name {
+  title: string
   firstName: string
   middleName?: string
   surname: string
+  nickname: string
 }
 
 // staff = year 2 (68x) ; participant = year 1 (69x)
