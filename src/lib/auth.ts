@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
-import { adminAuth, adminDb } from "@/firebase/admin"
+import { adminAuth } from "@/firebase/admin"
 import { User } from "@/types/user"
+import userService from "@/services/userService"
 
 /**
  * Retrieves the currently authenticated user from the session cookie.
@@ -24,19 +25,8 @@ export async function getAuthenticatedUser(): Promise<User | null> {
     }
 
     const studentId = email.split("@")[0]
-    const userDoc = await adminDb.collection("users").doc(studentId).get()
-
-    if (!userDoc.exists) {
-      return null
-    }
-
-    const data = userDoc.data()
-    return {
-      id: studentId,
-      firstName: data?.firstName || "",
-      lastName: data?.lastName || "",
-      role: data?.role || "",
-    }
+    const user = await userService.getById(studentId)
+    return user
   } catch {
     return null
   }

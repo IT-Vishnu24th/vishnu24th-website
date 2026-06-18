@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run check && next build",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write \"**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,css,md}\"",
+    "check": "tsc --noEmit && npm run lint && npm run format",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": [
+    "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,css,md}": [
       "prettier --write"
     ]
   },

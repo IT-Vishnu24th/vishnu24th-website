@@ -14,7 +14,7 @@ export default function HomePage() {
       {user ? (
         <div>
           <p>
-            Logged in as: {user.firstName} {user.lastName} ({user.id})
+            Logged in as: {user.nameEn.firstName} {user.nameTh.surname} ({user.id})
           </p>
           <div style={{ marginTop: "10px" }}>
             <Link href="/profile">Go to Profile</Link>
