@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import { adminAuth, adminDb } from "@/firebase/admin"
+import { adminAuth } from "@/firebase/admin"
+import userService from "@/services/userService"
 
 const STUDENT_EMAIL_PATTERN = /^6[89]\d{6}21@student\.chula\.ac\.th$/
 const SESSION_EXPIRES_IN_MS = 1000 * 60 * 60 * 24 * 5 // 5 days
@@ -35,8 +36,8 @@ export async function POST(request: Request) {
     const studentId = email.split("@")[0]
 
     // Check if user in firestore
-    const userDoc = await adminDb.collection("users").doc(studentId).get()
-    if (!userDoc.exists) {
+    const user = await userService.getById(studentId)
+    if (!user) {
       return NextResponse.json(
         { error: "profile-not-found", message: "User does not exist" },
         { status: 404 }
