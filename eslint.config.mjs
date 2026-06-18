@@ -5,6 +5,23 @@ import nextTs from "eslint-config-next/typescript"
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    ignores: ["src/services/**"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/firebase/admin",
+              importNames: ["adminDb"],
+              message: "Use services in `@/services/` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
