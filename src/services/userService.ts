@@ -18,11 +18,11 @@ const userCollection = adminDb.collection("users").withConverter({
   toFirestore: (data: RawUser) => data,
 })
 
-const populateGroup = async (user: RawUser): Promise<User | null> => {
+const populateGroup = async (user: RawUser): Promise<User> => {
   const group = await groupService.getById(user.group)
   if (!group) {
-    console.error(`userService.getUser: broken ref: group '${user.group}' not found`)
-    return null
+    // broken ref: should respond 500
+    throw new Error(`Broken ref in users/${user.id}: group '${user.group}' not found`)
   }
   return {
     ...user,
@@ -44,13 +44,13 @@ const userService = {
     return populateGroup(data)
   },
 
-  async create(user: RawUser): Promise<User | null> {
+  async create(user: RawUser): Promise<User> {
     const ref = userCollection.doc(user.id)
     await ref.create(user)
 
     const result = await ref.get()
     const data = result.data()
-    if (!data) return null
+    if (!data) throw new Error("Document should exist") // should never happen
     return populateGroup(data)
   },
 
@@ -60,7 +60,7 @@ const userService = {
 
     const result = await ref.get()
     const data = result.data()
-    if (!data) return null
+    if (!data) throw new Error("Document should exist") // should never happen
     return populateGroup(data)
   },
 }
