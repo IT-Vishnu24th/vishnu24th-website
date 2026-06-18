@@ -18,15 +18,31 @@ const groupService = {
     } else {
       const {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars -- removing hidden info
-        label: __label,
+        label: _label,
         ...vessel
       } = data
       return vessel satisfies Vessel
     }
   },
-  async create(group: Group): Promise<string> {
-    await groupCollection.doc(group.label).set(group)
-    return group.label
+
+  async create(group: Group): Promise<Group | null> {
+    const ref = groupCollection.doc(group.label)
+    await ref.create(group)
+
+    const result = await ref.get()
+    const data = result.data()
+    if (!data) return null
+    return data
+  },
+
+  async update(id: string, group: Partial<Omit<Group, "label">>): Promise<Group | null> {
+    const ref = groupCollection.doc(id)
+    await ref.update(group)
+
+    const result = await ref.get()
+    const data = result.data()
+    if (!data) return null
+    return data
   },
 }
 
