@@ -1,4 +1,4 @@
-import { getAdminDb } from "@/firebase/admin"
+import { adminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
 import type { Name, User, UserRole } from "@/types/user"
 
@@ -13,12 +13,10 @@ export interface RawUser {
   prefLanguage: "en" | "th"
 }
 
-const userCollection = getAdminDb()
-  .collection("users")
-  .withConverter({
-    fromFirestore: (snapshot) => snapshot.data() as RawUser,
-    toFirestore: (data: RawUser) => data,
-  })
+const userCollection = adminDb.collection("users").withConverter({
+  fromFirestore: (snapshot) => snapshot.data() as RawUser,
+  toFirestore: (data: RawUser) => data,
+})
 
 const userService = {
   /** exposes group; admin use only */

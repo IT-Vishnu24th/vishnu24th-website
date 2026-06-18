@@ -1,13 +1,11 @@
-import { getAdminDb } from "@/firebase/admin"
+import { adminDb } from "@/firebase/admin"
 import featureFlagsService from "@/services/featureFlagService"
 import type { Group, Vessel } from "@/types/group"
 
-const groupCollection = getAdminDb()
-  .collection("groups")
-  .withConverter({
-    fromFirestore: (snapshot) => snapshot.data() as Group,
-    toFirestore: (data: Group) => data,
-  })
+const groupCollection = adminDb.collection("groups").withConverter({
+  fromFirestore: (snapshot) => snapshot.data() as Group,
+  toFirestore: (data: Group) => data,
+})
 
 const groupService = {
   async getById(id: string): Promise<Group | Vessel | null> {
