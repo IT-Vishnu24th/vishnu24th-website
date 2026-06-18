@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth"
 import LoginButton from "@/components/LoginButton"
 import { Suspense } from "react"
+import { modalStore, useModalStore } from "@/stores/modalStore"
 
 export default function HomePage() {
   const { user } = useAuth()
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <div>
       <h1>VISHNU 24th</h1>
+      <button onClick={() => modalStore.open(<div>bruh</div>)}>yo</button>
       {user ? (
         <div>
           <p>
