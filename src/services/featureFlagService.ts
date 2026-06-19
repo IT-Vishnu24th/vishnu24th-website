@@ -14,23 +14,13 @@ const featureFlagsService = {
     return data
   },
 
-  async create(id: string, enabled: boolean = false): Promise<FeatureFlag | null> {
+  async setFlag(id: string, enabled: boolean = false): Promise<FeatureFlag> {
     const ref = featureFlagCollection.doc(id)
-    await ref.create({ id, enabled })
+    await ref.set({ id, enabled })
 
     const result = await ref.get()
     const data = result.data()
-    if (!data) return null
-    return data
-  },
-
-  async update(id: string, enabled: boolean): Promise<FeatureFlag | null> {
-    const ref = featureFlagCollection.doc(id)
-    await ref.update({ enabled })
-
-    const result = await ref.get()
-    const data = result.data()
-    if (!data) return null
+    if (!data) throw new Error("Unknown error ; document should exist") // should never happen
     return data
   },
 }
