@@ -1,7 +1,7 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import featureFlagsService from "@/services/featureFlagService"
-import { success, failure, protect } from "@/utils/responseHelpers"
+import { success, failure, protect } from "@/utils/apiHelpers"
 import type { NextRequest } from "next/server"
 import type { FeatureFlag } from "@/types/featureFlag"
 
