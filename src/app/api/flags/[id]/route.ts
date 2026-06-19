@@ -1,8 +1,7 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
-import { getAuthenticatedUser } from "@/lib/auth"
 import featureFlagsService from "@/services/featureFlagService"
-import { success, failure } from "@/utils/responseHelpers"
+import { success, failure, protect } from "@/utils/responseHelpers"
 import type { NextRequest } from "next/server"
 import type { FeatureFlag } from "@/types/featureFlag"
 
@@ -22,13 +21,11 @@ const updateFeatureFlagPayload = z.object({
   enabled: z.boolean(),
 })
 
-// protected: admin
 export async function PUT(req: NextRequest, { params }: RouteContext<"/api/flags/[id]">) {
   const { id } = await params
   try {
-    const user = await getAuthenticatedUser()
-    if (!user) return failure(401, "Not logged in")
-    if (user.role !== "admin") return failure(403, "Forbidden")
+    const [error] = await protect("admin")
+    if (error) return error
 
     const payload = updateFeatureFlagPayload.parse(await req.json())
 

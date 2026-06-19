@@ -1,16 +1,14 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
-import { getAuthenticatedUser } from "@/lib/auth"
 import userService from "@/services/userService"
-import { success, failure } from "@/utils/responseHelpers"
+import { success, failure, protect } from "@/utils/responseHelpers"
 import type { NextRequest } from "next/server"
 import type { User } from "@/types/user"
 
-// protected: user
 export async function GET() {
   try {
-    const user = await getAuthenticatedUser()
-    if (!user) return failure(401, "Not logged in")
+    const [error, user] = await protect()
+    if (error) return error
 
     return success<User>(user)
   } catch (error) {
@@ -25,11 +23,10 @@ const updateUserPayload = z
   })
   .refine((schema) => Object.keys(schema).length > 0, "Payload may not be empty")
 
-// protected: user
 export async function PATCH(req: NextRequest) {
   try {
-    const user = await getAuthenticatedUser()
-    if (!user) return failure(401, "Not logged in")
+    const [error, user] = await protect()
+    if (error) return error
 
     const payload = updateUserPayload.parse(await req.json())
 
