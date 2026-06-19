@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import { AuthProvider } from "@/components/AuthProvider"
+import { AuthProvider } from "@/features/auth/providers/AuthProvider"
 import { getAuthenticatedUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
 
@@ -26,7 +26,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const user = await getAuthenticatedUser()
-
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body>
