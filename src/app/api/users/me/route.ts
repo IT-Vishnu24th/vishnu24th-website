@@ -1,9 +1,8 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
-import userService from "@/services/userService"
+import userService, { User } from "@/services/userService"
 import { success, failure, protect } from "@/utils/apiHelpers"
 import type { NextRequest } from "next/server"
-import type { User } from "@/types/user"
 
 export async function GET() {
   try {

@@ -1,7 +1,6 @@
 import { cookies } from "next/headers"
 import { adminAuth } from "@/firebase/admin"
-import { User } from "@/types/user"
-import userService from "@/services/userService"
+import userService, { User } from "@/services/userService"
 
 /**
  * Retrieves the currently authenticated user from the session cookie.

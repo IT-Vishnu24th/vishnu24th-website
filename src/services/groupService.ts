@@ -1,6 +1,7 @@
 import { adminDb } from "@/firebase/admin"
 import featureFlagsService from "@/services/featureFlagService"
 import type { Group, Vessel } from "@/types/group"
+export type * from "@/types/group"
 
 const groupCollection = adminDb.collection("groups").withConverter({
   fromFirestore: (snapshot) => snapshot.data() as Group,

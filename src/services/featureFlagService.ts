@@ -1,5 +1,6 @@
 import { adminDb } from "@/firebase/admin"
 import type { FeatureFlag } from "@/types/featureFlag"
+export type * from "@/types/featureFlag"
 
 const featureFlagCollection = adminDb.collection("featureFlags").withConverter({
   fromFirestore: (snapshot) => snapshot.data() as FeatureFlag,

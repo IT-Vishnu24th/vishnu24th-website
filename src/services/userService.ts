@@ -3,6 +3,7 @@ import groupService from "@/services/groupService"
 import { makePaginationMeta, type PaginationInput } from "@/utils/apiHelpers"
 import type { PaginationMeta } from "@/types/apiResponse"
 import type { Name, User, UserRole } from "@/types/user"
+export type * from "@/types/user"
 
 export interface RawUser {
   id: string
