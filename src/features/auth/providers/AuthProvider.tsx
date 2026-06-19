@@ -8,7 +8,7 @@ import { User } from "@/types/user"
 interface AuthContextType {
   user: User | null
   loading: boolean
-  signInWithGoogle: (callbackUrl?: string) => Promise<void>
+  signInWithGoogle: (callbackUrl?: string) => Promise<boolean>
   signOut: () => Promise<void>
   error: string | null
 }
@@ -51,11 +51,12 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
         const data = await response.json()
         await firebaseSignOut(auth)
         setError(data.error || "internal-server-error")
-        return
+        return false
       }
 
       router.push(callbackUrl || "/")
       router.refresh()
+      return true
     } catch (err) {
       // Ensure Firebase is signed out on failure to prevent stale client state
       await firebaseSignOut(auth).catch(() => {})
@@ -67,11 +68,12 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 
       // Handle common Firebase Auth errors gracefully
       if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
-        return
+        return false
       }
 
       console.error("Sign-in transaction failed:", err)
       setError(code ? code.replace("auth/", "") : "sign-in-failed")
+      return false
     } finally {
       setLoading(false)
     }

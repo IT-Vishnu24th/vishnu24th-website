@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AuthContext } from "@/components/AuthProvider"
+import { AuthContext } from "@/features/auth/providers/AuthProvider"
 
 /**
  * Custom React hook to access the current authentication state and actions.
