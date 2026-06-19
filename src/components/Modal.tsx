@@ -1,14 +1,18 @@
 "use client"
 
 import * as Dialog from "@radix-ui/react-dialog"
+<<<<<<< HEAD
 import { AnimatePresence, motion } from "motion/react"
 
+=======
+>>>>>>> d327aee (add phase endpoints)
 import { useModalStore } from "@/stores/modalStore"
 
 export function Modal() {
   const { isOpen, component, close } = useModalStore()
 
   return (
+<<<<<<< HEAD
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && close()}>
       <AnimatePresence>
         {isOpen && component && (
@@ -37,6 +41,13 @@ export function Modal() {
           </Dialog.Portal>
         )}
       </AnimatePresence>
+=======
+    <Dialog.Root open={isOpen} onOpenChange={close}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content>{component}</Dialog.Content>
+      </Dialog.Portal>
+>>>>>>> d327aee (add phase endpoints)
     </Dialog.Root>
   )
 }

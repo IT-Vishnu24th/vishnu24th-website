@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server"
 import z from "zod"
+<<<<<<< HEAD
 import { getAuthenticatedUser, getAuthenticatedRawUser } from "@/lib/auth"
+=======
+import { getAuthenticatedUser } from "@/lib/auth"
+>>>>>>> d327aee (add phase endpoints)
 import type {
   ApiSuccess,
   ApiPaginatedSuccess,
@@ -8,7 +12,10 @@ import type {
   PaginationMeta,
 } from "@/types/apiResponse"
 import type { User, UserRole } from "@/types/user"
+<<<<<<< HEAD
 import type { RawUser } from "@/services/userService"
+=======
+>>>>>>> d327aee (add phase endpoints)
 
 export const success = <T>(data: T) =>
   NextResponse.json({ data } satisfies ApiSuccess<T>, { status: 200 })
@@ -31,6 +38,7 @@ export const protect = async (role?: UserRole): Promise<ProtectResult> => {
   return [null, user]
 }
 
+<<<<<<< HEAD
 export type ProtectRawResult = [error: NextResponse, null] | [null, user: RawUser]
 export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => {
   const user = await getAuthenticatedRawUser()
@@ -43,6 +51,8 @@ export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => 
   return [null, user]
 }
 
+=======
+>>>>>>> d327aee (add phase endpoints)
 export const paginationSchema = z.object({
   page: z.coerce.number().int().catch(0),
   limit: z.coerce.number().int().optional().catch(undefined),

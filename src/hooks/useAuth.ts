@@ -1,5 +1,9 @@
 import { useContext } from "react"
+<<<<<<< HEAD
 import { AuthContext } from "@/features/auth/providers/AuthProvider"
+=======
+import { AuthContext } from "@/components/AuthProvider"
+>>>>>>> d327aee (add phase endpoints)
 
 /**
  * Custom React hook to access the current authentication state and actions.

@@ -1,7 +1,11 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+<<<<<<< HEAD
 import { AuthProvider } from "@/features/auth/providers/AuthProvider"
+=======
+import { AuthProvider } from "@/components/AuthProvider"
+>>>>>>> d327aee (add phase endpoints)
 import { getAuthenticatedUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
 
@@ -26,6 +30,10 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const user = await getAuthenticatedUser()
+<<<<<<< HEAD
+=======
+
+>>>>>>> d327aee (add phase endpoints)
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body>
