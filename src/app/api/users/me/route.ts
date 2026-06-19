@@ -31,7 +31,6 @@ export async function PATCH(req: NextRequest) {
     const payload = updateUserPayload.parse(await req.json())
 
     const updated = await userService.update(user.id, payload)
-    if (!updated) throw new Error("Invalid user")
     return success<User>(updated)
   } catch (error) {
     if (error instanceof ZodError) return failure(400, "Invalid body")
