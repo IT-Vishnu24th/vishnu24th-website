@@ -1,8 +1,8 @@
 import AuthResult from "@/features/auth/components/AuthResult"
 import { LoginButton } from "@/features/auth/components/LoginButton"
-import Image from "next/image";
-import SponsorFooter from "@/components/_SponsorFooterForHome";
-import NavigationFooter from "@/components/_NavigationFooter"
+import Image from "next/image"
+import SponsorFooter from "@/components/SponsorFooterForHome"
+import NavigationFooter from "@/components/NavigationFooter"
 
 export default function HomePage() {
   return (
@@ -15,4 +15,3 @@ export default function HomePage() {
     </div>
   )
 }
-
