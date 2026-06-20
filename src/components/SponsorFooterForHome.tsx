@@ -19,7 +19,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="w-full py-10 mb-10">
+    <footer className="w-full pt-10 pb-24">
       <div className="max-w-6xl mx-auto px-3">
         <h2 className="text-center text-xl font-semibold mb-8">ขอขอบคุณผู้สนับสนุน</h2>
 
