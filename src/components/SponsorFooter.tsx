@@ -1,13 +1,8 @@
 export default function Footer() {
-  const sponsors = [
-    "/sponsors/sponsor1.png",
-    "/sponsors/sponsor2.png",
-    "/sponsors/sponsor3.png",
-    "/sponsors/sponsor4.png",
-    "/sponsors/sponsor5.png",
-    "/sponsors/sponsor6.png",
-    "/sponsors/sponsor7.png",
-  ]
+  const sponsors = Array.from({ length: 7 }, (_, index) => ({
+    id: index,
+    name: `Sponsor ${index + 1}`,
+  }))
 
   return (
     <footer className="w-full pt-10 pb-24">
@@ -15,9 +10,12 @@ export default function Footer() {
         <h2 className="text-center text-xl font-semibold mb-6">ขอขอบคุณผู้สนับสนุน</h2>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {sponsors.map((logo, index) => (
-            <div key={index} className="w-20 h-12 flex items-center justify-center">
-              <img src={logo} alt={`Sp ${index + 1}`} className="max-h-full object-contain" />
+          {sponsors.map((sponsor) => (
+            <div
+              key={sponsor.id}
+              className="w-28 h-16 rounded-lg bg-neutral-200 flex items-center justify-center text-sm text-neutral-500"
+            >
+              {sponsor.name}
             </div>
           ))}
         </div>

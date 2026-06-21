@@ -1,21 +1,16 @@
 export default function Footer() {
-  const bigsponsors = ["/sponsors/sponsor1.png", "/sponsors/sponsor2.png"]
+  const bigSponsors = ["Sponsor 1", "Sponsor 2"]
 
-  const mediumsponsors = [
-    "/sponsors/sponsor4.png",
-    "/sponsors/sponsor5.png",
-    "/sponsors/sponsor6.png",
-    "/sponsors/sponsor7.png",
-  ]
+  const mediumSponsors = ["Sponsor 3", "Sponsor 4", "Sponsor 5", "Sponsor 6"]
 
-  const smallsponsors = [
-    "/sponsors/sponsor8.png",
-    "/sponsors/sponsor9.png",
-    "/sponsors/sponsor10.png",
-    "/sponsors/sponsor11.png",
-    "/sponsors/sponsor12.png",
-    "/sponsors/sponsor13.png",
-    "/sponsors/sponsor14.png",
+  const smallSponsors = [
+    "Sponsor 7",
+    "Sponsor 8",
+    "Sponsor 9",
+    "Sponsor 10",
+    "Sponsor 11",
+    "Sponsor 12",
+    "Sponsor 13",
   ]
 
   return (
@@ -25,39 +20,36 @@ export default function Footer() {
 
         {/* BIG */}
         <div className="flex justify-center gap-5 mb-8">
-          {bigsponsors.map((logo, index) => (
-            <div key={index} className=" w-28 h-20 flex items-center justify-center">
-              <img
-                src={logo}
-                alt={`Big ${index}`}
-                className="max-w-full max-h-full object-contain"
-              />
+          {bigSponsors.map((name) => (
+            <div
+              key={name}
+              className="w-28 h-20 rounded-xl bg-neutral-200 flex items-center justify-center text-sm text-neutral-500"
+            >
+              {name}
             </div>
           ))}
         </div>
 
         {/* MEDIUM */}
-        <div className="flex justify-center gap-4 mb-8">
-          {mediumsponsors.map((logo, index) => (
-            <div key={index} className="w-20 h-14 flex items-center justify-center">
-              <img
-                src={logo}
-                alt={`Medium ${index}`}
-                className="max-w-full max-h-full object-contain"
-              />
+        <div className="flex justify-center gap-4 mb-8 flex-wrap">
+          {mediumSponsors.map((name) => (
+            <div
+              key={name}
+              className="w-20 h-14 rounded-lg bg-neutral-200 flex items-center justify-center text-xs text-neutral-500"
+            >
+              {name}
             </div>
           ))}
         </div>
 
         {/* SMALL */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {smallsponsors.map((logo, index) => (
-            <div key={index} className="w-14 h-10 flex items-center justify-center">
-              <img
-                src={logo}
-                alt={`Small ${index}`}
-                className="max-w-full max-h-full object-contain "
-              />
+        <div className="flex flex-wrap justify-center gap-3">
+          {smallSponsors.map((name) => (
+            <div
+              key={name}
+              className="w-14 h-10 rounded-md bg-neutral-200 flex items-center justify-center text-[10px] text-neutral-500"
+            >
+              {name}
             </div>
           ))}
         </div>
