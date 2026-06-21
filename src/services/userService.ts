@@ -38,6 +38,10 @@ const userService = {
       group,
     }
   },
+  async getRawById(id: string): Promise<RawUser | null> {
+    const doc = await userCollection.doc(id).get()
+    return doc.data() ?? null
+  },
   async create(user: RawUser): Promise<string> {
     await userCollection.doc(user.id).set(user)
     return user.id
