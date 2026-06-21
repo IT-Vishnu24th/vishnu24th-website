@@ -31,7 +31,7 @@ export const LoginModal = ({ callbackUrl = "/" }: LoginModalProps) => {
         className="mt-3.5 flex h-10 w-full cursor-pointer items-center rounded-full border border-[#4b4b4b] bg-white px-3 text-base font-normal transition-colors hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-wait disabled:opacity-60"
       >
         <GoogleIcon />
-        <span className="flex-1 pr-6 text-center">"ลงชื่อเข้าใช้ด้วย Google"</span>
+        <span className="flex-1 pr-6 text-center">&quot;ลงชื่อเข้าใช้ด้วย Google&quot;</span>
       </button>
 
       <p className="mt-2.5 text-center text-sm leading-5">
