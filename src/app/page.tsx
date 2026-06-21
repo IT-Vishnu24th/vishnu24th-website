@@ -1,14 +1,10 @@
 import AuthResult from "@/features/auth/components/AuthResult"
-import { LoginButton } from "@/features/auth/components/LoginButton"
-import { LanguageChangerButton } from "@/features/auth/components/LanguageChangerButton"
+import { Header } from "@/components/Headers"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen px-6 py-10">
-      <div className="flex justify-between items-center">
-        <LanguageChangerButton />
-        <LoginButton />
-      </div>
+      <Header />
       <div className="flex flex-col items-center justify-center text-center mt-36 md:mt-24 space-y-3">
         <h1 className="text-5xl md:text-8xl font-bold">INTANIA</h1>
 
