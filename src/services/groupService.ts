@@ -38,8 +38,8 @@ const groupService = {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars -- removing hidden info
         label: __label,
         ...vessel
-      } = data
-      return vessel satisfies Vessel
+      } = group
+      return vessel
     }
   },
 }
