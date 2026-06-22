@@ -1,4 +1,8 @@
 import AuthResult from "@/features/auth/components/AuthResult"
+import { LoginButton } from "@/features/auth/components/LoginButton"
+import Image from "next/image"
+import SponsorFooter from "@/components/SponsorFooterForHome"
+import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
 
 export default function HomePage() {
@@ -21,6 +25,8 @@ export default function HomePage() {
         <h3 className="text-lg md:text-xl">21–24 กรกฎาคม 2569</h3>
       </div>
       <AuthResult isSucess={true} />
+      <SponsorFooter />
+      <NavigationFooter />
     </div>
   )
 }
