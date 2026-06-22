@@ -31,16 +31,10 @@ const groupService = {
     return group.label
   },
   mapToPublic(group: Group, showFullGroup: boolean | null): Group | Vessel {
-    if (showFullGroup) {
-      return group
-    } else {
-      const {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- removing hidden info
-        label: __label,
-        ...vessel
-      } = group
-      return vessel
-    }
+    if (showFullGroup) return group
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { label, ...vessel } = group
+    return vessel
   },
 }
 
