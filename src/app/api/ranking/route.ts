@@ -1,68 +1,36 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import { adminAuth } from "@/firebase/admin"
+import { getAuthenticatedRawUser } from "@/lib/auth"
 import groupService from "@/services/groupService"
-import userService from "@/services/userService"
 import featureFlagsService from "@/services/featureFlagService"
 
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("session")?.value
-
-    if (!sessionCookie) {
-      return NextResponse.json(
-        { error: "unauthorized", message: "Unauthorized access" },
-        { status: 401 }
-      )
-    }
-
-    let studentId = ""
-    try {
-      const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, false)
-      studentId = decodedToken.email?.split("@")[0] || ""
-    } catch {}
-
-    if (!studentId) {
-      return NextResponse.json(
-        { error: "unauthorized", message: "Unauthorized access" },
-        { status: 401 }
-      )
-    }
-
-    const userData = await userService.getRawById(studentId)
-    if (!userData) {
-      return NextResponse.json(
-        { error: "user-not-found", message: "User not found" },
-        { status: 404 }
-      )
+    const user = await getAuthenticatedRawUser()
+    if (!user) {
+      return NextResponse.json({ error: "unauthorized", message: "Unauthorized" }, { status: 401 })
     }
 
     const groups = await groupService.rawList()
 
     // Sort by score desc, then by label asc to keep order deterministic
-    const sorted = [...groups].sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score
-      }
-      return a.label.localeCompare(b.label)
-    })
+    const sorted = [...groups].sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
 
     const showFullGroup = await featureFlagsService.getFlag("show-group")
-    const top3 = sorted.slice(0, 3).map((g) => groupService.mapToPublic(g, showFullGroup))
 
-    let userYaan = null
-    if (userData.group) {
-      const userGroupLabel = userData.group
-      const userGroup = sorted.find((g) => g.label === userGroupLabel)
-      if (userGroup) {
-        const rank = sorted.filter((g) => g.score > userGroup.score).length + 1
-        userYaan = {
+    const getRank = (score: number) => sorted.findIndex((g) => g.score === score) + 1
+
+    const top3 = sorted.slice(0, 3).map((g) => ({
+      ...groupService.mapToPublic(g, showFullGroup),
+      rank: getRank(g.score),
+    }))
+
+    const userGroup = user.group ? sorted.find((g) => g.label === user.group) : null
+    const userYaan = userGroup
+      ? {
           ...groupService.mapToPublic(userGroup, showFullGroup),
-          rank,
+          rank: getRank(userGroup.score),
         }
-      }
-    }
+      : null
 
     return NextResponse.json({ top3, userYaan }, { status: 200 })
   } catch (error) {
