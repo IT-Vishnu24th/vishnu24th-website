@@ -6,8 +6,9 @@ import type { NextRequest } from "next/server"
 
 const updateUserPayload = z
   .object({
-    role: z.enum(["admin", "staff", "participant"]).optional(),
+    role: z.enum(["admin", "staff", "participant"]),
   })
+  .partial()
   .refine((schema) => Object.keys(schema).length > 0, "Payload may not be empty")
 
 export async function PATCH(req: NextRequest, { params }: RouteContext<"/api/users/[id]">) {

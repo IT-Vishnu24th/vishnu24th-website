@@ -18,8 +18,9 @@ export async function GET() {
 
 const updateUserPayload = z
   .object({
-    prefLanguage: z.enum(["en", "th"]).optional(),
+    prefLanguage: z.enum(["en", "th"]),
   })
+  .partial()
   .refine((schema) => Object.keys(schema).length > 0, "Payload may not be empty")
 
 export async function PATCH(req: NextRequest) {
