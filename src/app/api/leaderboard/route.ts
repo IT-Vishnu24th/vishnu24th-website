@@ -1,15 +1,12 @@
-import { NextResponse } from "next/server"
-import { getAuthenticatedRawUser } from "@/lib/auth"
+import { success, failure, protect } from "@/utils/apiHelpers"
 import groupService from "@/services/groupService"
 import featureFlagsService from "@/services/featureFlagService"
 import type { RankingResponse } from "@/types/group"
 
 export async function GET() {
   try {
-    const user = await getAuthenticatedRawUser()
-    if (!user) {
-      return NextResponse.json({ error: "unauthorized", message: "Unauthorized" }, { status: 401 })
-    }
+    const [error] = await protect()
+    if (error) return error
 
     const groups = await groupService.rawList()
 
@@ -25,12 +22,9 @@ export async function GET() {
       rank: getRank(g.score),
     }))
 
-    return NextResponse.json<RankingResponse>({ top3 }, { status: 200 })
+    return success<RankingResponse>({ top3 })
   } catch (error) {
     console.error("Failed to fetch ranking:", error)
-    return NextResponse.json(
-      { error: "internal-server-error", message: "Failed to fetch ranking" },
-      { status: 500 }
-    )
+    return failure(500, "Internal server error")
   }
 }
