@@ -1,7 +1,5 @@
 import { adminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
-import { makePaginationMeta, type PaginationInput } from "@/utils/apiHelpers"
-import type { PaginationMeta } from "@/types/apiResponse"
 import type { Name, User, UserRole } from "@/types/user"
 export type * from "@/types/user"
 
@@ -34,18 +32,10 @@ const populateGroup = async (user: RawUser): Promise<User> => {
 }
 
 const userService = {
-  // TODO: support filtering, searching, & sorting. create extra field of lowercased, composed names used for case-insensitive searching, and easy sorting
   /** exposes group; admin use only */
-  async rawList({ page, limit = 50 }: PaginationInput): Promise<[RawUser[], PaginationMeta]> {
-    const coll = await userCollection
-      .offset(page * limit)
-      .limit(limit)
-      .get()
-    const total = (await userCollection.count().get()).data().count
-    return [
-      coll.docs.map((doc) => doc.data()),
-      makePaginationMeta(total, coll.docs.length, page, limit),
-    ]
+  async rawList(): Promise<RawUser[]> {
+    const coll = await userCollection.get()
+    return coll.docs.map((doc) => doc.data())
   },
 
   async getById(id: string): Promise<User | null> {
