@@ -1,5 +1,6 @@
 import { adminDb } from "@/firebase/admin"
 import type { FeatureFlag } from "@/types/featureFlag"
+export type * from "@/types/featureFlag"
 
 const featureFlagCollection = adminDb.collection("featureFlags").withConverter({
   fromFirestore: (snapshot) => snapshot.data() as FeatureFlag,
@@ -7,15 +8,21 @@ const featureFlagCollection = adminDb.collection("featureFlags").withConverter({
 })
 
 const featureFlagsService = {
-  async getFlag(id: string): Promise<boolean | null> {
+  async getFlag(id: string): Promise<FeatureFlag | null> {
     const doc = await featureFlagCollection.doc(id).get()
     const data = doc.data()
     if (!data) return null
-    return data.enabled
+    return data
   },
-  async create(id: string, enabled: boolean = false): Promise<string> {
-    await featureFlagCollection.doc(id).set({ id, enabled })
-    return id
+
+  async setFlag(id: string, enabled: boolean = false): Promise<FeatureFlag> {
+    const ref = featureFlagCollection.doc(id)
+    await ref.set({ id, enabled })
+
+    const result = await ref.get()
+    const data = result.data()
+    if (!data) throw new Error("Unknown error ; document should exist") // should never happen
+    return data
   },
 }
 

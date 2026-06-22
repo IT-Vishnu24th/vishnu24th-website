@@ -1,7 +1,6 @@
 import { cookies } from "next/headers"
 import { adminAuth } from "@/firebase/admin"
-import { User } from "@/types/user"
-import userService, { RawUser } from "@/services/userService"
+import userService, { User, RawUser } from "@/services/userService"
 
 /**
  * Extracts and verifies the student ID directly from the session cookie.

@@ -1,11 +1,11 @@
-import { success, failure, protect } from "@/utils/apiHelpers"
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
 import groupService from "@/services/groupService"
 import featureFlagsService from "@/services/featureFlagService"
 import type { RankingResponse } from "@/types/group"
 
 export async function GET() {
   try {
-    const [error] = await protect()
+    const [error] = await protectRaw()
     if (error) return error
 
     const groups = await groupService.rawList()
@@ -13,7 +13,8 @@ export async function GET() {
     // Sort by score desc, then by label asc to keep order deterministic
     const sorted = [...groups].sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
 
-    const showFullGroup = await featureFlagsService.getFlag("show-group")
+    const flag = await featureFlagsService.getFlag("show-group")
+    const showFullGroup = flag?.enabled ?? false
 
     const getRank = (score: number) => sorted.findIndex((g) => g.score === score) + 1
 
