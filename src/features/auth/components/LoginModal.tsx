@@ -34,7 +34,7 @@ export const LoginModal = ({ callbackUrl = "/" }: LoginModalProps) => {
         onClick={() => signInWithGoogle(callbackUrl)}
       >
         <GoogleIcon />
-        <span className="flex-1 pr-6 text-center">"ลงชื่อเข้าใช้ด้วย Google"</span>
+        <span className="flex-1 pr-6 text-center">&quot;ลงชื่อเข้าใช้ด้วย Google&quot;</span>
       </button>
 
       <p className="mt-2.5 text-center text-sm leading-5">

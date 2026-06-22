@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import z from "zod"
-import { getAuthenticatedUser } from "@/lib/auth"
+import { getAuthenticatedUser, getAuthenticatedRawUser } from "@/lib/auth"
 import type {
   ApiSuccess,
   ApiPaginatedSuccess,
@@ -8,6 +8,7 @@ import type {
   PaginationMeta,
 } from "@/types/apiResponse"
 import type { User, UserRole } from "@/types/user"
+import type { RawUser } from "@/services/userService"
 
 export const success = <T>(data: T) =>
   NextResponse.json({ data } satisfies ApiSuccess<T>, { status: 200 })
@@ -21,6 +22,18 @@ export const failure = (status: number, message: string) =>
 export type ProtectResult = [error: NextResponse, null] | [null, user: User]
 export const protect = async (role?: UserRole): Promise<ProtectResult> => {
   const user = await getAuthenticatedUser()
+  if (!user) return [failure(401, "Not logged in"), null]
+  if (role) {
+    if (user.role !== "admin" && user.role !== role) {
+      return [failure(403, "Forbidden"), null]
+    }
+  }
+  return [null, user]
+}
+
+export type ProtectRawResult = [error: NextResponse, null] | [null, user: RawUser]
+export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => {
+  const user = await getAuthenticatedRawUser()
   if (!user) return [failure(401, "Not logged in"), null]
   if (role) {
     if (user.role !== "admin" && user.role !== role) {

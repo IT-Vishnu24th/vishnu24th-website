@@ -1,5 +1,6 @@
 import { adminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
+import featureFlagsService from "@/services/featureFlagService"
 import type { Name, User, UserRole } from "@/types/user"
 export type * from "@/types/user"
 
@@ -25,9 +26,11 @@ const populateGroup = async (user: RawUser): Promise<User> => {
     // broken ref: should respond 500
     throw new Error(`Broken ref in users/${user.id}: group '${user.group}' not found`)
   }
+  const flag = await featureFlagsService.getFlag("show-group")
+  const showFullGroup = flag?.enabled ?? false
   return {
     ...user,
-    group,
+    group: groupService.mapToPublic(group, showFullGroup),
   }
 }
 
@@ -43,6 +46,10 @@ const userService = {
     const data = doc.data()
     if (!data) return null
     return populateGroup(data)
+  },
+  async getRawById(id: string): Promise<RawUser | null> {
+    const doc = await userCollection.doc(id).get()
+    return doc.data() ?? null
   },
 
   async create(user: RawUser): Promise<User> {
