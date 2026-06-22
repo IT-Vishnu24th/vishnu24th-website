@@ -25,15 +25,7 @@ export async function GET() {
       rank: getRank(g.score),
     }))
 
-    const userGroup = user.group ? sorted.find((g) => g.label === user.group) : null
-    const userYaan = userGroup
-      ? {
-          ...groupService.mapToPublic(userGroup, showFullGroup),
-          rank: getRank(userGroup.score),
-        }
-      : null
-
-    return NextResponse.json<RankingResponse>({ top3, userYaan }, { status: 200 })
+    return NextResponse.json<RankingResponse>({ top3 }, { status: 200 })
   } catch (error) {
     console.error("Failed to fetch ranking:", error)
     return NextResponse.json(
