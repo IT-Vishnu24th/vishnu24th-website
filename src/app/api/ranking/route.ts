@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getAuthenticatedRawUser } from "@/lib/auth"
 import groupService from "@/services/groupService"
 import featureFlagsService from "@/services/featureFlagService"
+import type { RankingResponse } from "@/types/group"
 
 export async function GET() {
   try {
@@ -32,7 +33,7 @@ export async function GET() {
         }
       : null
 
-    return NextResponse.json({ top3, userYaan }, { status: 200 })
+    return NextResponse.json<RankingResponse>({ top3, userYaan }, { status: 200 })
   } catch (error) {
     console.error("Failed to fetch ranking:", error)
     return NextResponse.json(
