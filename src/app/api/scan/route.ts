@@ -12,7 +12,11 @@ export async function POST(request: Request) {
       return failure(400, "Missing club ID")
     }
 
-    const result = await clubService.scan(user.id, clubId)
+    if (!user.group) {
+      return failure(404, "User group not found")
+    }
+
+    const result = await clubService.scan(user.id, user.group, clubId)
     if (!result.success) {
       if (result.error === "club-not-found") {
         return failure(404, "Club not found")

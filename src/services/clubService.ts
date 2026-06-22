@@ -27,19 +27,24 @@ const clubService = {
 
   async scan(
     userId: string,
+    userGroup: string,
     clubId: string
   ): Promise<
     | ({ success: true; club: Club } & Omit<Scan, "createdAt"> & { createdAt: string })
     | { success: false; error: string }
   > {
     const docRef = scanCollection.doc(`${userId}_${clubId}`)
-    const userDocRef = adminDb.collection("users").doc(userId)
     const clubDocRef = clubCollection.doc(clubId)
+    const groupDocRef = adminDb.collection("groups").doc(userGroup)
+
+    const groupDoc = await groupDocRef.get()
+    if (!groupDoc.exists) {
+      return { success: false, error: "group-not-found" }
+    }
 
     return adminDb.runTransaction(async (transaction) => {
-      const [scanDoc, userDoc, clubDoc] = await Promise.all([
+      const [scanDoc, clubDoc] = await Promise.all([
         transaction.get(docRef),
-        transaction.get(userDocRef),
         transaction.get(clubDocRef),
       ])
 
@@ -50,21 +55,6 @@ const clubService = {
       const club = clubDoc.data()
       if (!club) {
         return { success: false, error: "club-not-found" }
-      }
-
-      if (!userDoc.exists) {
-        return { success: false, error: "user-not-found" }
-      }
-
-      const userGroup = userDoc.data()?.group
-      if (!userGroup) {
-        return { success: false, error: "group-not-found" }
-      }
-
-      const groupDocRef = adminDb.collection("groups").doc(userGroup)
-      const groupDoc = await transaction.get(groupDocRef)
-      if (!groupDoc.exists) {
-        return { success: false, error: "group-not-found" }
       }
 
       const score = rollScore()
@@ -79,7 +69,6 @@ const clubService = {
 
       transaction.set(docRef, scan)
 
-      // Atomically increment group score
       transaction.update(groupDocRef, {
         scanScore: FieldValue.increment(score),
       })
