@@ -37,27 +37,27 @@ const clubService = {
     const clubDocRef = clubCollection.doc(clubId)
     const groupDocRef = adminDb.collection("groups").doc(userGroup)
 
-    const groupDoc = await groupDocRef.get()
+    // Check existence outside transaction to prevent lock contention under load?
+    // CAUTION: Assumes no deletes in prod :skull:
+    const [groupDoc, clubDoc] = await Promise.all([groupDocRef.get(), clubDocRef.get()])
+
     if (!groupDoc.exists) {
       return { success: false, error: "group-not-found" }
+    }
+
+    const club = clubDoc.data()
+    if (!club) {
+      return { success: false, error: "club-not-found" }
     }
 
     const score = rollScore()
     const now = Timestamp.now()
 
     return adminDb.runTransaction(async (transaction) => {
-      const [scanDoc, clubDoc] = await Promise.all([
-        transaction.get(docRef),
-        transaction.get(clubDocRef),
-      ])
+      const scanDoc = await transaction.get(docRef)
 
       if (scanDoc.exists) {
         return { success: false, error: "already-scanned" }
-      }
-
-      const club = clubDoc.data()
-      if (!club) {
-        return { success: false, error: "club-not-found" }
       }
 
       const scan: Scan = {
