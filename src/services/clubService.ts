@@ -42,6 +42,9 @@ const clubService = {
       return { success: false, error: "group-not-found" }
     }
 
+    const score = rollScore()
+    const now = Timestamp.now()
+
     return adminDb.runTransaction(async (transaction) => {
       const [scanDoc, clubDoc] = await Promise.all([
         transaction.get(docRef),
@@ -56,9 +59,6 @@ const clubService = {
       if (!club) {
         return { success: false, error: "club-not-found" }
       }
-
-      const score = rollScore()
-      const now = Timestamp.now()
 
       const scan: Scan = {
         userId,
