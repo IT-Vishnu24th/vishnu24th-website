@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import z from "zod"
 import { getAuthenticatedUser, getAuthenticatedRawUser } from "@/lib/auth"
 import type {
@@ -19,7 +19,9 @@ export const successPaginated = <T>(data: T[], pagination: PaginationMeta) =>
 export const failure = (status: number, message: string) =>
   NextResponse.json({ message } satisfies ApiFailure, { status })
 
-export type ProtectResult = [error: NextResponse, null] | [null, user: User]
+type MiddlewareResult<T> = [error: NextResponse, null] | [null, result: T]
+
+export type ProtectResult = MiddlewareResult<User>
 export const protect = async (role?: UserRole): Promise<ProtectResult> => {
   const user = await getAuthenticatedUser()
   if (!user) return [failure(401, "Not logged in"), null]
@@ -31,7 +33,7 @@ export const protect = async (role?: UserRole): Promise<ProtectResult> => {
   return [null, user]
 }
 
-export type ProtectRawResult = [error: NextResponse, null] | [null, user: RawUser]
+export type ProtectRawResult = MiddlewareResult<RawUser>
 export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => {
   const user = await getAuthenticatedRawUser()
   if (!user) return [failure(401, "Not logged in"), null]
@@ -41,6 +43,18 @@ export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => 
     }
   }
   return [null, user]
+}
+
+export const parseBody = async <T>(
+  req: NextRequest,
+  schema: z.ZodType<T>
+): Promise<MiddlewareResult<T>> => {
+  try {
+    const payload = schema.parse(await req.json())
+    return [null, payload]
+  } catch {
+    return [failure(400, "Invalid body"), null]
+  }
 }
 
 export const paginationSchema = z.object({

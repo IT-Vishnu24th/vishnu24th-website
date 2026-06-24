@@ -1,7 +1,7 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import featureFlagsService, { FeatureFlag } from "@/services/featureFlagService"
-import { success, failure, protect } from "@/utils/apiHelpers"
+import { success, failure, protect, parseBody } from "@/utils/apiHelpers"
 import type { NextRequest } from "next/server"
 
 export async function GET() {
@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
     const [error] = await protect("admin")
     if (error) return error
 
-    const payload = createFeatureFlagsPayload.parse(await req.json())
+    const [parseErr, payload] = await parseBody(req, createFeatureFlagsPayload)
+    if (parseErr) return parseErr
 
     const featureFlag = await featureFlagsService.createFlag(payload)
     return success<FeatureFlag>(featureFlag)
@@ -46,7 +47,8 @@ export async function PATCH(req: NextRequest) {
     const [error] = await protect("admin")
     if (error) return error
 
-    const payload = updateFeatureFlagsPayload.parse(await req.json())
+    const [parseErr, payload] = await parseBody(req, updateFeatureFlagsPayload)
+    if (parseErr) return parseErr
 
     await featureFlagsService.updateFlags(payload)
     return success<boolean>(true)
