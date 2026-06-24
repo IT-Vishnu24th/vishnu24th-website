@@ -1,7 +1,7 @@
 import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import userService, { User } from "@/services/userService"
-import { success, failure, protect } from "@/utils/apiHelpers"
+import { success, failure, protect, parseBody } from "@/utils/apiHelpers"
 import type { NextRequest } from "next/server"
 
 export async function GET() {
@@ -28,7 +28,8 @@ export async function PATCH(req: NextRequest) {
     const [error, user] = await protect()
     if (error) return error
 
-    const payload = updateUserPayload.parse(await req.json())
+    const [parseErr, payload] = await parseBody(req, updateUserPayload)
+    if (parseErr) return parseErr
 
     const updated = await userService.update(user.id, payload)
     return success<User>(updated)
