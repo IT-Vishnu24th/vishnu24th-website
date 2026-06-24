@@ -7,7 +7,3 @@ export interface Group {
 }
 
 export type Vessel = Omit<Group, "label">
-
-export interface RankingResponse {
-  top3: ((Group | Vessel) & { rank: number })[]
-}
