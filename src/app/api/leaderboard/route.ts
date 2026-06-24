@@ -1,0 +1,35 @@
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import groupService from "@/services/groupService"
+import featureFlagsService from "@/services/featureFlagService"
+import type { LeaderboardResponse } from "@/types/leaderboard"
+
+export async function GET() {
+  try {
+    const [error, user] = await protectRaw()
+    if (error) return error
+
+    const groups = await groupService.rawList()
+
+    // Sort by score desc, then by label asc to keep order deterministic
+    const sorted = [...groups].sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+
+    const flag = await featureFlagsService.getFlag("show-group")
+    const showFullGroup = flag?.enabled ?? false
+
+    // Normal ranking (eg. 1224)
+    const getRank = (score: number) => sorted.filter((g) => g.score > score).length + 1
+
+    const top3 = sorted.slice(0, 3).map((g) => ({
+      ...groupService.mapToPublic(g, showFullGroup),
+      rank: getRank(g.score),
+    }))
+
+    const group = sorted.find((g) => g.label === user.group)
+    const rank = group ? getRank(group.score) : null
+
+    return success<LeaderboardResponse>({ top3, rank })
+  } catch (error) {
+    console.error("Failed to fetch ranking:", error)
+    return failure(500, "Internal server error")
+  }
+}
