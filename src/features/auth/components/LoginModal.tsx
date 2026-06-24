@@ -4,6 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import { GoogleIcon } from "@/components/icon/GoogleIcon"
 import useAuth from "@/hooks/useAuth"
+import { modalStore } from "@/stores/modalStore"
 
 interface LoginModalProps {
   callbackUrl?: string
@@ -13,15 +14,14 @@ export const LoginModal = ({ callbackUrl = "/" }: LoginModalProps) => {
   const { signInWithGoogle } = useAuth()
   return (
     <section className="fixed left-1/2 top-1/2 min-h-42.5 w-[calc(100%-2rem)] max-w-90.25 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white px-5.5 pb-6 pt-6.75 text-[#171717] shadow-[0_12px_40px_rgba(0,0,0,0.24)]">
-      <Dialog.Close asChild>
-        <button
-          type="button"
-          aria-label="ปิดหน้าต่างเข้าสู่ระบบ"
-          className="absolute right-2.75 top-2.5 grid size-8 cursor-pointer place-items-center rounded-full transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-        >
-          <X aria-hidden="true" className="size-6" strokeWidth={2} />
-        </button>
-      </Dialog.Close>
+      <button
+        type="button"
+        aria-label="ปิดหน้าต่างเข้าสู่ระบบ"
+        onClick={modalStore.close}
+        className="absolute right-2.75 top-2.5 grid size-8 cursor-pointer place-items-center rounded-full transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+      >
+        <X aria-hidden="true" className="size-6" strokeWidth={2} />
+      </button>
 
       <Dialog.Title className="text-center text-xl font-normal leading-7">เข้าสู่ระบบ</Dialog.Title>
       <Dialog.Description className="sr-only">
