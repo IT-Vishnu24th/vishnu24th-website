@@ -15,7 +15,8 @@ export default function ProfilePage() {
             <strong>ID:</strong> {user.id}
           </p>
           <p>
-            <strong>Name:</strong> {user.nameEn.firstName} {user.nameTh.surname}
+            <strong>Name: </strong>
+            {user.name[user.prefLanguage].firstName} {user.name[user.prefLanguage].surname}
           </p>
         </div>
       ) : (
