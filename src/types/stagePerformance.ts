@@ -1,8 +1,10 @@
+import type { MultiLang } from "@/types/util"
+
 export type StagePerformanceStatus = "complete" | "live" | "upcoming" | "delayed"
 
 export interface StagePerformance {
-  name: string
-  description: string
+  name: MultiLang
+  description: MultiLang
   status: StagePerformanceStatus
   duration: number // minutes
   // ISO 8601 timestamps

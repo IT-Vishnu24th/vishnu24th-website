@@ -1,11 +1,12 @@
 import { adminDb } from "@/firebase/admin"
 import { Timestamp } from "firebase-admin/firestore"
 import type { StagePerformance, StagePerformanceStatus } from "@/types/stagePerformance"
+import type { MultiLang } from "@/types/util"
 export type * from "@/types/stagePerformance"
 
 interface BaseStagePerformance {
-  name: string
-  description: string
+  name: MultiLang
+  description: MultiLang
   status: StagePerformanceStatus
   duration: number
 }
