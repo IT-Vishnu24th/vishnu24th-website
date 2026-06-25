@@ -71,6 +71,10 @@ const stageService = {
     return serializeStage(data)
   },
 
+  async delete(id: string): Promise<void> {
+    await stageCollection.doc(id).delete()
+  },
+
   async setSoleActive(targetId: string) {
     adminDb.runTransaction(async (tx) => {
       const currentLive = await tx.get(
