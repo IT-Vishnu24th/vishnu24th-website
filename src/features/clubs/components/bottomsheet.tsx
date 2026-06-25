@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef } from "react"
 import Image from "next/image"
 import { CATEGORIES } from "../const/categories"
 import { Club } from "../types/club"
@@ -14,11 +14,10 @@ function getCategoryLabel(categoryId: string) {
 type Props = {
   club: Club | null
   onClose: () => void
-  onHomeClick?: () => void
 }
 
 export default function ClubBottomSheet({ club, onClose }: Props) {
-  const [height, setHeight] = useState(70)
+  const startY = useRef<number | null>(null)
 
   if (!club) return null
 
@@ -31,24 +30,26 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-black/40" onClick={onClose}>
       <div
-        style={{ height: `${height}vh` }}
-        className="relative flex w-full flex-col rounded-t-2xl bg-white transition-all duration-150"
+        className="relative flex h-[75vh] w-full flex-col rounded-t-2xl bg-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* handle */}
         <div
-          className="flex cursor-row-resize justify-center pt-3 pb-1"
-          onTouchMove={(e) => {
-            const y = e.touches[0].clientY
-            const vh = window.innerHeight
-            const next = 100 - (y / vh) * 100
+          className="flex justify-center pt-3 pb-2"
+          onTouchStart={(e) => {
+            startY.current = e.touches[0].clientY
+          }}
+          onTouchEnd={(e) => {
+            if (!startY.current) return
 
-            if (next < 35) {
+            const endY = e.changedTouches[0].clientY
+            const diff = endY - startY.current
+
+            if (diff > 80) {
               onClose()
-              return
             }
 
-            setHeight(Math.max(35, Math.min(95, next)))
+            startY.current = null
           }}
         >
           <div className="h-1 w-10 rounded-full bg-gray-300" />
@@ -98,39 +99,40 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
         </div>
 
         {/* bottom bar */}
-        <div className="flex items-center gap-2 border-t border-gray-100 bg-white px-3 py-3">
-          <div className="flex items-center gap-2 rounded-full bg-gray-900 px-4 py-3 text-sm text-white whitespace-nowrap">
-            <House size={16} />
-            <span>{club.boothcount ?? 0}</span>
-          </div>
+        <div className="border-t border-gray-100 bg-white px-3 pb-4 pt-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-full bg-gray-900 px-4 py-3 text-sm text-white whitespace-nowrap">
+              <House size={16} />
+              <span>{club.boothcount ?? 0}</span>
+            </div>
 
-          <div className="flex-1 truncate rounded-full bg-black px-3 py-2 text-center text-sm text-white">
-            {club.location ?? "ยังไม่ระบุพิกัด"}
-          </div>
+            <div className="flex-1 truncate rounded-full bg-black px-3 py-3 text-center text-sm text-white">
+              {club.location ?? "ยังไม่ระบุพิกัด"}
+            </div>
 
-          {instagramUrl && (
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-white"
-              aria-label="instagram"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <rect
-                  x="2"
-                  y="2"
-                  width="20"
-                  height="20"
-                  rx="5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
-                <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
-              </svg>
-            </a>
-          )}
+            {instagramUrl && (
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-pink-500 text-white"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="2"
+                    y="2"
+                    width="20"
+                    height="20"
+                    rx="5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+                </svg>
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>

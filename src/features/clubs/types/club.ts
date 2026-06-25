@@ -1,6 +1,5 @@
 export interface Club {
   id: string
-  rank: number
   name: string
 
   shortdescription?: string

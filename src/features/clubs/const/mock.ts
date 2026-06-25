@@ -3,20 +3,18 @@ import { Club } from "../types/club"
 export const MOCK_CLUBS: Club[] = [
   {
     id: "1",
-    rank: 1,
     name: "ชมรมวิชาการ",
     shortdescription: "ติวและแข่งขันทางวิชาการ",
     description: "จัดกิจกรรมติวสอบ แข่งขัน และพัฒนาทักษะด้านวิชาการ",
     categoryId: "academic",
     havebooth: true,
     boothcount: 1,
-    instagram: "academicclub",
+    instagram: "vishnu24th",
     location: "ตึก 100 ปี",
   },
 
   {
     id: "2",
-    rank: 2,
     name: "ชมรมคณิตศาสตร์",
     shortdescription: "เรียนรู้คณิตแบบสนุก",
     description: "กิจกรรมโจทย์แข่งขัน เวิร์กชอป และแลกเปลี่ยนความรู้",
@@ -29,7 +27,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "3",
-    rank: 3,
     name: "ชมรมฟุตบอล",
     shortdescription: "รวมสายกีฬา",
     description: "ฝึกซ้อมฟุตบอลและเข้าร่วมการแข่งขันประจำปี",
@@ -42,7 +39,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "4",
-    rank: 4,
     name: "ชมรมบาสเกตบอล",
     shortdescription: "ฝึกซ้อมและแข่งขัน",
     description: "เปิดรับทุกระดับ จัดกิจกรรมแข่งขันภายใน",
@@ -55,7 +51,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "5",
-    rank: 5,
     name: "ชมรมวาดภาพ",
     shortdescription: "สร้างสรรค์งานศิลป์",
     description: "กิจกรรมวาดภาพ ระบายสี และจัดแสดงผลงาน",
@@ -68,7 +63,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "6",
-    rank: 6,
     name: "ชมรมดนตรี",
     shortdescription: "เล่นดนตรีร่วมกัน",
     description: "ฝึกซ้อมและจัดการแสดงดนตรีในกิจกรรมต่าง ๆ",
@@ -81,7 +75,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "7",
-    rank: 7,
     name: "ชมรมอาสาพัฒนา",
     shortdescription: "ทำกิจกรรมเพื่อสังคม",
     description: "ร่วมพัฒนาชุมชนและจัดกิจกรรมจิตอาสา",
@@ -94,7 +87,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "8",
-    rank: 8,
     name: "ชมรมสิ่งแวดล้อม",
     shortdescription: "ดูแลโลกไปด้วยกัน",
     description: "จัดกิจกรรมปลูกต้นไม้และลดขยะ",
@@ -107,7 +99,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "9",
-    rank: 9,
     name: "ชมรมถ่ายภาพ",
     shortdescription: "เก็บทุกช่วงเวลา",
     description: "ฝึกถ่ายภาพและแต่งภาพเบื้องต้น",
@@ -120,7 +111,6 @@ export const MOCK_CLUBS: Club[] = [
 
   {
     id: "10",
-    rank: 10,
     name: "ชมรมเกม",
     shortdescription: "เล่นและสร้างเกม",
     description: "รวมผู้สนใจเกมและกิจกรรมแข่งขัน",

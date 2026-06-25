@@ -48,10 +48,15 @@ export default function Page() {
       groups[key].push(club)
     }
 
+    let globalIndex = 0
+
     return CATEGORIES.filter((c) => groups[c.id]?.length).map((c) => ({
       categoryId: c.id,
       title: getCategoryLabel(c.id),
-      clubs: groups[c.id],
+      clubs: (groups[c.id] ?? []).map((club) => {
+        globalIndex += 1
+        return { ...club, displayNumber: globalIndex }
+      }),
     }))
   }, [clubs])
 
@@ -147,13 +152,13 @@ export default function Page() {
               </h2>
 
               <ul className="overflow-hidden rounded-2xl bg-white">
-                {group.clubs.map((club, index) => (
+                {group.clubs.map((club) => (
                   <li
                     key={club.id}
                     onClick={() => setSelectedClub(club)}
                     className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 last:border-b-0"
                   >
-                    <span className="w-4 shrink-0 text-sm text-gray-400">{index + 1}</span>
+                    <span className="w-4 shrink-0 text-sm text-gray-400">{club.displayNumber}</span>
 
                     <div className="h-14 w-14 shrink-0 rounded-xl bg-gray-200" aria-hidden="true" />
 
