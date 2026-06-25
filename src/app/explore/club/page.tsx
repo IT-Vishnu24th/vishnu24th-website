@@ -5,10 +5,9 @@ import { ChevronLeft, ChevronDown, ChevronUp, Search, MoreHorizontal, Check } fr
 import { Header } from "@/components/Headers"
 
 import { MOCK_CLUBS } from "@/features/clubs/const/mock"
-
 import { CATEGORIES } from "@/features/clubs/const/categories"
-
 import { useClubFilter, type BoothFilter } from "@/features/clubs/hooks/useClubFilter"
+import ClubBottomSheet from "@/features/clubs/components/bottomsheet"
 
 const BOOTH_OPTIONS: { id: BoothFilter; label: string }[] = [
   { id: "all", label: "ทั้งหมด" },
@@ -29,6 +28,7 @@ export default function Page() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filterOpen, setFilterOpen] = useState(false)
   const [boothFilter, setBoothFilter] = useState<BoothFilter>("all")
+  const [selectedClub, setSelectedClub] = useState<any | null>(null)
 
   const clubs = useClubFilter(MOCK_CLUBS, query, selectedCategories, boothFilter)
 
@@ -56,7 +56,7 @@ export default function Page() {
   }, [clubs])
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-sm bg-[#fafafa] pb-10 font-sans">
+    <div className="mx-auto min-h-screen w-full bg-[#fafafa] pb-10 font-sans">
       <Header />
       <header className="relative flex items-center justify-center px-4 pt-6 pb-2">
         <button type="button" aria-label="กลับ" className="absolute left-4 top-6 text-gray-900">
@@ -150,6 +150,7 @@ export default function Page() {
                 {group.clubs.map((club, index) => (
                   <li
                     key={club.id}
+                    onClick={() => setSelectedClub(club)}
                     className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 last:border-b-0"
                   >
                     <span className="w-4 shrink-0 text-sm text-gray-400">{index + 1}</span>
@@ -160,7 +161,7 @@ export default function Page() {
                       <h3 className="truncate text-[15px] font-medium text-gray-900">
                         {club.name}
                       </h3>
-                      <p className="truncate text-sm text-gray-400">{club.description}</p>
+                      <p className="truncate text-sm text-gray-400">{club.shortdescription}</p>
                     </div>
 
                     <button
@@ -179,6 +180,7 @@ export default function Page() {
           <p className="py-10 text-center text-sm text-gray-400">ไม่พบชมรมที่ค้นหา</p>
         )}
       </div>
+      <ClubBottomSheet club={selectedClub} onClose={() => setSelectedClub(null)} />
     </div>
   )
 }
