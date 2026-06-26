@@ -76,7 +76,7 @@ const stageService = {
     await stageCollection.doc(id).delete()
   },
 
-  async setSoleActive(targetId: string) {
+  async setSoleLive(targetId: string) {
     adminDb.runTransaction(async (tx) => {
       const currentLive = await tx.get(
         stageCollection.where("status", "==", "live" satisfies StagePerformanceStatus)
