@@ -37,7 +37,8 @@ const stageCollection = adminDb.collection("stage").withConverter({
   }),
 })
 
-const serializeStage = (stage: RawStagePerformance): StagePerformance => ({
+const serializeStage = (id: string, stage: RawStagePerformance): StagePerformance => ({
+  id,
   ...stage,
   start: stage.start.toISOString(),
   end: stage.start.toISOString(),
@@ -46,14 +47,14 @@ const serializeStage = (stage: RawStagePerformance): StagePerformance => ({
 const stageService = {
   async list(): Promise<StagePerformance[]> {
     const coll = await stageCollection.orderBy("start").get()
-    return coll.docs.map((doc) => serializeStage(doc.data()))
+    return coll.docs.map((doc) => serializeStage(doc.id, doc.data()))
   },
 
   async getById(id: string): Promise<StagePerformance | null> {
     const doc = await stageCollection.doc(id).get()
     const data = doc.data()
     if (!data) return null
-    return serializeStage(data)
+    return serializeStage(doc.id, data)
   },
 
   async create(stage: RawStagePerformance): Promise<string> {
@@ -68,7 +69,7 @@ const stageService = {
     const result = await ref.get()
     const data = result.data()
     if (!data) throw new Error("Document should exist") // should never happen
-    return serializeStage(data)
+    return serializeStage(ref.id, data)
   },
 
   async delete(id: string): Promise<void> {
