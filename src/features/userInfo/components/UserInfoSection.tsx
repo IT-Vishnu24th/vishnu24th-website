@@ -14,7 +14,7 @@ export const UserInfoSection = ({ user }: UserInfoSectionProps) => {
         <p className="mt-1 text-[19px] leading-none">{user.id}</p>
 
         <p className="mt-4.75 font-serif text-[25px] leading-none tracking-[-0.03em]">ภาควิชา</p>
-        <p className="mt-1 text-[19px] leading-none">{user.departmentTh}</p>
+        <p className="mt-1 text-[19px] leading-none">{user.department.th}</p>
       </div>
 
       <div className="mx-3 mt-12.25 rounded-[11px] bg-[#e9e9e9] px-6.25 pb-5.25 pt-5.5">

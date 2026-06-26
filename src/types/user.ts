@@ -1,4 +1,5 @@
-import { Group, Vessel } from "@/types/group"
+import type { Group, Vessel } from "@/types/group"
+import type { MultiLang } from "@/types/util"
 
 export interface Name {
   title: string
@@ -14,10 +15,8 @@ export type UserRole = "admin" | "staff" | "participant"
 export interface User {
   id: string // student id
   role: UserRole
-  nameEn: Name
-  nameTh: Name
+  name: MultiLang<Name>
   group: Group | Vessel
-  departmentEn: string
-  departmentTh: string
-  prefLanguage: "en" | "th"
+  department: MultiLang
+  prefLanguage: keyof MultiLang
 }

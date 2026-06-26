@@ -3,26 +3,33 @@ import type { User } from "@/types/user"
 export const getMockUser = (id = "1234567890"): User => ({
   id,
   role: "participant",
-  nameEn: {
-    title: "Mr.",
-    firstName: "Karen",
-    surname: "Speed",
-    nickname: "Speed",
-  },
-  nameTh: {
-    title: "นาย",
-    firstName: "แคเรน",
-    surname: "สปีด วัดสกีน",
-    nickname: "สปีด",
+  name: {
+    en: {
+      title: "Mr.",
+      firstName: "Karen",
+      surname: "Speed",
+      nickname: "Speed",
+    },
+    th: {
+      title: "นาย",
+      firstName: "แคเรน",
+      surname: "สปีด วัดสกีน",
+      nickname: "สปีด",
+    },
   },
   group: {
     label: "ยาน",
-    vesselNameEn: "Among Us",
-    vesselNameTh: "ยานอามองอัส",
+    vesselName: {
+      en: "Among Us",
+      th: "ยานอามองอัส",
+    },
     score: 240,
+    scanScore: 0,
   },
-  departmentEn: "Information Technology",
-  departmentTh: "เทคโนโลยีสารสนเทศ",
+  department: {
+    en: "Information Technology",
+    th: "เทคโนโลยีสารสนเทศ",
+  },
   prefLanguage: "th",
 })
 

@@ -1,5 +1,7 @@
+import type { MultiLang } from "@/types/util"
+
 export interface FeatureFlag {
   id: string
-  name: string
+  name: MultiLang
   enabled: boolean
 }

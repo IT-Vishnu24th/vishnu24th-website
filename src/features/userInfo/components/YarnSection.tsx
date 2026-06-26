@@ -12,7 +12,7 @@ export const YarnSection = ({ user }: YarnSectionProps) => {
         <p>logo</p>
       </div>
       <h2 className="mt-2.75 font-serif text-[38px] leading-none tracking-[-0.045em]">
-        {user.group.vesselNameTh}
+        {user.group.vesselName.th}
       </h2>
     </section>
   )

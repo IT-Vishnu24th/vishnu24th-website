@@ -3,6 +3,7 @@ import z, { ZodError } from "zod"
 import featureFlagsService, { FeatureFlag } from "@/services/featureFlagService"
 import { success, failure, protectRaw, parseBody } from "@/utils/apiHelpers"
 import type { NextRequest } from "next/server"
+import { multiLangSchema } from "@/types/util"
 
 export async function GET() {
   try {
@@ -16,7 +17,7 @@ export async function GET() {
 
 const createFeatureFlagsPayload = z.object({
   id: z.string().min(1),
-  name: z.string(),
+  name: multiLangSchema(z.string()),
   enabled: z.boolean().default(false),
 })
 

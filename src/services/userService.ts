@@ -2,16 +2,15 @@ import { adminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
 import featureFlagsService from "@/services/featureFlagService"
 import type { Name, User, UserRole } from "@/types/user"
+import type { MultiLang } from "@/types/util"
 export type * from "@/types/user"
 
 export interface RawUser {
   id: string
   role: UserRole
-  nameEn: Name
-  nameTh: Name
+  name: MultiLang<Name>
   group: string
-  departmentEn: string
-  departmentTh: string
+  department: MultiLang
   prefLanguage: "en" | "th"
 }
 

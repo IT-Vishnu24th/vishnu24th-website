@@ -6,7 +6,7 @@ type UserProfileSectionProps = {
 }
 
 export const UserProfileSection = ({ user }: UserProfileSectionProps) => {
-  const { title, firstName, surname, nickname } = user.nameTh
+  const { title, firstName, surname, nickname } = user.name.th
 
   return (
     <section className="flex w-full flex-col items-center px-7 pt-5.5 text-center">

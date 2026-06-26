@@ -1,7 +1,8 @@
+import type { MultiLang } from "@/types/util"
+
 export interface Group {
   label: string
-  vesselNameEn: string
-  vesselNameTh: string
+  vesselName: MultiLang
   score: number
   scanScore: number
 }
