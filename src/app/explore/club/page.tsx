@@ -61,7 +61,7 @@ export default function Page() {
   }, [clubs])
 
   return (
-    <div className="mx-auto min-h-screen w-full bg-[#fafafa] pb-10 font-sans">
+    <div className="mx-auto min-h-screen w-full overflow-x-hidden bg-[#fafafa] pb-10 font-sans">
       <Header />
       <header className="relative flex items-center justify-center px-4 pt-6 pb-2">
         <button type="button" aria-label="กลับ" className="absolute left-4 top-6 text-gray-900">
@@ -129,14 +129,14 @@ export default function Page() {
               type="button"
               onClick={() => toggleCategory(cat.id)}
               className={[
-                "flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-sm transition-colors",
+                "flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-sm transition-colors",
                 isActive
                   ? "bg-gray-900 text-white"
                   : "bg-white text-gray-700 border border-gray-200",
               ].join(" ")}
             >
               <Icon size={14} className={isActive ? "text-white" : "text-gray-500"} />
-              {cat.label}
+              <span className="truncate">{cat.label}</span>
             </button>
           )
         })}
