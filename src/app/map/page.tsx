@@ -1,6 +1,11 @@
+"use client"
+import { Header } from "@/components/Headers"
+import { Hand } from "lucide-react"
+
 export default function MapPage() {
   return (
     <div className="max-w-[420px] mx-auto pb-8 font-sans">
+      <Header />
       {/* Top Bar */}
       <div className="flex items-center px-4 pt-4 pb-2">
         <button
@@ -19,15 +24,15 @@ export default function MapPage() {
         {/* <Image src="/map.png" alt="แผนที่" width={400} height={260} className="w-full rounded-xl" /> */}
       </div>
 
-      {/* Hint */}
+      {/* text */}
       <div className="flex items-center gap-2 px-4 py-3 text-base">
-        <span className="text-xl">👆</span>
+        <Hand size={20} className="text-gray-700" />
         <span>แตะบนอาคารที่ต้องการดูแผนที่ชมรม</span>
       </div>
 
       {/* Chips */}
       <div className="flex flex-wrap gap-2 px-4 py-2">
-        {["ลานเทียร์", "ตึก 3", "อาคารวิศวฯ 100 ปี"].map((label) => (
+        {["ลานเกียร์", "ตึก 3", "อาคารวิศวฯ 100 ปี"].map((label) => (
           <button
             key={label}
             className="bg-white border border-gray-300 rounded-full px-5 py-2 text-base cursor-pointer hover:bg-gray-100 transition-colors"
