@@ -4,7 +4,7 @@ import { UserInfoButton } from "@/features/userInfo/components/UserInfoButton"
 
 export const Header = () => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center px-6 py-10">
       <LanguageChangerButton />
       <div className="flex items-center gap-2">
         <UserInfoButton />

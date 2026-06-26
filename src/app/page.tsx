@@ -7,7 +7,7 @@ import { Header } from "@/components/Headers"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen px-6 py-10">
+    <div className="min-h-screen">
       <Header />
       <div className="flex flex-col items-center justify-center text-center mt-36 md:mt-24 space-y-3">
         <h1 className="text-5xl md:text-8xl font-bold">INTANIA</h1>
