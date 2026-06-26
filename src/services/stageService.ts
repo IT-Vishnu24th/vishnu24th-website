@@ -45,7 +45,7 @@ const serializeStage = (stage: RawStagePerformance): StagePerformance => ({
 
 const stageService = {
   async list(): Promise<StagePerformance[]> {
-    const coll = await stageCollection.get()
+    const coll = await stageCollection.orderBy("start").get()
     return coll.docs.map((doc) => serializeStage(doc.data()))
   },
 
