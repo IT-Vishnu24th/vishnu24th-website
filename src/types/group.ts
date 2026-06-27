@@ -5,6 +5,10 @@ export interface Group {
   vesselName: MultiLang
   score: number
   scanScore: number
+  registrationPoint: {
+    firstdate: string
+    vishnu: string
+  }
 }
 
 export type Vessel = Omit<Group, "label">
