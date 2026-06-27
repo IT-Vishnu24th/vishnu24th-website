@@ -104,7 +104,7 @@ export default function MapPage() {
   const selected = selectedBuilding ? buildingData[selectedBuilding] : null
 
   return (
-    <div className="max-w-[420px] mx-auto pb-8 font-sans">
+    <div className="mx-auto pb-8 font-sans">
       <Header />
       {/* Top Bar */}
       <div className="flex items-center px-4 pt-4 pb-2">
@@ -123,7 +123,7 @@ export default function MapPage() {
         <iframe
           src="/map/engineer.html"
           title="แผนที่"
-          className="w-full h-[260px] border-0 block"
+          className="block w-full aspect-[4/3] border-0"
           scrolling="no"
         />
       </div>
