@@ -32,7 +32,7 @@ export const getMockUser = (id = "1234567890"): User => ({
     },
     room: {
       locationId: "eng4",
-      room: "Sky-Cafe",
+      name: "Sky-Cafe",
     },
   },
   department: {
