@@ -1,12 +1,3 @@
-// export default function ranking() {
-//   return (
-//     <>
-//       <SponsorFooter />
-//       <NavigationFooter />
-//     </>
-//   )
-// }
-
 "use client"
 
 import { Header } from "@/components/Headers"
@@ -37,20 +28,23 @@ export default function Page() {
         <h1
           className="
             pt-3
+            mb-3
             text-center
             font-serif
-            text-6xl
+            text-4xl
             font-bold
           "
         >
           อันดับยาน
         </h1>
 
-        <div className="mt-12">
+        <div className="mt-8">
           <Podium top3={data.top3} />
         </div>
 
-        <MyRank rank={data.rank} vesselName={vesseldata.vesselName} score={vesseldata.score} />
+        <div className="mt-8">
+          <MyRank rank={data.rank} vesselName={vesseldata.vesselName} score={vesseldata.score} />
+        </div>
       </div>
       <SponsorFooter />
       <NavigationFooter />

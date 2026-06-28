@@ -6,7 +6,7 @@ type Props = {
 
 export default function MyRank({ rank, vesselName, score }: Props) {
   return (
-    <div className="mt-12 bg-gray-200 py-12">
+    <div className="mt-10 bg-gray-200 py-10">
       <h2 className="text-center text-3xl font-bold font-serif">อันดับของคุณ</h2>
 
       <div className="mx-auto mt-5 w-fit rounded-[24px] bg-gray-300 px-8 py-3">
