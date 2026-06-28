@@ -2,7 +2,7 @@ export type LocationId = "en100" | "eng3" | "eng4" | "larnsom" | "larngear" | "p
 
 export interface GroupRoom {
   locationId: LocationId
-  room: string
+  name: string
 }
 
 export interface RegistrationPoint {
