@@ -1,5 +1,5 @@
 import type { MultiLang } from "@/types/util"
-import { RegistrationPoint } from "./registrationPoint"
+import { RegistrationPoint, GroupRoom } from "./registrationPoint"
 
 export interface Group {
   label: string
@@ -7,6 +7,7 @@ export interface Group {
   score: number
   scanScore: number
   registrationPoint: RegistrationPoint
+  room: GroupRoom | ""
 }
 
 export type Vessel = Omit<Group, "label">
