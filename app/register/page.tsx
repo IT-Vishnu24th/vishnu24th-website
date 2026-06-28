@@ -6,6 +6,7 @@ import Header from "../../components/register/Header";
 import Hero from "../../components/register/Hero";
 import SearchButton from "../../components/register/SearchButton";
 import SearchModal from "../../components/register/SearchModal";
+import ResultView from "../../components/register/ResultView";
 
 type LocationData = {
   name: string;
@@ -20,40 +21,31 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // 🧪 TEMP MOCK (replace with backend later)
   const handleSearch = async (studentId: string) => {
-    try {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ studentId }),
+    setTimeout(() => {
+      setLocationData({
+        name: "ตึก 100 ปี",
+        image:
+          "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6",
+        lat: 13.7367,
+        lng: 100.5231,
       });
 
-      if (!res.ok) {
-        throw new Error("Student not found");
-      }
-
-      const data = await res.json();
-      setLocationData(data);
-      setIsModalOpen(false);
-    } catch (err: any) {
-      setError(err.message);
-      setLocationData(null);
-    } finally {
       setLoading(false);
-    }
+      setIsModalOpen(false);
+    }, 800);
   };
 
   return (
     <main className="min-h-screen bg-gray-100">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col bg-white shadow-lg md:flex-row">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col bg-white shadow-lg md:flex-row">
 
         {/* LEFT SIDE */}
-        <div className="flex w-full flex-col px-6 py-6 md:w-1/2">
+        <div className="flex w-full flex-col px-4 py-6 md:w-1/2 md:px-6">
           <Header />
           <Hero />
 
@@ -61,14 +53,12 @@ export default function RegisterPage() {
             <SearchButton onClick={() => setIsModalOpen(true)} />
           </div>
 
-          {/* Error */}
           {error && (
             <p className="mt-4 text-center text-sm text-red-500">
               {error}
             </p>
           )}
 
-          {/* Loading */}
           {loading && (
             <p className="mt-4 text-center text-sm text-gray-500">
               Searching location...
@@ -76,46 +66,24 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="hidden w-full md:flex md:w-1/2 bg-gray-100 p-6">
-          <div className="w-full space-y-4">
-
-            {!locationData ? (
-              <div className="flex h-full items-center justify-center text-center text-gray-500">
-                🗺️
-                <br />
-                Enter student ID to view location
-              </div>
-            ) : (
-              <>
-                {/* Title */}
-                <h2 className="text-xl font-bold text-gray-800">
-                  {locationData.name}
-                </h2>
-
-                {/* Image */}
-                <img
-                  src={locationData.image}
-                  className="w-full rounded-lg object-cover"
-                  alt="location"
-                />
-
-                {/* GOOGLE MAP (PRO VERSION) */}
-                <div className="w-full overflow-hidden rounded-lg">
-                  <iframe
-                    width="100%"
-                    height="320"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps?q=${locationData.lat},${locationData.lng}&z=17&output=embed`}
-                  />
-                </div>
-              </>
-            )}
-
-          </div>
+        {/* RIGHT SIDE (desktop only) */}
+        <div className="hidden w-full bg-gray-100 p-4 md:flex md:w-1/2">
+          {!locationData ? (
+            <div className="flex w-full items-center justify-center text-center text-gray-500">
+              🗺️ Enter student ID to view location
+            </div>
+          ) : (
+            <ResultView
+              data={{
+                ...locationData,
+                pointNumber: 67,
+                yann: "ยานอานาคอนดี้",
+                description:
+                  "โถงใต้อาคารวิศวะ 100 ปี (#11) เวลา 08:00-09:00 น.",
+              }}
+              onBack={() => setLocationData(null)}
+            />
+          )}
         </div>
       </div>
 

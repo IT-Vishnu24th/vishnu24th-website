@@ -9,52 +9,51 @@ type Props = {
 
 export default function SearchModal({ onClose, onSearch }: Props) {
   const [studentId, setStudentId] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSearch = async () => {
-    if (!studentId.trim()) return;
-
-    setLoading(true);
-    await onSearch(studentId);
-    setLoading(false);
-  };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 px-4">
+      
+      {/* Modal Box */}
+      <div className="w-full max-w-sm rounded-2xl bg-gray-100 p-6 shadow-xl">
+
+        {/* Icon */}
+        <div className="flex justify-center">
+          <div className="text-2xl">🔍</div>
+        </div>
 
         {/* Title */}
-        <h2 className="text-xl font-semibold text-gray-800">
-          ค้นหาจุดลงทะเบียน
+        <h2 className="mt-3 text-center text-2xl font-bold text-black">
+          ค้นหาด้วยเลขนิสิต
         </h2>
+
+        {/* Subtitle */}
+        <p className="mt-2 text-center text-sm text-gray-600 leading-relaxed">
+          กรอกเลขประจำตัวนิสิต 10 หลัก เพื่อดูจุดลงทะเบียนสำหรับค่ายวิษณุ
+        </p>
 
         {/* Input */}
         <input
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
-          placeholder="กรอกรหัสนิสิต"
-          className="mt-4 w-full rounded-lg border px-4 py-2 outline-none focus:border-black"
+          placeholder="69XXXXXX21"
+          className="mt-5 w-full rounded-lg bg-white px-4 py-3 text-sm text-black placeholder-gray-400 outline-none"
         />
 
-        {/* Buttons */}
-        <div className="mt-6 flex gap-3">
+        {/* Button */}
+        <button
+          onClick={() => onSearch(studentId)}
+          className="mt-5 w-full rounded-full bg-black py-3 text-white font-medium hover:bg-gray-900 transition"
+        >
+          ยืนยัน
+        </button>
 
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-lg bg-gray-200 py-2 transition hover:bg-gray-300"
-          >
-            ยกเลิก
-          </button>
-
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="flex-1 rounded-lg bg-black py-2 text-white transition hover:bg-gray-800 disabled:opacity-50"
-          >
-            {loading ? "กำลังค้นหา..." : "ค้นหา"}
-          </button>
-
-        </div>
+        {/* Optional Close (tap outside is still possible, but this helps UX) */}
+        <button
+          onClick={onClose}
+          className="mt-4 w-full text-xs text-gray-500 hover:text-black"
+        >
+          ปิด
+        </button>
 
       </div>
     </div>
