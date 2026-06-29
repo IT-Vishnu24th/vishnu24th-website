@@ -76,10 +76,8 @@ const clubService = {
       return {
         success: true,
         ...scan,
-        // result in Asia/Bangkok timezone
-        createdAt: new Date(now.toDate().getTime() + 7 * 60 * 60 * 1000)
-          .toISOString()
-          .replace("Z", "+07:00"),
+        // result in UTC timezone
+        createdAt: now.toDate().toISOString(),
         club,
       }
     })
