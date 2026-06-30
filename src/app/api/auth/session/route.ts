@@ -60,6 +60,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: "Sign in successfully" }, { status: 200 })
   } catch (error) {
+    const code = (error as { code?: string })?.code
+
+    if (code?.startsWith("auth/")) {
+      return NextResponse.json(
+        { error: "invalid-id-token", message: "Invalid ID token" },
+        { status: 401 }
+      )
+    }
+
     console.error("Session creation error:", error)
 
     return NextResponse.json(
