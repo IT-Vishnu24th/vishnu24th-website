@@ -25,6 +25,10 @@ export const getMockUser = (id = "1234567890"): User => ({
     },
     score: 240,
     scanScore: 0,
+    registrationPoint: {
+      firstdate: "EN100",
+      vishnu: "EN100",
+    },
   },
   department: {
     en: "Information Technology",
