@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const studentId = email.split("@")[0]
 
     // Check if user in firestore
-    const user = await userService.getById(studentId)
+    const user = await userService.getRawById(studentId)
     if (!user) {
       return NextResponse.json(
         { error: "profile-not-found", message: "User does not exist" },
