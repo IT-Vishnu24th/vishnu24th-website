@@ -20,6 +20,7 @@ const groupService = {
     const coll = await groupCollection.get()
     return coll.docs.map((doc) => doc.data())
   },
+
   async getById(id: string): Promise<Group | null> {
     const doc = await groupCollection.doc(id).get()
     const data = doc.data()
