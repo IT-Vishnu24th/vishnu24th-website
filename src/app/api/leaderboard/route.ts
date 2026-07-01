@@ -1,12 +1,12 @@
-import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { success, failure } from "@/utils/apiHelpers"
 import groupService from "@/services/groupService"
 import leaderboardService from "@/services/leaderboardService"
+import { getAuthenticatedRawUser } from "@/lib/auth"
 import type { LeaderboardResponse } from "@/types/leaderboard"
 
 export async function GET() {
   try {
-    const [error, user] = await protectRaw()
-    if (error) return error
+    const user = await getAuthenticatedRawUser()
 
     const entries = await leaderboardService.rawList()
     const groups = await groupService.rawList()
@@ -23,7 +23,7 @@ export async function GET() {
       rank: getRank(e.score),
     }))
 
-    const group = sorted.find((e) => e.group === user.group)
+    const group = user && sorted.find((e) => e.group === user.group)
     const rank = group ? getRank(group.score) : null
 
     return success<LeaderboardResponse>({ top3, rank })
