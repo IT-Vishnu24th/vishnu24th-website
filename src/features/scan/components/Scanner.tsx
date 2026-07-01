@@ -1,56 +1,118 @@
 "use client"
 
-import { useEffect } from "react"
-import { Html5QrcodeScanner } from "html5-qrcode"
+import { useEffect, useRef } from "react"
+import { Html5Qrcode } from "html5-qrcode"
 
 type Props = {
   onSuccess: (value: string) => void
 }
 
 export default function Scanner({ onSuccess }: Props) {
+  const scannerRef = useRef<Html5Qrcode | null>(null)
+
+  const scannedRef = useRef(false)
+
   useEffect(() => {
-    const container = document.getElementById("qr-reader")
+    let mounted = true
 
-    if (container) {
-      container.innerHTML = ""
-    }
+    async function startScanner() {
+      try {
+        if (scannerRef.current) return
 
-    const scanner = new Html5QrcodeScanner(
-      "qr-reader",
-      {
-        fps: 10,
-        qrbox: {
-          width: 220,
-          height: 220,
-        },
-      },
-      false
-    )
+        // ขอ permission ทันที
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        })
 
-    scanner.render(
-      (decodedText) => {
-        onSuccess(decodedText)
-      },
+        stream.getTracks().forEach((t) => t.stop())
 
-      () => {}
-    )
+        if (!mounted) return
 
-    return () => {
-      scanner.clear().catch(() => {})
+        const scanner = new Html5Qrcode("qr-reader")
 
-      if (container) {
-        container.innerHTML = ""
+        scannerRef.current = scanner
+
+        await scanner.start(
+          {
+            facingMode: "environment",
+          },
+
+          {
+            fps: 10,
+
+            qrbox: {
+              width: 250,
+              height: 250,
+            },
+
+            aspectRatio: 1,
+          },
+
+          async (decodedText) => {
+            if (scannedRef.current) return
+
+            scannedRef.current = true
+
+            try {
+              await scanner.stop()
+
+              scanner.clear()
+
+              scannerRef.current = null
+
+              onSuccess(decodedText)
+            } catch (error) {
+              console.error(error)
+            }
+          },
+
+          () => {}
+        )
+      } catch (error) {
+        console.error("Camera error", error)
       }
     }
-  }, [])
+
+    startScanner()
+
+    return () => {
+      mounted = false
+
+      const scanner = scannerRef.current
+
+      scannerRef.current = null
+
+      if (scanner) {
+        scanner
+          .stop()
+          .catch(() => {})
+          .finally(() => {
+            scanner.clear()
+          })
+      }
+
+      const root = document.getElementById("qr-reader")
+
+      if (root) {
+        root.innerHTML = ""
+      }
+    }
+  }, [onSuccess])
 
   return (
     <div
-      id="qr-reader"
       className="
         overflow-hidden
-        rounded-xl
+        rounded-2xl
+        bg-white
       "
-    />
+    >
+      <div
+        id="qr-reader"
+        className="
+          w-full
+        "
+      />
+    </div>
   )
 }
