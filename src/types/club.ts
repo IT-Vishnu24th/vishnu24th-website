@@ -1,5 +1,5 @@
-// TODO: Complete Club schema
+import { MultiLang } from "@/types/util"
+
 export interface Club {
-  name: string
-  description: string
+  name: MultiLang<string>
 }
