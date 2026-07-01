@@ -42,34 +42,35 @@ const scanService = {
     const score = rollScore()
     const now = Timestamp.now()
 
-    return adminDb.runTransaction(async (transaction) => {
-      const scanDoc = await transaction.get(docRef)
+    const scan: Scan = {
+      userId,
+      clubId,
+      createdAt: now,
+      score,
+    }
 
-      if (scanDoc.exists) {
+    const batch = adminDb.batch()
+    batch.create(docRef, scan)
+    batch.update(groupDocRef, {
+      scanScore: FieldValue.increment(score),
+    })
+
+    try {
+      await batch.commit()
+    } catch (error: unknown) {
+      if (error instanceof Error && "code" in error && (error as { code: number }).code === 6) {
         return { success: false, error: "already-scanned" }
       }
+      throw error
+    }
 
-      const scan: Scan = {
-        userId,
-        clubId,
-        createdAt: now,
-        score,
-      }
-
-      transaction.set(docRef, scan)
-
-      transaction.update(groupDocRef, {
-        scanScore: FieldValue.increment(score),
-      })
-
-      return {
-        success: true,
-        ...scan,
-        // result in UTC timezone
-        createdAt: now.toDate().toISOString(),
-        club,
-      }
-    })
+    return {
+      success: true,
+      ...scan,
+      // result in UTC timezone
+      createdAt: now.toDate().toISOString(),
+      club,
+    }
   },
 }
 
