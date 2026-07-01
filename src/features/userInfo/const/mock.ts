@@ -26,8 +26,13 @@ export const getMockUser = (id = "1234567890"): User => ({
     score: 240,
     scanScore: 0,
     registrationPoint: {
-      firstdate: "EN100",
-      vishnu: "EN100",
+      package: 1,
+      firstdate: "en100",
+      vishnu: "eng4",
+    },
+    room: {
+      locationId: "eng4",
+      name: "Sky-Cafe",
     },
   },
   department: {
