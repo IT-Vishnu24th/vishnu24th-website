@@ -8,7 +8,7 @@ export interface Scan {
   score: number
 }
 
-export interface ScanPostResponse {
+export interface ScanResponse {
   createdAt: string
   club: Club
   score: number
