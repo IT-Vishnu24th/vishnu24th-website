@@ -1,5 +1,5 @@
 import { adminDb } from "@/firebase/admin"
-import type { Group } from "@/types/group"
+import type { RawGroup } from "@/services/groupService"
 import type { LeaderboardEntry } from "@/types/leaderboard"
 export type * from "@/types/leaderboard"
 
@@ -29,7 +29,7 @@ const leaderboardService = {
     await batch.commit()
   },
 
-  async updateAll(groups: Group[]): Promise<void> {
+  async updateAll(groups: RawGroup[]): Promise<void> {
     const batch = adminDb.batch()
     for (const { label: group, score } of groups) {
       batch.set(leaderboardCollection.doc(group), { group, score })

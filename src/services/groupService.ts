@@ -3,33 +3,43 @@ import { adminDb } from "@/firebase/admin"
 import type { Group, Vessel } from "@/types/group"
 export type * from "@/types/group"
 
+export interface RawGroup extends Group {
+  score: number
+  scanScore: number
+}
+
 const groupCollection = adminDb.collection("groups").withConverter({
   fromFirestore: (snapshot) => {
-    const data = snapshot.data() as Group
+    const data = snapshot.data() as RawGroup
     return {
       ...data,
       score: typeof data.score === "number" ? data.score : 0,
     }
   },
-  toFirestore: (data: Group) => data,
+  toFirestore: (data: RawGroup) => data,
 })
 
+/** exposes group label/details; internal/admin use only */
 const groupService = {
-  /** exposes group label/details; internal/admin use only */
-  async rawList(): Promise<Group[]> {
+  async rawList(): Promise<RawGroup[]> {
     const coll = await groupCollection.get()
     return coll.docs.map((doc) => doc.data())
   },
-  async getById(id: string): Promise<Group | null> {
+
+  async getById(id: string): Promise<RawGroup | null> {
     const doc = await groupCollection.doc(id).get()
     const data = doc.data()
     if (!data) return null
     return data
   },
 
-  async create(group: Group): Promise<Group | null> {
+  async create(group: Group): Promise<RawGroup | null> {
     const ref = groupCollection.doc(group.label)
-    await ref.create(group)
+    await ref.create({
+      ...group,
+      score: 0,
+      scanScore: 0,
+    })
 
     const result = await ref.get()
     const data = result.data()
@@ -37,7 +47,7 @@ const groupService = {
     return data
   },
 
-  async update(id: string, group: Partial<Omit<Group, "label">>): Promise<Group | null> {
+  async update(id: string, group: Partial<Omit<RawGroup, "label">>): Promise<RawGroup | null> {
     const ref = groupCollection.doc(id)
     await ref.update(group)
 
@@ -46,11 +56,14 @@ const groupService = {
     if (!data) return null
     return data
   },
-  mapToPublic(group: Group, showFullGroup: boolean | null): Group | Vessel {
-    if (showFullGroup) return group
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { label, ...vessel } = group
-    return vessel
+
+  mapToPublic(group: RawGroup, showFullGroup: boolean | null): Group | Vessel {
+    const { label, vesselName, registrationPoint } = group
+    return {
+      vesselName,
+      registrationPoint,
+      ...(showFullGroup ? { label } : {}),
+    }
   },
 }
 
