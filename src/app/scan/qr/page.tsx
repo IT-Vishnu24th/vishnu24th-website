@@ -20,7 +20,7 @@ export default function ScanPage() {
 
       {/* Top */}
       <div className="flex items-center px-4 pt-4">
-        <button onClick={() => router.push("/")} className="text-2xl">
+        <button onClick={() => router.push("/scan")} className="text-2xl">
           ←
         </button>
 

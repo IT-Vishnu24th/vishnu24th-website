@@ -9,7 +9,7 @@ export default function RewardPage() {
 
   const [opened, setOpened] = useState(false)
 
-  const [score] = useState(169)
+  const [score] = useState(67)
 
   function openBox() {
     if (opened) return
@@ -62,10 +62,12 @@ export default function RewardPage() {
             h-[180px]
             w-[180px]
             rounded
-            bg-[#d3d3d3]
             text-5xl
             active:scale-95
             transition
+            bg-gray-200
+            px-8
+            py-4
           "
         >
           {opened ? "🎁" : "หีบ"}
@@ -84,56 +86,23 @@ export default function RewardPage() {
 
       {/* Popup */}
       {opened && (
-        <div
-          className="
-            fixed
-            inset-0
-            z-50
-            flex
-            items-center
-            justify-center
-            bg-black/50
-          "
-        >
-          <div
-            className="
-              w-[320px]
-              rounded-3xl
-              bg-white
-              p-8
-              text-center
-            "
-          >
-            <h2
-              className="
-                text-2xl
-                font-bold
-              "
-            >
-              ได้รับคะแนน
-            </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-[320px] rounded-2xl bg-[#cdcdcd]  px-8 py-8 text-center">
+            <h2 className="text-4xl font-bold mx-3">ยินดีด้วย!</h2>
 
-            <div
-              className="
-                py-6
-                text-7xl
-                font-bold
-              "
-            >
-              +{score}
+            <h2 className="text-2xl font-bold mb-4">คุณได้รับ</h2>
+
+            <div className="py-6 text-7xl font-bold bg-[#BFBFBF] p-3 mb-2 mx-3 rounded-2xl">
+              {score}
             </div>
+
+            <h2 className="text-2xl font-bold mb-8">คะแนน</h2>
 
             <button
               onClick={() => router.replace("/scan")}
-              className="
-                w-full
-                rounded-xl
-                bg-black
-                py-3
-                text-white
-              "
+              className="w-full rounded-full bg-black py-3 text-white"
             >
-              กลับหน้าคะแนน
+              กลับหน้าเช็คอิน
             </button>
           </div>
         </div>

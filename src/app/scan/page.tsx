@@ -18,7 +18,7 @@ export default function ScorePage() {
         </button>
 
         <div className="text-center">
-          <h1 className="text-4xl font-serif">YAAN ANACONDEE</h1>
+          <h1 className="text-3xl font-serif">YAAN ANACONDEE</h1>
 
           <p className="mt-1 text-xl">ยานอนาคอนด้า</p>
         </div>
@@ -35,6 +35,13 @@ export default function ScorePage() {
       >
         <div
           className="
+            flex
+            h-[180px]
+            w-[180px]
+            items-center
+            justify-center
+            rounded-full
+            bg-[#d5d5d5]
             text-5xl
             font-bold
           "
@@ -51,7 +58,7 @@ export default function ScorePage() {
             items-center
             gap-4
             rounded-2xl
-            bg-[#cfcfcf]
+            bg-[#D1D1D1]
             px-5
             py-5
           "
@@ -65,17 +72,10 @@ export default function ScorePage() {
             "
           />
 
-          <div>
+          <div className="flex-1">
             <p className="text-lg">คะแนนรวมของยาน</p>
 
-            <h2
-              className="
-                text-5xl
-                font-bold
-              "
-            >
-              1,250
-            </h2>
+            <h2 className="text-5xl font-bold">1,250</h2>
 
             <p>คะแนน</p>
           </div>
@@ -92,12 +92,12 @@ export default function ScorePage() {
             items-center
             gap-4
             rounded-2xl
-            bg-[#9f9f9f]
+             bg-gray-400
             px-6
-            py-5
+            py-6
           "
         >
-          <QrCode size={38} />
+          <QrCode size={40} />
 
           <div className="text-left">
             <p className="text-xl">สแกน QR Code</p>
