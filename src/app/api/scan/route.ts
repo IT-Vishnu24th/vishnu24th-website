@@ -1,5 +1,5 @@
 import scanService from "@/services/scanService"
-import { ScanPostResponse } from "@/types/scan"
+import { ScanResponse } from "@/types/scan"
 import { protectRaw, success, failure } from "@/utils/apiHelpers"
 
 export async function POST(request: Request) {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       return failure(500, "Internal server error")
     }
 
-    return success<ScanPostResponse>({
+    return success<ScanResponse>({
       createdAt: result.createdAt,
       club: result.club,
       score: result.score,
