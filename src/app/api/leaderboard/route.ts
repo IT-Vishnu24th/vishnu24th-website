@@ -5,6 +5,7 @@ import { getAuthenticatedRawUser } from "@/lib/auth"
 import type { LeaderboardResponse } from "@/types/leaderboard"
 
 export async function GET() {
+  const unknownVessel = { en: "Unknown Vessel", th: "Unknown Vessel" }
   try {
     const user = await getAuthenticatedRawUser()
 
@@ -18,7 +19,7 @@ export async function GET() {
     const getRank = (score: number) => sorted.filter((g) => g.score > score).length + 1
 
     const top3 = sorted.slice(0, 3).map((e) => ({
-      vesselName: groups.find(({ label }) => label === e.group)!.vesselName,
+      vesselName: groups.find(({ label }) => label === e.group)?.vesselName ?? unknownVessel,
       score: e.score,
       rank: getRank(e.score),
     }))
