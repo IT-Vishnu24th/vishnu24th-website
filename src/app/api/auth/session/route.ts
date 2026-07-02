@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const studentId = email.split("@")[0]
 
     // Check if user in firestore
-    const user = await userService.getById(studentId)
+    const user = await userService.getRawById(studentId)
     if (!user) {
       return NextResponse.json(
         { error: "profile-not-found", message: "User does not exist" },
@@ -60,6 +60,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: "Sign in successfully" }, { status: 200 })
   } catch (error) {
+    const code = (error as { code?: string })?.code
+
+    if (code?.startsWith("auth/")) {
+      return NextResponse.json(
+        { error: "invalid-id-token", message: "Invalid ID token" },
+        { status: 401 }
+      )
+    }
+
     console.error("Session creation error:", error)
 
     return NextResponse.json(

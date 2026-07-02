@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { success, failure } from "@/utils/apiHelpers"
 import userService from "@/services/userService"
-import type { RegistrationPoint } from "@/types/registrationPoint"
+import type { RegistrationPointResponse } from "@/types/registrationPoint"
 
 export async function GET(
   req: NextRequest,
@@ -22,7 +22,7 @@ export async function GET(
       return failure(404, "Registration point not found for user's group")
     }
 
-    return success<RegistrationPoint>(registrationPoint)
+    return success<RegistrationPointResponse>({ ...registrationPoint, room: user.group.room })
   } catch (error) {
     console.error(`Failed to fetch registration point for user ${id}:`, error)
     return failure(500, "Internal server error")

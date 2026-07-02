@@ -1,5 +1,5 @@
-import clubService from "@/services/clubService"
-import { ScanPostResponse } from "@/types/scan"
+import scanService from "@/services/scanService"
+import { ScanResponse } from "@/types/scan"
 import { protectRaw, success, failure } from "@/utils/apiHelpers"
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       return failure(404, "User group not found")
     }
 
-    const result = await clubService.scan(user.id, user.group, clubId)
+    const result = await scanService.scan(user.id, user.group, clubId)
     if (!result.success) {
       if (result.error === "club-not-found") {
         return failure(404, "Club not found")
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       return failure(500, "Internal server error")
     }
 
-    return success<ScanPostResponse>({
+    return success<ScanResponse>({
       createdAt: result.createdAt,
       club: result.club,
       score: result.score,
