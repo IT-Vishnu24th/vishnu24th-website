@@ -23,8 +23,8 @@ export const getMockUser = (id = "1234567890"): User => ({
       en: "Among Us",
       th: "ยานอามองอัส",
     },
-    score: 240,
-    scanScore: 0,
+    // score: 240,
+    // scanScore: 0,
     registrationPoint: {
       package: 1,
       firstdate: "en100",

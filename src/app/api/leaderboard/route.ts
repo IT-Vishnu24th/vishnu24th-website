@@ -1,30 +1,30 @@
-import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { success, failure } from "@/utils/apiHelpers"
 import groupService from "@/services/groupService"
-import featureFlagsService from "@/services/featureFlagService"
+import leaderboardService from "@/services/leaderboardService"
+import { getAuthenticatedRawUser } from "@/lib/auth"
 import type { LeaderboardResponse } from "@/types/leaderboard"
 
 export async function GET() {
+  const unknownVessel = { en: "Unknown Vessel", th: "Unknown Vessel" }
   try {
-    const [error, user] = await protectRaw()
-    if (error) return error
+    const user = await getAuthenticatedRawUser()
 
+    const entries = await leaderboardService.rawList()
     const groups = await groupService.rawList()
 
     // Sort by score desc, then by label asc to keep order deterministic
-    const sorted = [...groups].sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
-
-    const flag = await featureFlagsService.getFlag("show-group")
-    const showFullGroup = flag?.enabled ?? false
+    const sorted = [...entries].sort((a, b) => b.score - a.score || a.group.localeCompare(b.group))
 
     // Normal ranking (eg. 1224)
     const getRank = (score: number) => sorted.filter((g) => g.score > score).length + 1
 
-    const top3 = sorted.slice(0, 3).map((g) => ({
-      ...groupService.mapToPublic(g, showFullGroup),
-      rank: getRank(g.score),
+    const top3 = sorted.slice(0, 3).map((e) => ({
+      vesselName: groups.find(({ label }) => label === e.group)?.vesselName ?? unknownVessel,
+      score: e.score,
+      rank: getRank(e.score),
     }))
 
-    const group = sorted.find((g) => g.label === user.group)
+    const group = user && sorted.find((e) => e.group === user.group)
     const rank = group ? getRank(group.score) : null
 
     return success<LeaderboardResponse>({ top3, rank })

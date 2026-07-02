@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof ZodError) return failure(400, "Invalid body")
 
-    console.error(`Error in POST /api/flags:`, error)
+    console.error(`Error in POST /api/stage:`, error)
     return failure(500, "Internal server error")
   }
 }
