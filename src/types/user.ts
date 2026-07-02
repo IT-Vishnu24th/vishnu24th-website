@@ -20,3 +20,10 @@ export interface User {
   department: MultiLang
   prefLanguage: keyof MultiLang
 }
+
+export interface AuthUser {
+  id: string
+  role: UserRole
+  group: string
+  prefLanguage: keyof MultiLang
+}
