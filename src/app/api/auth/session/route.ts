@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
+import z from "zod"
 import { adminAuth } from "@/firebase/admin"
 import userService from "@/services/userService"
 
 const STUDENT_EMAIL_PATTERN = /^6[89]\d{6}21@student\.chula\.ac\.th$/
 const SESSION_EXPIRES_IN_MS = 1000 * 60 * 60 * 24 * 5 // 5 days
 
+const sessionPayloadSchema = z.object({
+  idToken: z.string(),
+})
+
 export async function POST(request: Request) {
   try {
-    const { idToken } = await request.json()
-    if (!idToken) {
+    const body = await request.json()
+    const parseResult = sessionPayloadSchema.safeParse(body)
+
+    if (!parseResult.success) {
       return NextResponse.json(
         { error: "missing-id-token", message: "Missing ID token" },
         { status: 400 }
       )
     }
+
+    const { idToken } = parseResult.data
 
     // Verify ID token
     const decodedToken = await adminAuth.verifyIdToken(idToken)

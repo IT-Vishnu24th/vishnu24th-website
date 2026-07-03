@@ -1,16 +1,22 @@
+import { NextRequest } from "next/server"
+import z from "zod"
 import scanService from "@/services/scanService"
 import { ScanResponse } from "@/types/scan"
-import { protectRaw, success, failure } from "@/utils/apiHelpers"
+import { protectRaw, success, failure, parseBody } from "@/utils/apiHelpers"
 
-export async function POST(request: Request) {
+const scanPayloadSchema = z.object({
+  clubId: z.string(),
+})
+
+export async function POST(req: NextRequest) {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
 
-    const { clubId } = await request.json()
-    if (!clubId) {
-      return failure(400, "Missing club ID")
-    }
+    const [parseErr, payload] = await parseBody(req, scanPayloadSchema)
+    if (parseErr) return parseErr
+
+    const { clubId } = payload
 
     if (!user.group) {
       return failure(404, "User group not found")
