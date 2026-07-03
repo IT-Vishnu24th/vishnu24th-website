@@ -23,7 +23,6 @@ export async function updateRegistrationPhase(current: RegistrationPhase): Promi
 export async function createRegistrationPhase(): Promise<void> {
   await regisRef.set({
     current: "firstdate",
-    values: ["firstdate", "vishnu-1", "vishnu-2", "vishnu-3", "vishnu-4"],
   })
 }
 
@@ -44,15 +43,6 @@ export async function updateMissionPhase(current: VishnuMissionPhase): Promise<v
 export async function createMissionPhase(): Promise<void> {
   await missionRef.set({
     current: "mission-1",
-    values: [
-      "mission-1",
-      "mission-2",
-      "mission-3",
-      "mission-4",
-      "mission-5",
-      "mission-6",
-      "mission-7",
-    ],
   })
 }
 
