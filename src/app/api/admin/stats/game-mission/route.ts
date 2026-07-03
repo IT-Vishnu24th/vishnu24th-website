@@ -5,7 +5,7 @@ import { success, failure, protectRaw } from "@/utils/apiHelpers"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
 import type { UserAnswers } from "@/types/user"
 
-type QuizStatsResponse = Record<string, Record<string, number>>
+type MissionStatsResponse = Record<string, Record<string, number>>
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,19 +20,21 @@ export async function GET(req: NextRequest) {
 
     const [users, groups] = await Promise.all([userService.rawList(), groupService.rawList()])
 
+    // sorted by label
+    const sortedGroups = [...groups].sort((a, b) => a.label.localeCompare(b.label))
+
     const vesselNameMap: Record<string, string> = {}
-    groups.forEach((g) => {
+    sortedGroups.forEach((g) => {
       vesselNameMap[g.label] = g.vesselName.th
     })
 
-    const groupNames = groups.map((g) => vesselNameMap[g.label] || g.label)
-
-    const report: QuizStatsResponse = {}
+    const report: MissionStatsResponse = {}
     const questionIds = id ? [id] : Object.keys(QUESTIONS)
 
     questionIds.forEach((qId) => {
       report[qId] = {}
-      groupNames.forEach((name) => {
+      sortedGroups.forEach((g) => {
+        const name = g.vesselName.th
         report[qId][name] = 0
       })
     })
@@ -57,7 +59,35 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    return success<QuizStatsResponse>(report)
+    const format = req.nextUrl.searchParams.get("format")
+    if (format === "csv") {
+      const headers = ["label", "vesselName", ...questionIds]
+      const csvRows = [headers.join(",")]
+
+      sortedGroups.forEach((g) => {
+        const name = g.vesselName.th
+        const row = [
+          g.label,
+          `"${name.replace(/"/g, '""')}"`,
+          ...questionIds.map((qId) => report[qId][name] ?? 0),
+        ]
+        csvRows.push(row.join(","))
+      })
+
+      // Add UTF-8 BOM (\ufeff) to make Excel parse Thai characters correctly
+      const csvContent = "\ufeff" + csvRows.join("\r\n")
+
+      const filename = `game_mission_stats${(id && `_${id}`) || ""}.csv`
+
+      return new Response(csvContent, {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+      })
+    }
+
+    return success<MissionStatsResponse>(report)
   } catch (error) {
     console.error("Error in GET /api/admin/stats/game-mission:", error)
     return failure(500, "Internal server error")
