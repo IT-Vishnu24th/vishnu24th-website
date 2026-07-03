@@ -138,7 +138,9 @@ export function evaluateAnswer(questionId: string, userAnswer: string | string[]
     )
   }
 
-  const userStr = String(userAnswer).trim().toLowerCase()
+  if (Array.isArray(userAnswer)) return false
+
+  const userStr = userAnswer.trim().toLowerCase()
 
   if (Array.isArray(q.correctAnswer)) {
     return q.correctAnswer.some((correctVal) => String(correctVal).trim().toLowerCase() === userStr)

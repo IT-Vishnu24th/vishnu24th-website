@@ -43,7 +43,7 @@ export async function GET() {
 
 const submitAnswerSchema = z.object({
   id: z.string(),
-  answer: z.union([z.string(), z.array(z.string())]),
+  answer: z.union([z.string(), z.array(z.string()).min(1)]),
 })
 
 export async function POST(req: NextRequest) {
@@ -58,6 +58,16 @@ export async function POST(req: NextRequest) {
     const question = QUESTIONS[id]
     if (!question) {
       return failure(400, "Invalid question ID")
+    }
+
+    if (question.type === "multi-choice") {
+      if (!Array.isArray(answer)) {
+        return failure(400, "Answer must be an array of strings for multi-choice questions")
+      }
+    } else {
+      if (typeof answer !== "string") {
+        return failure(400, "Answer must be a single string for this question type")
+      }
     }
 
     const missionPhase = await getMissionPhase()
