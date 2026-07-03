@@ -13,7 +13,10 @@ export async function GET() {
     if (error) return error
 
     const userAnswers = await userService.getUserAnswers(user.id)
-    const currentTime = new Date()
+    const currentTime =
+      process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
+        ? new Date(process.env.MOCK_CURRENT_TIME)
+        : new Date()
 
     const historyList = Object.keys(QUESTIONS)
       .filter((qId) => userAnswers[qId as keyof UserAnswers] !== null)

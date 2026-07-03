@@ -22,7 +22,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return failure(404, "Answer not found for this question")
     }
 
-    const isRevealed = new Date() >= new Date(q.revealTime)
+    const currentTime =
+      process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
+        ? new Date(process.env.MOCK_CURRENT_TIME)
+        : new Date()
+
+    const isRevealed = currentTime >= new Date(q.revealTime)
 
     return success<UserAnswerHistoryItem>({
       id,
