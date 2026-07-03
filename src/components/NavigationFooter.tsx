@@ -1,8 +1,9 @@
 "use client"
 
-import { Home, Compass, Rocket, Dices } from "lucide-react"
+import { Home, Compass, Ship, Gamepad, ShieldCheck } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
+import Image from "next/image"
 
 export default function FooterNavigation() {
   const router = useRouter()
@@ -10,12 +11,39 @@ export default function FooterNavigation() {
 
   const [holdItem, setHoldItem] = useState<string | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  // เช็ค role ของ user ปัจจุบัน ว่าเป็น admin ไหม
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchRole = async () => {
+      try {
+        const res = await fetch("/api/users/me")
+        if (!res.ok) return
+
+        const { data } = await res.json()
+        if (!cancelled && data?.role === "admin") {
+          setIsAdmin(true)
+        }
+      } catch (err) {
+        console.error("Failed to fetch user role:", err)
+      }
+    }
+
+    fetchRole()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const menus = [
     { name: "Home", icon: Home, path: "/" },
     { name: "Explore", icon: Compass, path: "/explore" },
-    { name: "Ranking", icon: Rocket, path: "/ranking" },
-    { name: "Game", icon: Dices, path: "/game" },
+    { name: "Ranking", icon: Ship, path: "/ranking" },
+    { name: "Game", icon: Gamepad, path: "/game" },
+    ...(isAdmin ? [{ name: "Admin", icon: ShieldCheck, path: "/admin" }] : []),
   ]
 
   // กดค้างเริ่มแสดง text
@@ -41,14 +69,13 @@ export default function FooterNavigation() {
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-50 h-40">
-      <svg
-        viewBox="0 0 100 28"
-        preserveAspectRatio="none"
-        className="absolute bottom-0 left-0 w-full h-full"
-      >
-        <path d="M0,12 Q50,20 100,12 L100,28 L0,28 Z" fill="rgba(0,0,0,0.9)" />
-      </svg>
-      <div className="absolute bottom-0 left-0 w-full flex justify-between px-15 pb-4">
+      <Image
+        src="/navbar/navbar.svg"
+        alt="navbar"
+        fill
+        className="object-fill scale-105 translate-y-2"
+      />
+      <div className="absolute bottom-0 left-0 w-full flex justify-between px-5 pb-4 pt-1 bg-[#2D3542]">
         {menus.map((item) => {
           const Icon = item.icon
           const selected = pathname === item.path
@@ -69,7 +96,7 @@ export default function FooterNavigation() {
                 <span
                   className="
                   absolute -top-15
-                  bg-black text-white font-bold
+                  bg-[#2D3542] text-[#74DDCF] font-bold
                   text-md px-3 py-3
                   rounded-[10px]
                   shadow 
@@ -82,7 +109,7 @@ export default function FooterNavigation() {
               {/* ICON */}
               <div
                 className={`px-4 py-2 rounded-full ${
-                  selected ? "bg-white text-black" : "text-white"
+                  selected ? "bg-[#74DDCF] text-black" : "text-[#74DDCF]"
                 }`}
               >
                 <Icon className="w-7 h-7" />
