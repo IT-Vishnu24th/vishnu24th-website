@@ -1,13 +1,7 @@
 import { NextRequest } from "next/server"
 import groupService from "@/services/groupService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
-
-export interface GroupStatsResponse {
-  label: string
-  vesselName: string
-  scanScore: number
-  score: number
-}
+import type { GroupStatsResponse } from "@/types/group"
 
 export async function GET(_req: NextRequest) {
   try {

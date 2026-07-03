@@ -9,3 +9,10 @@ export interface Group {
 }
 
 export type Vessel = Omit<Group, "label">
+
+export interface GroupStatsResponse {
+  label: string
+  vesselName: string
+  scanScore: number
+  score: number
+}
