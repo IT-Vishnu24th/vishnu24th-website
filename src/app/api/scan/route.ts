@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
 
     const result = await scanService.scan(user.id, user.group, clubId)
     if (!result.success) {
+      if (result.error === "game-not-active") {
+        return failure(403, "Club scanning game is not active")
+      }
       if (result.error === "club-not-found") {
         return failure(404, "Club not found")
       }
