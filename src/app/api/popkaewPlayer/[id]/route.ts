@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 import popkaewPlayerService from "@/services/popKaewPlayerServices"
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const [error] = await protectRaw("participant")
+    if (error) return error
+
     const { id } = await params
     const player = await popkaewPlayerService.getById(id)
 
     if (!player) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 })
+      return failure(404, "Player not found")
     }
 
-    return NextResponse.json({
+    return success({
       id,
       name: player.name,
       vesselName: player.vessel,
@@ -19,6 +23,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
   } catch (error) {
     console.error("Get player error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, "Internal server error")
   }
 }

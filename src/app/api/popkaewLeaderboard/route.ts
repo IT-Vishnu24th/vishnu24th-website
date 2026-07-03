@@ -1,12 +1,17 @@
-import { NextResponse } from "next/server"
-
 import popkaewVesselService from "@/services/popkaewVesselService"
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
 
 export async function GET() {
-  const leaderboard = await popkaewVesselService.leaderboard()
+  try {
+    const [error] = await protectRaw("participant")
+    if (error) return error
 
-  return NextResponse.json({
-    success: true,
-    leaderboard,
-  })
+    const leaderboard = await popkaewVesselService.leaderboard()
+
+    return success(leaderboard)
+  } catch (error) {
+    console.error(error)
+
+    return failure(500, "Internal server error")
+  }
 }
