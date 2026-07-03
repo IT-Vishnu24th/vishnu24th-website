@@ -1,24 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
-import { adminDb } from "@/firebase/admin"
-import { popkaewPlayer } from "@/types/popkaewPlayer"
+import popkaewPlayerService from "@/services/popKaewPlayerServices"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const playerDoc = await adminDb.collection("popkaewPlayer").doc(id).get()
+    const player = await popkaewPlayerService.getById(id)
 
-    if (!playerDoc.exists) {
+    if (!player) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 })
     }
 
-    const data = playerDoc.data() as popkaewPlayer
-
     return NextResponse.json({
-      id: playerDoc.id,
-      name: data.name,
-      vesselName: data.vessel,
-      popkaewscore: data.popkaewscore,
-      lastClickAt: data.lastClickAt?.toDate().toISOString() ?? null,
+      id,
+      name: player.name,
+      vesselName: player.vessel,
+      popkaewscore: player.popkaewscore,
+      lastClickAt: player.lastClickAt?.toDate().toISOString() ?? null,
     })
   } catch (error) {
     console.error("Get player error:", error)
