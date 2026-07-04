@@ -1,11 +1,10 @@
 import { FieldValue } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
 import { popkaewPlayer } from "@/types/popkaewPlayer"
-import { Group } from "@/types/group"
 import { popkaewVessel } from "@/types/popkaewVessel"
 
 export async function click(playerId: string) {
-  const playerRef = await adminDb.collection("popkaewPlayer").doc(playerId)
+  const playerRef = adminDb.collection("popkaewPlayer").doc(playerId)
 
   let newScore = 0
 
@@ -20,8 +19,6 @@ export async function click(playerId: string) {
     const player = playerDoc.data() as popkaewPlayer
 
     const playergroup = adminDb.collection("popkaewVessel").doc(player.vessel)
-
-    console.log(playergroup)
 
     transaction.update(playerRef, {
       popkaewscore: FieldValue.increment(1),

@@ -1,39 +1,42 @@
-import { NextRequest, NextResponse } from "next/server"
-
+import { NextRequest } from "next/server"
+import z from "zod"
+import { success, failure, parseBody, protectRaw } from "@/utils/apiHelpers"
 import {
   getRegistrationPhase,
   getMissionPhase,
   updateRegistrationPhase,
   updateMissionPhase,
 } from "@/services/phaseService"
+import { REGISTRATION_PHASES, VISHNU_MISSION_PHASES } from "@/types/phase"
 
 export async function GET() {
   try {
     const [regis, vishnuMission] = await Promise.all([getRegistrationPhase(), getMissionPhase()])
 
-    return NextResponse.json({
+    return success({
       regis,
       vishnuMission,
     })
   } catch (error) {
     console.error(error)
-
-    return NextResponse.json(
-      {
-        error: "Failed to fetch phases",
-      },
-      {
-        status: 500,
-      }
-    )
+    return failure(500, "Failed to fetch phases")
   }
 }
 
+const patchPhaseSchema = z.object({
+  regis: z.enum(REGISTRATION_PHASES).optional(),
+  vishnuMission: z.enum(VISHNU_MISSION_PHASES).optional(),
+})
+
 export async function PATCH(req: NextRequest) {
   try {
-    const body = await req.json()
+    const [error] = await protectRaw("admin")
+    if (error) return error
 
-    const { regis, vishnuMission } = body
+    const [parseErr, payload] = await parseBody(req, patchPhaseSchema)
+    if (parseErr) return parseErr
+
+    const { regis, vishnuMission } = payload
 
     const tasks: Promise<void>[] = []
 
@@ -46,14 +49,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (tasks.length === 0) {
-      return NextResponse.json(
-        {
-          error: "No phase provided",
-        },
-        {
-          status: 400,
-        }
-      )
+      return failure(400, "No phase provided")
     }
 
     await Promise.all(tasks)
@@ -63,21 +59,13 @@ export async function PATCH(req: NextRequest) {
       getMissionPhase(),
     ])
 
-    return NextResponse.json({
+    return success({
       message: "Phase updated successfully",
       regis: updatedRegis,
       vishnuMission: updatedMission,
     })
   } catch (error) {
     console.error(error)
-
-    return NextResponse.json(
-      {
-        error: "Failed to update phase",
-      },
-      {
-        status: 500,
-      }
-    )
+    return failure(500, "Failed to update phase")
   }
 }

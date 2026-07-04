@@ -1,27 +1,28 @@
-import { NextRequest, NextResponse } from "next/server"
-import { adminDb } from "@/firebase/admin"
-import { popkaewPlayer } from "@/types/popkaewPlayer"
+import { NextRequest } from "next/server"
+import popkaewPlayerService from "@/services/popKaewPlayerServices"
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
-    const playerDoc = await adminDb.collection("popkaewPlayer").doc(id).get()
+    const [error] = await protectRaw("participant")
+    if (error) return error
 
-    if (!playerDoc.exists) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 })
+    const { id } = await params
+    const player = await popkaewPlayerService.getById(id)
+
+    if (!player) {
+      return failure(404, "Player not found")
     }
 
-    const data = playerDoc.data() as popkaewPlayer
-
-    return NextResponse.json({
-      id: playerDoc.id,
-      name: data.name,
-      vesselName: data.vessel,
-      popkaewscore: data.popkaewscore,
-      lastClickAt: data.lastClickAt?.toDate().toISOString() ?? null,
+    return success({
+      id,
+      name: player.name,
+      vesselName: player.vessel,
+      popkaewscore: player.popkaewscore,
+      lastClickAt: player.lastClickAt?.toDate().toISOString() ?? null,
     })
   } catch (error) {
     console.error("Get player error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, "Internal server error")
   }
 }
