@@ -4,18 +4,21 @@ import type { Group, Vessel } from "@/types/group"
 export type * from "@/types/group"
 
 export interface RawGroup extends Group {
-  score: number
   scanScore: number
+  scoreSources: {
+    scanRankBonus: number
+    igMissionScore: number
+    questionMissionScore: number
+    waterScore: number
+    sustainScore: number
+    day1Score: number
+    day2AMScore: number
+    day2PMScore: number
+  }
 }
 
 const groupCollection = adminDb.collection("groups").withConverter({
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data() as RawGroup
-    return {
-      ...data,
-      score: typeof data.score === "number" ? data.score : 0,
-    }
-  },
+  fromFirestore: (snapshot) => snapshot.data() as RawGroup,
   toFirestore: (data: RawGroup) => data,
 })
 
@@ -37,8 +40,19 @@ const groupService = {
     const ref = groupCollection.doc(group.label)
     await ref.create({
       ...group,
-      score: 0,
+
+      // starting scores
       scanScore: 0,
+      scoreSources: {
+        scanRankBonus: 0,
+        igMissionScore: 0,
+        questionMissionScore: 0,
+        waterScore: 0,
+        sustainScore: 0,
+        day1Score: 0,
+        day2AMScore: 0,
+        day2PMScore: 0,
+      },
     })
 
     const result = await ref.get()
