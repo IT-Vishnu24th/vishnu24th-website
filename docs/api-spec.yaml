@@ -1,0 +1,2250 @@
+openapi: 3.1.0
+info:
+  title: Vishnu 24th Website API
+  description: |
+    REST API for the Vishnu 24th (Engineering Faculty Freshy Week) website.
+
+    ## Authentication
+    Most endpoints require a valid **session cookie** (`session`) obtained via `POST /api/auth/session`.
+    Roles used throughout this API:
+    - **admin** – full access
+    - **staff** – year-2 students (68x)
+    - **participant** – year-1 students (69x)
+
+    Unauthenticated requests return `401`. Insufficient-role requests return `403`.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+tags:
+  - name: Auth
+    description: Authentication and session management
+  - name: Flags
+    description: Feature flag management (admin only for mutations)
+  - name: Leaderboard
+    description: Group score ranking (authenticated)
+  - name: Scan
+    description: Club QR-code scanning (participants only)
+  - name: Stage
+    description: Stage performance scheduling (admin only for mutations)
+  - name: Users
+    description: User profile management
+  - name: Phase
+    description: Event phase management (admin only for mutations)
+  - name: Popkaew
+    description: PopKaew clicker game integration (participant only)
+  - name: Stats
+    description: Admin statistics and reports (admin only)
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: session
+      description: HTTP-only session cookie issued by POST /api/auth/session
+  schemas:
+    MultiLang:
+      type: object
+      required:
+        - en
+        - th
+      properties:
+        en:
+          type: string
+          example: English text
+        th:
+          type: string
+          example: ข้อความภาษาไทย
+    Name:
+      type: object
+      required:
+        - title
+        - firstName
+        - surname
+        - nickname
+      properties:
+        title:
+          type: string
+          example: Mr.
+        firstName:
+          type: string
+          example: John
+        middleName:
+          type: string
+          nullable: true
+          example: null
+        surname:
+          type: string
+          example: Doe
+        nickname:
+          type: string
+          example: Jack
+    MultiLangName:
+      type: object
+      required:
+        - en
+        - th
+      properties:
+        en:
+          $ref: "#/components/schemas/Name"
+        th:
+          $ref: "#/components/schemas/Name"
+    LocationId:
+      type: string
+      enum:
+        - en100
+        - eng3
+        - eng4
+        - larnsom
+        - larngear
+        - plateau
+      example: eng3
+    GroupRoom:
+      type: object
+      required:
+        - locationId
+        - name
+      properties:
+        locationId:
+          $ref: "#/components/schemas/LocationId"
+        name:
+          type: string
+          example: ENG3 Room A
+    RegistrationPoint:
+      type: object
+      required:
+        - package
+        - firstdate
+        - vishnu
+      properties:
+        package:
+          type: integer
+          example: 1
+        firstdate:
+          $ref: "#/components/schemas/LocationId"
+        vishnu:
+          $ref: "#/components/schemas/LocationId"
+    Group:
+      type: object
+      required:
+        - label
+        - vesselName
+        - registrationPoint
+        - room
+      properties:
+        label:
+          type: string
+          example: A1
+        vesselName:
+          $ref: "#/components/schemas/MultiLang"
+        registrationPoint:
+          $ref: "#/components/schemas/RegistrationPoint"
+        room:
+          oneOf:
+            - $ref: "#/components/schemas/GroupRoom"
+            - type: string
+              enum: [""]
+    Vessel:
+      type: object
+      required:
+        - vesselName
+        - registrationPoint
+        - room
+      properties:
+        vesselName:
+          $ref: "#/components/schemas/MultiLang"
+        registrationPoint:
+          $ref: "#/components/schemas/RegistrationPoint"
+        room:
+          oneOf:
+            - $ref: "#/components/schemas/GroupRoom"
+            - type: string
+              enum: [""]
+    User:
+      type: object
+      required:
+        - id
+        - role
+        - name
+        - group
+        - department
+        - prefLanguage
+      properties:
+        id:
+          type: string
+          description: Student ID
+          example: "6900001121"
+        role:
+          type: string
+          enum:
+            - admin
+            - staff
+            - participant
+          example: participant
+        name:
+          $ref: "#/components/schemas/MultiLangName"
+        group:
+          oneOf:
+            - $ref: "#/components/schemas/Group"
+            - $ref: "#/components/schemas/Vessel"
+        department:
+          $ref: "#/components/schemas/MultiLang"
+        prefLanguage:
+          type: string
+          enum:
+            - en
+            - th
+          example: th
+    FeatureFlag:
+      type: object
+      required:
+        - id
+        - name
+        - enabled
+      properties:
+        id:
+          type: string
+          example: show-group
+        name:
+          $ref: "#/components/schemas/MultiLang"
+        enabled:
+          type: boolean
+          example: false
+    StagePerformance:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - status
+        - duration
+        - start
+        - end
+      properties:
+        id:
+          type: string
+          example: stage-001
+        name:
+          $ref: "#/components/schemas/MultiLang"
+        description:
+          $ref: "#/components/schemas/MultiLang"
+        status:
+          type: string
+          enum:
+            - complete
+            - live
+            - upcoming
+            - delayed
+          example: upcoming
+        duration:
+          type: integer
+          description: Duration in minutes
+          example: 30
+        start:
+          type: string
+          format: date-time
+          example: "2026-07-04T09:00:00.000Z"
+        end:
+          type: string
+          format: date-time
+          example: "2026-07-04T09:30:00.000Z"
+    UserAnswerHistoryItem:
+      type: object
+      required:
+        - id
+        - userAnswer
+        - isRevealed
+        - isCorrect
+        - correctAnswer
+      properties:
+        id:
+          type: string
+          example: q1
+        userAnswer:
+          oneOf:
+            - type: string
+              example: "A"
+            - type: array
+              items:
+                type: string
+              example: ["A", "B"]
+          nullable: true
+        isRevealed:
+          type: boolean
+          example: true
+        isCorrect:
+          type: boolean
+          nullable: true
+          example: true
+        correctAnswer:
+          oneOf:
+            - type: string
+              example: "A"
+            - type: array
+              items:
+                type: string
+              example: ["A", "B"]
+          nullable: true
+    RegistrationPointResponse:
+      allOf:
+        - $ref: "#/components/schemas/RegistrationPoint"
+        - type: object
+          required:
+            - room
+          properties:
+            room:
+              oneOf:
+                - $ref: "#/components/schemas/GroupRoom"
+                - type: string
+                  enum: [""]
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Error message description
+    AuthErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          example: error-code
+        message:
+          type: string
+          example: Detailed error message
+paths:
+  /api/auth/session:
+    post:
+      tags:
+        - Auth
+      operationId: createSession
+      summary: Create a session cookie (sign in)
+      description: |
+        Verifies a Firebase ID token, validates that the email belongs to a
+        recognised Chula student account (class 68 or 69 ending in 21),
+        checks that the user exists in Firestore, then sets an HTTP-only
+        session cookie valid for 5 days.
+
+        Email pattern: 6[89]\d{6}21@student.chula.ac.th
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - idToken
+              properties:
+                idToken:
+                  type: string
+                  description: Firebase ID token from the client-side auth flow
+                  example: mock-id-token
+      responses:
+        "200":
+          description: Signed in successfully; session cookie is set
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Sign in successfully
+        "400":
+          description: Missing ID token or email not found in token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              examples:
+                missingIdToken:
+                  value:
+                    error: missing-id-token
+                    message: Missing ID token
+                emailNotProvided:
+                  value:
+                    error: email-not-provided
+                    message: No email found
+        "401":
+          description: ID token is invalid, expired, or revoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              example:
+                error: invalid-id-token
+                message: Invalid ID token
+        "403":
+          description: Email does not match the required student pattern
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              example:
+                error: invalid-email-domain
+                message: This email is not a valid student account
+        "404":
+          description: User does not exist in Firestore
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              example:
+                error: profile-not-found
+                message: User does not exist
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              example:
+                error: internal-server-error
+                message: Sign in failed
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth
+      operationId: logout
+      summary: Destroy session (sign out)
+      description: Deletes the session cookie.
+      responses:
+        "200":
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Logged out successfully
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    example: Logout failed
+  /api/flags:
+    get:
+      tags:
+        - Flags
+      operationId: listFlags
+      summary: List all feature flags
+      description: Returns every feature flag. No authentication required.
+      responses:
+        "200":
+          description: Array of feature flags
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FeatureFlag"
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    post:
+      tags:
+        - Flags
+      operationId: createFlag
+      summary: Create a new feature flag
+      description: Admin only.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+                  example: show-group
+                name:
+                  $ref: "#/components/schemas/MultiLang"
+                enabled:
+                  type: boolean
+                  default: false
+                  example: false
+      responses:
+        "200":
+          description: Feature flag created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/FeatureFlag"
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "409":
+          description: Feature flag already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Conflict
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    patch:
+      tags:
+        - Flags
+      operationId: updateFlags
+      summary: Bulk update feature flag states
+      description: Admin only. Accepts a map of flagId to boolean.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: boolean
+              example:
+                show-group: true
+                popkaew-active: false
+      responses:
+        "200":
+          description: Flags updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Flag not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/flags/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: show-group
+    get:
+      tags:
+        - Flags
+      operationId: getFlag
+      summary: Get a single feature flag by ID
+      description: No authentication required.
+      responses:
+        "200":
+          description: Feature flag found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/FeatureFlag"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    put:
+      tags:
+        - Flags
+      operationId: setFlag
+      summary: Set the enabled state of a feature flag
+      description: Admin only.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - enabled
+              properties:
+                enabled:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: Feature flag updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/FeatureFlag"
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/leaderboard:
+    get:
+      tags:
+        - Leaderboard
+      operationId: getLeaderboard
+      summary: Get leaderboard data
+      description: |
+        Returns top-3 ranked groups and the authenticated user's group rank.
+        Groups are sorted by score descending; ties broken alphabetically by label.
+        Requires authentication (any role).
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Leaderboard data
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - top3
+                      - rank
+                    properties:
+                      top3:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - vesselName
+                            - score
+                            - rank
+                          properties:
+                            vesselName:
+                              $ref: "#/components/schemas/MultiLang"
+                            score:
+                              type: number
+                              example: 420
+                            rank:
+                              type: integer
+                              example: 1
+                      rank:
+                        type: integer
+                        nullable: true
+                        description: Rank of the authenticated user's group (null if group not found)
+                        example: 5
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/leaderboard/update:
+    put:
+      tags:
+        - Leaderboard
+      operationId: updateLeaderboard
+      summary: Recalculate and update all leaderboard scores
+      description: Admin only. Triggers score aggregation from groups.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Leaderboard updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/scan:
+    post:
+      tags:
+        - Scan
+      operationId: scanClub
+      summary: Scan a club QR code
+      description: |
+        Participant only. Records a club visit for the authenticated user and
+        awards scan score to their group.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clubId
+              properties:
+                clubId:
+                  type: string
+                  example: club-123
+      responses:
+        "200":
+          description: Club scanned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - createdAt
+                      - club
+                      - score
+                    properties:
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2026-07-04T09:00:00.000Z"
+                      club:
+                        type: object
+                        required:
+                          - name
+                        properties:
+                          name:
+                            $ref: "#/components/schemas/MultiLang"
+                      score:
+                        type: number
+                        example: 10
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Club scanning game is not active (closed)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Club scanning game is not active
+        "404":
+          description: Club, user, or group not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Club not found
+        "409":
+          description: Already scanned this club
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: You have already scanned this club
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/stage:
+    get:
+      tags:
+        - Stage
+      operationId: listStages
+      summary: List all stage performances
+      description: No authentication required.
+      responses:
+        "200":
+          description: Array of stage performances
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/StagePerformance"
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    post:
+      tags:
+        - Stage
+      operationId: createStage
+      summary: Create a stage performance
+      description: Admin only.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - description
+                - status
+                - duration
+                - start
+                - end
+              properties:
+                name:
+                  $ref: "#/components/schemas/MultiLang"
+                description:
+                  $ref: "#/components/schemas/MultiLang"
+                status:
+                  type: string
+                  enum:
+                    - complete
+                    - live
+                    - upcoming
+                    - delayed
+                  example: upcoming
+                duration:
+                  type: integer
+                  example: 30
+                start:
+                  type: string
+                  format: date-time
+                  example: "2026-07-04T09:00:00.000Z"
+                end:
+                  type: string
+                  format: date-time
+                  example: "2026-07-04T09:30:00.000Z"
+      responses:
+        "200":
+          description: ID of the newly created stage
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: string
+                    description: New stage document ID
+                    example: stage-001
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/stage/live:
+    put:
+      tags:
+        - Stage
+      operationId: setLiveStage
+      summary: Set a stage as the sole live performance
+      description: |
+        Admin only. Sets a single stage to live status, clearing live
+        from any other stage that was previously live.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: string
+                  description: ID of the stage to set as the sole live performance
+                  example: stage-001
+      responses:
+        "200":
+          description: Live stage updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Stage not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/stage/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: stage-001
+    get:
+      tags:
+        - Stage
+      operationId: getStage
+      summary: Get a stage performance by ID
+      description: No authentication required.
+      responses:
+        "200":
+          description: Stage performance found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/StagePerformance"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    patch:
+      tags:
+        - Stage
+      operationId: updateStage
+      summary: Partially update a stage performance
+      description: Admin only. All body fields are optional.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/MultiLang"
+                description:
+                  $ref: "#/components/schemas/MultiLang"
+                status:
+                  type: string
+                  enum:
+                    - complete
+                    - live
+                    - upcoming
+                    - delayed
+                  example: upcoming
+                duration:
+                  type: integer
+                  example: 35
+                start:
+                  type: string
+                  format: date-time
+                  example: "2026-07-04T09:00:00.000Z"
+                end:
+                  type: string
+                  format: date-time
+                  example: "2026-07-04T09:35:00.000Z"
+      responses:
+        "200":
+          description: Updated stage performance
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/StagePerformance"
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    delete:
+      tags:
+        - Stage
+      operationId: deleteStage
+      summary: Delete a stage performance
+      description: Admin only.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Stage deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/users/me:
+    get:
+      tags:
+        - Users
+      operationId: getMe
+      summary: Get the authenticated user's profile
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    patch:
+      tags:
+        - Users
+      operationId: updateMe
+      summary: Update the authenticated user's profile
+      description: |
+        Updates mutable fields on the current user's profile.
+        Currently only prefLanguage is updatable. The request body must
+        contain at least one field.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                prefLanguage:
+                  type: string
+                  enum:
+                    - en
+                    - th
+                  example: en
+      responses:
+        "200":
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Request body validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "404":
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/registration-point:
+    get:
+      tags:
+        - Users
+      operationId: getRegistrationPoint
+      summary: Get registration point for a user
+      description: |
+        Returns the registration point details (package, first-day location,
+        Vishnu day location) together with the user's group room.
+        No authentication required.
+      parameters:
+        - name: studentId
+          in: query
+          required: true
+          description: Student ID of the participant
+          schema:
+            type: string
+          example: "6900001121"
+      responses:
+        "200":
+          description: Registration point data
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/RegistrationPointResponse"
+        "400":
+          description: Missing query parameter studentId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: "Missing required query parameter: studentId"
+        "404":
+          description: User or group registration point not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                userNotFound:
+                  value:
+                    message: User not found
+                regNotFound:
+                  value:
+                    message: Registration point not found for user's group
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/phase:
+    get:
+      tags:
+        - Phase
+      operationId: getPhases
+      summary: Get current event and mission phases
+      description: Returns the active registration phase and Vishnu mission phase. No authentication required.
+      responses:
+        "200":
+          description: Current phases
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - regis
+                      - vishnuMission
+                    properties:
+                      regis:
+                        type: string
+                        enum: [firstdate, vishnu-1, vishnu-2, vishnu-3, vishnu-4]
+                        example: vishnu-1
+                      vishnuMission:
+                        type: string
+                        enum:
+                          [
+                            mission-1,
+                            mission-2,
+                            mission-3,
+                            mission-4,
+                            mission-5,
+                            mission-6,
+                            mission-7,
+                          ]
+                        example: mission-1
+        "500":
+          description: Failed to fetch phases
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Failed to fetch phases
+    patch:
+      tags:
+        - Phase
+      operationId: updatePhases
+      summary: Update event phases
+      description: Admin only. Updates the registration phase, mission phase, or both.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                regis:
+                  type: string
+                  enum: [firstdate, vishnu-1, vishnu-2, vishnu-3, vishnu-4]
+                  example: vishnu-2
+                vishnuMission:
+                  type: string
+                  enum:
+                    [mission-1, mission-2, mission-3, mission-4, mission-5, mission-6, mission-7]
+                  example: mission-2
+      responses:
+        "200":
+          description: Phases updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - message
+                      - regis
+                      - vishnuMission
+                    properties:
+                      message:
+                        type: string
+                        example: Phase updated successfully
+                      regis:
+                        type: string
+                        example: vishnu-2
+                      vishnuMission:
+                        type: string
+                        example: mission-2
+        "400":
+          description: Invalid body or no phases provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                noPhase:
+                  value:
+                    message: No phase provided
+                invalidBody:
+                  value:
+                    message: Invalid body
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Failed to update phase
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Failed to update phase
+  /api/admin/stats/groups:
+    get:
+      tags:
+        - Stats
+      operationId: getGroupStats
+      summary: Get scoring statistics for all groups
+      description: Admin only. Can export either as JSON list or CSV file.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: format
+          in: query
+          required: false
+          description: Set to 'csv' to download as a CSV file.
+          schema:
+            type: string
+            enum: [csv]
+      responses:
+        "200":
+          description: Stats output (JSON array or text/csv download)
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - label
+                        - vesselName
+                        - scanScore
+                        - score
+                      properties:
+                        label:
+                          type: string
+                          example: A1
+                        vesselName:
+                          type: string
+                          example: เรือพระร่วง
+                        scanScore:
+                          type: number
+                          example: 20
+                        score:
+                          type: number
+                          example: 450
+            text/csv:
+              schema:
+                type: string
+                description: CSV formatted data with BOM for Thai Excel import
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/admin/stats/game-mission:
+    get:
+      tags:
+        - Stats
+      operationId: getGameMissionStats
+      summary: Get correct answer count statistics for missions
+      description: Admin only. Can export either as JSON report or CSV file.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: id
+          in: query
+          required: false
+          description: Specific question ID to filter results (e.g. q1).
+          schema:
+            type: string
+          example: q1
+        - name: format
+          in: query
+          required: false
+          description: Set to 'csv' to download as a CSV file.
+          schema:
+            type: string
+            enum: [csv]
+      responses:
+        "200":
+          description: Correct answers count stats per group (JSON or text/csv download)
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    description: Question ID mapped to groups correctly answering count
+                    additionalProperties:
+                      type: object
+                      additionalProperties:
+                        type: integer
+                    example:
+                      q1:
+                        เรือพระร่วง: 12
+                        เรือพระยศ: 8
+            text/csv:
+              schema:
+                type: string
+                description: CSV formatted data with BOM for Thai Excel import
+        "400":
+          description: Invalid question ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid question ID
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/users/me/missions:
+    get:
+      tags:
+        - Users
+      operationId: getMyMissions
+      summary: Get the authenticated participant's submitted answers
+      description: Participant only. Retrieves participant's submissions history. If reveal time for a question has passed, the correct answer and evaluation are returned.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Submissions history list
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - answers
+                    properties:
+                      answers:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/UserAnswerHistoryItem"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+    post:
+      tags:
+        - Users
+      operationId: submitMissionAnswer
+      summary: Submit an answer for a mission question
+      description: Participant only. Validates question type and checks if question submission window is currently open (matches active mission phase). User must not have already submitted.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - answer
+              properties:
+                id:
+                  type: string
+                  example: q1
+                answer:
+                  oneOf:
+                    - type: string
+                      example: option1
+                    - type: array
+                      items:
+                        type: string
+                      example: [option1, option2]
+      responses:
+        "200":
+          description: Answer submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+                        example: Answer submitted successfully
+        "400":
+          description: Request body validation failed or invalid question ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalidBody:
+                  value:
+                    message: Invalid body
+                invalidQuestion:
+                  value:
+                    message: Invalid question ID
+                typeMismatch:
+                  value:
+                    message: Answer must be an array of strings for multi-choice questions
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Submission window is closed or insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: The submission window for this question is currently closed
+        "404":
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: User profile not found
+        "409":
+          description: Answer already submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: You have already submitted an answer for this question
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/users/me/missions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: q1
+    get:
+      tags:
+        - Users
+      operationId: getMyMissionById
+      summary: Get details of a single mission submission
+      description: Participant only. Returns details for a specific answered question.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Submission details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/UserAnswerHistoryItem"
+        "400":
+          description: Invalid question ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Invalid question ID
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Answer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Answer not found for this question
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/popkaewClick:
+    post:
+      tags:
+        - Popkaew
+      operationId: submitPopkaewClick
+      summary: Submit click event for PopKaew game
+      description: Participant only. Increments score of user and user's vessel by 1. Recomputes top 3 vessel leaderboard.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Click processed and updated score & leaderboard returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - success
+                      - score
+                      - leaderboard
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      score:
+                        type: number
+                        example: 101
+                      leaderboard:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - vesselName
+                            - popkaewscore
+                            - group
+                            - rank
+                          properties:
+                            vesselName:
+                              $ref: "#/components/schemas/MultiLang"
+                            popkaewscore:
+                              type: number
+                              example: 450
+                            group:
+                              type: string
+                              example: A1
+                            rank:
+                              type: integer
+                              example: 1
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Player profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Player not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/popkaewLeaderboard:
+    get:
+      tags:
+        - Popkaew
+      operationId: getPopkaewLeaderboard
+      summary: Get PopKaew leaderboard
+      description: Participant only. Returns vessel rank leaderboard.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: PopKaew vessel rankings
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - rank
+                        - id
+                        - vesselName
+                        - popkaewscore
+                        - group
+                      properties:
+                        rank:
+                          type: integer
+                          example: 1
+                        id:
+                          type: string
+                          example: Vessel A
+                        vesselName:
+                          $ref: "#/components/schemas/MultiLang"
+                        popkaewscore:
+                          type: number
+                          example: 450
+                        group:
+                          type: string
+                          example: A1
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+  /api/popkaewPlayer/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "6900001121"
+    get:
+      tags:
+        - Popkaew
+      operationId: getPopkaewPlayer
+      summary: Get PopKaew player score details by ID
+      description: Participant only. Retrieves scoring info for a specific participant.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Player stats retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - id
+                      - name
+                      - vesselName
+                      - popkaewscore
+                      - lastClickAt
+                    properties:
+                      id:
+                        type: string
+                        example: "6900001121"
+                      name:
+                        type: string
+                        example: John Doe
+                      vesselName:
+                        type: string
+                        example: Vessel A
+                      popkaewscore:
+                        type: integer
+                        example: 101
+                      lastClickAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: "2026-07-04T09:00:00.000Z"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Forbidden
+        "404":
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Player not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error

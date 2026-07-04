@@ -45,4 +45,4 @@ next-env.d.ts
 /.agents
 /.claude
 skills-lock.json
-/docs
+/doc
