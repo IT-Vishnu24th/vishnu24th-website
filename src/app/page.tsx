@@ -9,14 +9,13 @@ import { MapPin, Ship } from "lucide-react"
 export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#2D3542] to-[#2D4D61]">
-      {/* พื้นหลังลาย art (เฟือง/ลวดลายรวม) */}
+      {/* พื้นหลังลายเฟือง */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/landingpage/art-background.png"
           alt=""
           fill
-          priority
-          className="object-contain  object-[center_22%]"
+          className="object-contain object-[center_22%]"
         />
       </div>
 
@@ -26,7 +25,7 @@ export default function HomePage() {
           src="/landingpage/art-foreground.png"
           alt=""
           fill
-          className="object-contain object-top scale-102"
+          className="object-contain object-top scale-102 object-[center_22%]"
         />
       </div>
 
