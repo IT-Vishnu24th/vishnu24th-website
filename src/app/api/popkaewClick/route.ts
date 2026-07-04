@@ -1,20 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 import { click } from "@/services/popkaewClickService"
+import { success, failure, protectRaw } from "@/utils/apiHelpers"
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
-    const { playerId } = await req.json()
+    const [error, user] = await protectRaw("participant")
+    if (error) return error
 
-    if (!playerId) {
-      return NextResponse.json({ error: "playerId is required" }, { status: 400 })
-    }
+    const playerId = user.id
 
     const result = await click(playerId)
 
-    return NextResponse.json(result)
+    return success(result)
   } catch (error) {
+    if (error instanceof Error && error.message === "Player not found") {
+      return failure(404, "Player not found")
+    }
+
     console.error(error)
 
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, "Internal server error")
   }
 }

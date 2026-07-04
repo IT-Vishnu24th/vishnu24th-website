@@ -6,7 +6,7 @@ import { AuthContext } from "@/features/auth/providers/AuthProvider"
  * This helper is client-only (React Client Components).
  *
  * Provides:
- * - `user`: The currently signed-in User object or null.
+ * - `user`: The minimal AuthUser identity (id, role, group, prefLanguage) or null.
  * - `loading`: Boolean indicating if an authentication transaction is in progress.
  * - `error`: Error messages from failed actions (e.g. invalid email domains).
  * - `signInWithGoogle`: Function to initiate client-side Google popup authentication.
