@@ -3,10 +3,10 @@ import React, { createContext, useState, ReactNode } from "react"
 import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth"
 import { auth } from "@/firebase/client"
 import { useRouter } from "next/navigation"
-import { User } from "@/types/user"
+import type { AuthUser } from "@/types/user"
 
 interface AuthContextType {
-  user: User | null
+  user: AuthUser | null
   loading: boolean
   signInWithGoogle: (callbackUrl?: string) => Promise<boolean>
   signOut: () => Promise<void>
@@ -17,12 +17,12 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 interface AuthProviderProps {
   children: ReactNode
-  initialUser: User | null
+  initialUser: AuthUser | null
 }
 
 export function AuthProvider({ children, initialUser }: AuthProviderProps) {
-  const [prevInitialUser, setPrevInitialUser] = useState<User | null>(initialUser)
-  const [user, setUser] = useState<User | null>(initialUser)
+  const [prevInitialUser, setPrevInitialUser] = useState<AuthUser | null>(initialUser)
+  const [user, setUser] = useState<AuthUser | null>(initialUser)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()

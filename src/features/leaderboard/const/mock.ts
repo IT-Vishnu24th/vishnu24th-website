@@ -27,7 +27,6 @@ export const MOCK_LEADERBOARD: LeaderboardResponse = {
       score: 67,
     },
   ],
-
   rank: 18,
 }
 //ไม่มีใน type

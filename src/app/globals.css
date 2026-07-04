@@ -1,22 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-brownie-dark: #3c2927;
+  --color-brownie: #934e43;
+  --color-brownie-light: #ba604e;
+  --color-brick-orange: #f0865c;
+  --color-clay-light: #f0bf99;
+  --color-cream-tanned: #f0dcc4;
+  --color-cream: #f2e6d0;
+
+  --color-midnight: #2d3542;
+  --color-midnight-light: #2d4b5f;
+  --color-turqoise: #74ddcf;
+  --color-turqoise-light: #aeefe7;
+  --color-mint-tanned: #cdf1ec;
+  --color-mint: #daf7f3;
+
+  --color-status-red-dark: #550e12;
+  --color-status-red: #f54747;
+  --color-status-green-dark: #0c5c3b;
+  --color-status-green: #42d46b;
+  --color-status-yellow-dark: #5c310c;
+  --color-status-yellow: #ebc040;
+  --color-white: #ffffff;
+
+  --background: var(--color-brownie-dark);
+  --foreground: var(--color-cream);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-brownie-dark: var(--color-brownie-dark);
+  --color-brownie: var(--color-brownie);
+  --color-brownie-light: var(--color-brownie-light);
+  --color-brick-orange: var(--color-brick-orange);
+  --color-clay-light: var(--color-clay-light);
+  --color-cream-tanned: var(--color-cream-tanned);
+  --color-cream: var(--color-cream);
+
+  --color-midnight: var(--color-midnight);
+  --color-midnight-light: var(--color-midnight-light);
+  --color-turqoise: var(--color-turqoise);
+  --color-turqoise-light: var(--color-turqoise-light);
+  --color-mint-tanned: var(--color-mint-tanned);
+  --color-mint: var(--color-mint);
+
+  --color-status-red-dark: var(--color-status-red-dark);
+  --color-status-red: var(--color-status-red);
+  --color-status-green-dark: var(--color-status-green-dark);
+  --color-status-green: var(--color-status-green);
+  --color-status-yellow-dark: var(--color-status-yellow-dark);
+  --color-status-yellow: var(--color-status-yellow);
+
+  /* Old code */
+
+  --color-earth-950: var(--color-brownie-dark);
+  --color-earth-800: var(--color-brownie);
+  --color-earth-700: var(--color-brownie-light);
+  --color-earth-500: var(--color-brick-orange);
+  --color-earth-300: var(--color-clay-light);
+  --color-earth-200: var(--color-cream-tanned);
+  --color-earth-100: var(--color-cream);
+
+  --color-ocean-950: var(--color-midnight);
+  --color-ocean-800: var(--color-midnight-light);
+  --color-ocean-400: var(--color-turqoise);
+  --color-ocean-300: var(--color-turqoise-light);
+  --color-ocean-200: var(--color-mint-tanned);
+  --color-ocean-100: var(--color-mint);
+
+  --color-danger-900: var(--color-status-red-dark);
+  --color-danger-500: var(--color-status-red);
+  --color-success-900: var(--color-status-green-dark);
+  --color-success-500: var(--color-status-green);
+  --color-warning-900: var(--color-status-yellow-dark);
+  --color-warning-500: var(--color-status-yellow);
+  --color-white: var(--color-white);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

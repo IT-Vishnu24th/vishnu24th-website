@@ -8,6 +8,7 @@ import { MOCK_CLUBS } from "@/features/clubs/const/mock"
 import { CATEGORIES } from "@/features/clubs/const/categories"
 import { useClubFilter, type BoothFilter } from "@/features/clubs/hooks/useClubFilter"
 import ClubBottomSheet from "@/features/clubs/components/bottomsheet"
+import type { Club } from "@/features/clubs/types/club"
 
 const BOOTH_OPTIONS: { id: BoothFilter; label: string }[] = [
   { id: "all", label: "ทั้งหมด" },
@@ -28,7 +29,7 @@ export default function Page() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filterOpen, setFilterOpen] = useState(false)
   const [boothFilter, setBoothFilter] = useState<BoothFilter>("all")
-  const [selectedClub, setSelectedClub] = useState<any | null>(null)
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null)
 
   const clubs = useClubFilter(MOCK_CLUBS, query, selectedCategories, boothFilter)
 
@@ -48,16 +49,30 @@ export default function Page() {
       groups[key].push(club)
     }
 
-    let globalIndex = 0
+    const result: {
+      categoryId: string
+      title: string
+      clubs: ((typeof clubs)[number] & { displayNumber: number })[]
+    }[] = []
 
-    return CATEGORIES.filter((c) => groups[c.id]?.length).map((c) => ({
-      categoryId: c.id,
-      title: getCategoryLabel(c.id),
-      clubs: (groups[c.id] ?? []).map((club) => {
-        globalIndex += 1
-        return { ...club, displayNumber: globalIndex }
-      }),
-    }))
+    let counter = 0
+    const filteredCategories = CATEGORIES.filter((c) => groups[c.id]?.length)
+
+    for (const c of filteredCategories) {
+      const groupClubs = groups[c.id] ?? []
+      const enrichedClubs = []
+      for (const club of groupClubs) {
+        counter++
+        enrichedClubs.push({ ...club, displayNumber: counter })
+      }
+      result.push({
+        categoryId: c.id,
+        title: getCategoryLabel(c.id),
+        clubs: enrichedClubs,
+      })
+    }
+
+    return result
   }, [clubs])
 
   return (

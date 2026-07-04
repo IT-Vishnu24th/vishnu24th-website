@@ -2,6 +2,7 @@ import { adminDb } from "@/firebase/admin"
 import type { Club } from "@/types/club"
 import type { Scan } from "@/types/scan"
 import clubService from "@/services/clubService"
+import featureFlagsService from "@/services/featureFlagService"
 import { Timestamp, FieldValue } from "firebase-admin/firestore"
 
 const scanCollection = adminDb.collection("scans").withConverter({
@@ -27,9 +28,15 @@ const scanService = {
     const docRef = scanCollection.doc(`${userId}_${clubId}`)
     const groupDocRef = adminDb.collection("groups").doc(userGroup)
 
-    // Check existence outside transaction to prevent lock contention under load?
-    // CAUTION: Assumes no deletes in prod :skull:
-    const [groupDoc, club] = await Promise.all([groupDocRef.get(), clubService.getClub(clubId)])
+    const [groupDoc, club, flag] = await Promise.all([
+      groupDocRef.get(),
+      clubService.getClub(clubId),
+      featureFlagsService.getFlag("game-clubscan"),
+    ])
+
+    if (!flag || !flag.enabled) {
+      return { success: false, error: "game-not-active" }
+    }
 
     if (!groupDoc.exists) {
       return { success: false, error: "group-not-found" }
@@ -53,6 +60,11 @@ const scanService = {
     batch.create(docRef, scan)
     batch.update(groupDocRef, {
       scanScore: FieldValue.increment(score),
+    })
+
+    const leaderboardDocRef = adminDb.collection("leaderboard").doc(userGroup)
+    batch.update(leaderboardDocRef, {
+      score: FieldValue.increment(score),
     })
 
     try {
