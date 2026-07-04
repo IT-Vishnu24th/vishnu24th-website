@@ -10,11 +10,8 @@ export async function PUT() {
     const groups = await groupService.rawList()
 
     const scores: Record<string, number> = {}
-    for (const { label, scoreSources } of groups) {
-      scores[label] = 0
-      for (const source in scoreSources) {
-        scores[label] += scoreSources[source as keyof typeof scoreSources]
-      }
+    for (const group of groups) {
+      scores[group.label] = groupService.totalScore(group)
     }
 
     await leaderboardService.updateAll(scores)

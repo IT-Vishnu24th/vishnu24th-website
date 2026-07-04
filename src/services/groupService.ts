@@ -80,6 +80,16 @@ const groupService = {
       ...(showFullGroup ? { label } : {}),
     }
   },
+
+  totalScore(group: RawGroup): number {
+    let total = 0
+    for (const value in Object.values(group.scoreSources)) {
+      if (typeof value === "number") {
+        total += value
+      }
+    }
+    return total
+  },
 }
 
 export default groupService
