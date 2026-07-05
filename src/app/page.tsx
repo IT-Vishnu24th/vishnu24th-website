@@ -25,14 +25,14 @@ export default function HomePage() {
           src="/landingpage/art-foreground.png"
           alt=""
           fill
-          className="object-contain object-top scale-102 object-[center_22%]"
+          className="object-contain object-top object-[center_22%]"
         />
       </div>
 
       <div className="relative z-10">
         <Header />
 
-        <div className="flex flex-col items-center justify-center text-center md:mt-24 px-6">
+        <div className="flex flex-col items-center justify-center text-center mt-3 md:mt-14 px-6">
           {/* Intania First Date logo */}
           <div className="relative w-full max-w-[340px] md:max-w-[480px] mb-3">
             <Image
@@ -45,10 +45,10 @@ export default function HomePage() {
             />
           </div>
 
-          <h2 className="text-base md:text-2xl text-[#74DDCF] font-medium">
+          <h2 className="text-base md:text-2xl text-[#74DDCF] font-kanit">
             Intania First Date 2026
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF]">19 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-kanit">19 กรกฎาคม 2569</h3>
 
           {/* Vishnu 24th logo */}
           <div className="relative w-full max-w-[300px] md:max-w-[420px] mt-10 mb-3">
@@ -61,14 +61,14 @@ export default function HomePage() {
             />
           </div>
 
-          <h2 className="text-base md:text-2xl text-[#74DDCF] font-medium">
+          <h2 className="text-base md:text-2xl text-[#74DDCF] font-kanit">
             ค่ายวิศณุกรรมบุตรครั้งที่ 24
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF]">21–24 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-kanit">21–24 กรกฎาคม 2569</h3>
 
           {/* ปุ่มด้านล่าง */}
-          <div className="flex items-center justify-center gap-3 mt-12 mb-30">
-            <button className="flex items-center gap-1 rounded-full bg-[#74DDCF] border border-[#2D4B5F] border-2 px-2 py-2.5 text-[#2D4B5F] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
+          <div className="flex items-center justify-center gap-3 mt-15 mb-30">
+            <button className="flex items-center gap-1 rounded-full bg-[#74DDCF] border border-[#2D4B5F] border-2 px-2 py-2.5 text-[#2D4B5F] text-sm md:text-base hover:bg-[#74ddcfa0] transition-colors">
               <MapPin size={18} strokeWidth={3} />
               ดูจุดลงทะเบียน
             </button>

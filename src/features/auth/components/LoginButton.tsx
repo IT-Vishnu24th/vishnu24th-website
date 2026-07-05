@@ -8,10 +8,10 @@ export const LoginButton = () => {
   return (
     <button
       onClick={() => modalStore.open(<LoginModal />)}
-      className="bg-black text-white rounded-4xl px-4 py-3 flex items-center gap-2 hover:bg-neutral-800 transition"
+      className="bg-midnight border-3 border-midnight-light text-white rounded-4xl px-4 py-2 flex items-center gap-2 hover:bg-neutral-800 transition"
     >
-      <LogIn size={20} />
-      <span className="text-lg">เข้าสู่ระบบ</span>
+      <LogIn size={20} color="turquoise" strokeWidth={2.5} />
+      <span className={`text-md font-kanit text-turqoise`}>เข้าสู่ระบบ</span>
     </button>
   )
 }
