@@ -7,16 +7,16 @@ import type { AuthUser } from "@/types/user"
  * Extracts and verifies the student ID directly from the session cookie.
  */
 async function getAuthenticatedStudentId(): Promise<string | null> {
-  if (process.env.NODE_ENV === "development" && process.env.MOCK_AUTH_USER) {
-    return process.env.MOCK_AUTH_USER
-  }
-
   try {
     const cookieStore = await cookies()
     const sessionCookie = cookieStore.get("session")?.value
 
     if (!sessionCookie) {
       return null
+    }
+
+    if (process.env.NODE_ENV === "development" && sessionCookie.startsWith("mock-session:")) {
+      return sessionCookie.replace("mock-session:", "")
     }
 
     // FIXME: check revocation false for now
