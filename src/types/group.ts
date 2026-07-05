@@ -5,7 +5,7 @@ export interface Group {
   label: string
   vesselName: MultiLang
   registrationPoint: RegistrationPoint
-  room: GroupRoom | ""
+  room: GroupRoom
 }
 
 export type Vessel = Omit<Group, "label">
