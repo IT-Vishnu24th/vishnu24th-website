@@ -16,7 +16,7 @@ export default function HomePage() {
           src="/landingpage/art-background.png"
           alt=""
           fill
-          className="object-contain object-[center_22%]"
+          className="object-contain object-[center_10%]"
         />
       </div>
 
@@ -46,10 +46,10 @@ export default function HomePage() {
             />
           </div>
 
-          <h2 className="text-base md:text-2xl text-[#74DDCF] font-kanit">
+          <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             Intania First Date 2026
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF] font-kanit">19 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">19 กรกฎาคม 2569</h3>
 
           {/* Vishnu 24th logo */}
           <div className="relative w-full max-w-[300px] md:max-w-[420px] mt-10 mb-3">
@@ -62,10 +62,12 @@ export default function HomePage() {
             />
           </div>
 
-          <h2 className="text-base md:text-2xl text-[#74DDCF] font-kanit">
+          <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             ค่ายวิศณุกรรมบุตรครั้งที่ 24
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF] font-kanit">21–24 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
+            21–24 กรกฎาคม 2569
+          </h3>
 
           {/* ปุ่มด้านล่าง */}
           <div className="flex items-center justify-center gap-3 mt-15 mb-30">
@@ -103,7 +105,7 @@ export default function HomePage() {
             />
           </div>
         </div>
-        <div className="relative -top-44">
+        <div className="relative -top-44 -mb-30">
           <FAQFooter />
         </div>
 

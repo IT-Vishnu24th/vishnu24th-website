@@ -81,7 +81,10 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-kanit: var(--font-kanit);
+  --font-fc-quantum: var(--font-fc-quantum);
+  --font-sov-yeehor: var(--font-sov-yeehor);
+  --font-fragment-glare: var(--font-fragment-glare);
+  --font-arthemis: var(--font-arthemis);
 }
 
 body {

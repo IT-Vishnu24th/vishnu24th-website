@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Kanit } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/features/auth/providers/AuthProvider"
 import { getAuthUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
+import localFont from "next/font/local"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,10 +16,75 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
-const kanit = Kanit({
-  variable: "--font-kanit",
-  subsets: ["thai", "latin"],
-  weight: ["400", "500", "700"],
+const fcQuantum = localFont({
+  src: "../fonts/FC Quantum [Non-commercial].otf",
+  variable: "--font-fc-quantum",
+  display: "swap",
+})
+
+const sovYeeHor = localFont({
+  src: "../fonts/SOV_YEEHOR.ttf",
+  variable: "--font-sov-yeehor",
+  display: "swap",
+})
+
+const fragmentGlare = localFont({
+  src: [
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareLight.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareLightItalic.otf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareRegular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareRegularItalic.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareExtraBold.otf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../fonts/PPFragment/PPFragment-GlareExtraBoldItalic.otf",
+      weight: "800",
+      style: "italic",
+    },
+  ],
+  variable: "--font-fragment-glare",
+  display: "swap",
+})
+
+const arthemis = localFont({
+  src: [
+    {
+      path: "../fonts/Arthemis/CSArthemis-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Arthemis/CSArthemis-Italic.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../fonts/Arthemis/CSArthemis-ReverseItalic.otf",
+      weight: "400",
+      style: "oblique",
+    },
+  ],
+  variable: "--font-arthemis",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -35,7 +101,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${kanit.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fcQuantum.variable} ${sovYeeHor.variable} ${fragmentGlare.variable} ${arthemis.variable} h-full antialiased`}
     >
       <body>
         <AuthProvider initialUser={user}>

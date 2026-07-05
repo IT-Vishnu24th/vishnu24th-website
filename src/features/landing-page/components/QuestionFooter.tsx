@@ -21,13 +21,13 @@ export default function FAQFooter() {
       </div>
 
       <div className="relative z-10 max-w-md mx-auto mt-10">
-        <h2 className="text-center text-3xl md:text-4xl font-kanit font-bold text-brownie-light mb-4">
+        <h2 className="text-center text-3xl md:text-4xl font-sov-yeehor font-bold text-brownie-light mb-4">
           คำถามที่พบบ่อย
         </h2>
 
         {faqData.map((category, catIdx) => (
           <div key={catIdx} className="mb-8">
-            <h3 className="text-center text-lg font-kanit font-semibold text-brownie-light mb-2">
+            <h3 className="text-center text-lg font-fc-quantum font-semibold text-brownie-light mb-2">
               {category.title}
             </h3>
 
