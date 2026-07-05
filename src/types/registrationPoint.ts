@@ -12,5 +12,5 @@ export interface RegistrationPoint {
 }
 
 export interface RegistrationPointResponse extends RegistrationPoint {
-  room: GroupRoom | ""
+  room: GroupRoom
 }

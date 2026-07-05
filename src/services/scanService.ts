@@ -62,11 +62,6 @@ const scanService = {
       scanScore: FieldValue.increment(score),
     })
 
-    const leaderboardDocRef = adminDb.collection("leaderboard").doc(userGroup)
-    batch.update(leaderboardDocRef, {
-      score: FieldValue.increment(score),
-    })
-
     try {
       await batch.commit()
     } catch (error: unknown) {

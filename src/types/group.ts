@@ -5,7 +5,7 @@ export interface Group {
   label: string
   vesselName: MultiLang
   registrationPoint: RegistrationPoint
-  room: GroupRoom | ""
+  room: GroupRoom
 }
 
 export type Vessel = Omit<Group, "label">
@@ -15,4 +15,11 @@ export interface GroupStatsResponse {
   vesselName: string
   scanScore: number
   score: number
+}
+
+export interface CommitScanBonusResult {
+  group: string
+  scanScore: number
+  scanRank: number
+  scanRankBonus: number
 }
