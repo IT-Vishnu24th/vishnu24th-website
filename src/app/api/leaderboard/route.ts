@@ -8,13 +8,14 @@ import type { LeaderboardEntry, LeaderboardResponse } from "@/types/leaderboard"
 export async function GET() {
   const unknownVessel = { en: "Unknown Vessel", th: "Unknown Vessel" }
   try {
-    const [user, groups, liveScanFlag] = await Promise.all([
+    const [user, groups, clubScanFlag] = await Promise.all([
       getAuthenticatedRawUser(),
       groupService.rawList(),
-      featureFlagsService.getFlag("live-scan-leaderboard"),
+      featureFlagsService.getFlag("game-clubscan"),
     ])
 
-    const entries: LeaderboardEntry[] = liveScanFlag
+    // if club scan game is active, show live leaderboard from `scanScore`s
+    const entries: LeaderboardEntry[] = clubScanFlag
       ? groups.map(({ label, scanScore }) => ({ group: label, score: scanScore }))
       : await leaderboardService.rawList()
 
