@@ -100,7 +100,7 @@ export const EventCard = ({
       </div>
       <div
         className={cn(
-          "w-full flex items-center justify-between bg-cream-tanned text-brick-orange",
+          "w-full flex items-center bg-cream-tanned text-brick-orange",
           index % 2 === 0 && "bg-cream",
           active && "bg-status-yellow-dark"
         )}
