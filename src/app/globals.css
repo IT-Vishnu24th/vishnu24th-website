@@ -12,6 +12,7 @@
   --color-midnight: #2d3542;
   --color-midnight-light: #2d4b5f;
   --color-turqoise: #74ddcf;
+  --color-turqoise-cream: #98e4da;
   --color-turqoise-light: #aeefe7;
   --color-mint-tanned: #cdf1ec;
   --color-mint: #daf7f3;
@@ -43,6 +44,7 @@
   --color-midnight: var(--color-midnight);
   --color-midnight-light: var(--color-midnight-light);
   --color-turqoise: var(--color-turqoise);
+  --color-turqoise-cream: var(--color-turqoise-cream);
   --color-turqoise-light: var(--color-turqoise-light);
   --color-mint-tanned: var(--color-mint-tanned);
   --color-mint: var(--color-mint);
