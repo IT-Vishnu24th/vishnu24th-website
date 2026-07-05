@@ -11,6 +11,7 @@ export default function FooterNavigation() {
 
   const [holdItem, setHoldItem] = useState<string | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const isLongPress = useRef(false)
   const [isAdmin, setIsAdmin] = useState(false)
 
   // เช็ค role ของ user ปัจจุบัน ว่าเป็น admin ไหม
@@ -35,6 +36,9 @@ export default function FooterNavigation() {
 
     return () => {
       cancelled = true
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
     }
   }, [])
 
@@ -48,12 +52,29 @@ export default function FooterNavigation() {
 
   // กดค้างเริ่มแสดง text
   const handlePressStart = (item: (typeof menus)[0]) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+
+    isLongPress.current = false
+
     timerRef.current = setTimeout(() => {
+      isLongPress.current = true
       setHoldItem(item.name)
-    }, 400) // กดค้าง 0.4 วิ
+    }, 400)
   }
 
-  //ปล่อยมือ
+  // ยกเลิกการกด (ลากออกนอกปุ่ม)
+  const handlePressCancel = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+
+    setHoldItem(null)
+    isLongPress.current = false
+  }
+
+  // ปล่อยมือ
   const handlePressEnd = (item: (typeof menus)[0]) => {
     if (timerRef.current) {
       clearTimeout(timerRef.current)
@@ -62,9 +83,11 @@ export default function FooterNavigation() {
     setHoldItem(null)
 
     // ถ้าไม่ได้กดค้าง → ถือว่า click ปกติ
-    if (!holdItem) {
+    if (!isLongPress.current) {
       router.push(item.path)
     }
+
+    isLongPress.current = false
   }
 
   return (
@@ -75,7 +98,8 @@ export default function FooterNavigation() {
         fill
         className="object-fill scale-105 translate-y-2"
       />
-      <div className="absolute bottom-0 left-0 w-full flex justify-between px-5 pb-4 pt-1 bg-[#2D3542]">
+
+      <div className="absolute bottom-0 left-0 w-full flex justify-between px-5 pb-4 pt-1.5 bg-[#2D3542]">
         {menus.map((item) => {
           const Icon = item.icon
           const selected = pathname === item.path
@@ -87,20 +111,21 @@ export default function FooterNavigation() {
               className="relative flex flex-col items-center w-full"
               onMouseDown={() => handlePressStart(item)}
               onMouseUp={() => handlePressEnd(item)}
-              onMouseLeave={() => handlePressEnd(item)}
+              onMouseLeave={handlePressCancel}
               onTouchStart={() => handlePressStart(item)}
               onTouchEnd={() => handlePressEnd(item)}
+              onTouchCancel={handlePressCancel}
             >
               {/* HOLD TEXT */}
               {showHold && (
                 <span
                   className="
-                  absolute -top-15
-                  bg-[#2D3542] text-[#74DDCF] font-bold
-                  text-md px-3 py-3
-                  rounded-[10px]
-                  shadow 
-                "
+                    absolute -top-15
+                    bg-[#2D3542] text-[#74DDCF] font-bold
+                    text-md px-3 py-3
+                    rounded-[10px]
+                    shadow
+                  "
                 >
                   {item.name}
                 </span>
