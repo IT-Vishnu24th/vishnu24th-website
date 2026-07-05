@@ -1,10 +1,11 @@
 import AuthResult from "@/features/auth/components/AuthResult"
 import { LoginButton } from "@/features/auth/components/LoginButton"
 import Image from "next/image"
-import SponsorFooter from "@/components/SponsorFooterForHome"
+import SponsorFooter from "@/features/landing-page/components/SponsorFooterForHome"
 import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
 import { MapPin, Ship } from "lucide-react"
+import FAQFooter from "@/features/landing-page/components/QuestionFooter"
 
 export default function HomePage() {
   return (
@@ -82,12 +83,30 @@ export default function HomePage() {
         <div className="relative w-full h-6 md:h-8 z-10">
           <Image src="/landingpage/blue-line.png" alt="" fill className="object-fill" />
         </div>
-        <NavigationFooter />
 
         {/* <AuthResult isSucess={true} /> */}
-        <div className="-mt-3 md:-mt-4 relative z-0">
-          <SponsorFooter />
+        <div className="-mt-3 md:-mt-4 relative ">
+          <div className="absolute -top-30 inset-0 z-50 pointer-events-none">
+            <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
+          </div>
+
+          <div className="z-20">
+            <SponsorFooter />
+          </div>
+
+          <div className="relative -top-40 w-full h-10 md:h-8 -mt-1">
+            <Image
+              src="/landingpage/cream-line.png"
+              alt=""
+              fill
+              className="object-fill scale-105"
+            />
+          </div>
         </div>
+        <div className="relative -top-44">
+          <FAQFooter />
+        </div>
+
         <NavigationFooter />
       </div>
     </div>
