@@ -85,8 +85,10 @@ const groupService = {
       const docs = await tx.getAll(...coll.docs.map((doc) => doc.ref))
       const groups = await Promise.all(docs.map((doc) => doc.data()!))
 
-      // Sort by score desc
-      const sorted = [...groups].sort((a, b) => b.scanScore - a.scanScore)
+      // Sort by score desc, then by label asc to keep order deterministic
+      const sorted = [...groups].sort(
+        (a, b) => b.scanScore - a.scanScore || a.label.localeCompare(b.label)
+      )
 
       // Normal ranking (eg. 1224), zero-based
       const ranked = sorted.map((group) => {
