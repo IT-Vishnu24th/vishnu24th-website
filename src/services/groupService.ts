@@ -1,7 +1,14 @@
 import { adminDb } from "@/firebase/admin"
 
-import type { Group, Vessel } from "@/types/group"
+import type { CommitScanBonusResult, Group, Vessel } from "@/types/group"
 export type * from "@/types/group"
+
+// prettier-ignore
+const scanScoreBonuses = [
+  /* 1-3 */ 2000, 1800, 1500,
+  /* 4-8 */ 1300, 1300, 1300, 1300, 1300,
+  /* 9-18 */ 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000
+]
 
 export interface RawGroup extends Group {
   scanScore: number
@@ -69,6 +76,43 @@ const groupService = {
     const data = result.data()
     if (!data) return null
     return data
+  },
+
+  async setScanBonuses(): Promise<CommitScanBonusResult[]> {
+    const coll = await groupCollection.get()
+
+    const result: CommitScanBonusResult[] = await adminDb.runTransaction(async (tx) => {
+      const docs = await tx.getAll(...coll.docs.map((doc) => doc.ref))
+      const groups = await Promise.all(docs.map((doc) => doc.data()!))
+
+      // Sort by score desc
+      const sorted = [...groups].sort((a, b) => b.scanScore - a.scanScore)
+
+      // Normal ranking (eg. 1224), zero-based
+      const ranked = sorted.map((group) => {
+        const rank = sorted.filter((g) => g.scanScore > group.scanScore).length
+        return {
+          ...group,
+          scanRank: rank + 1,
+          scanRankBonus: scanScoreBonuses[rank],
+        }
+      })
+
+      return ranked.map(({ label, scoreSources, scanScore, scanRank, scanRankBonus }) => {
+        tx.update(groupCollection.doc(label), {
+          scoreSources: { ...scoreSources, scanRankBonus },
+        })
+
+        return {
+          group: label,
+          scanScore,
+          scanRank,
+          scanRankBonus,
+        }
+      })
+    })
+
+    return result
   },
 
   mapToPublic(group: RawGroup, showFullGroup: boolean | null): Group | Vessel {

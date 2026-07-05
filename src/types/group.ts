@@ -16,3 +16,10 @@ export interface GroupStatsResponse {
   scanScore: number
   score: number
 }
+
+export interface CommitScanBonusResult {
+  group: string
+  scanScore: number
+  scanRank: number
+  scanRankBonus: number
+}
