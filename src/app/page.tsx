@@ -21,7 +21,7 @@ export default function HomePage() {
       </div>
 
       {/* ตึกซ้าย-ขวา + เฟืองมุมบน วางทับด้านหน้า */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
+      <div className="absolute inset-0 z-10 ">
         <Image
           src="/landingpage/art-foreground.png"
           alt=""

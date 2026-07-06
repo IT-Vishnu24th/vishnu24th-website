@@ -24,7 +24,7 @@
   --color-status-yellow: #ebc040;
   --color-white: #ffffff;
 
-  --background: var(--color-brownie-dark);
+  --background: var(--color-midnight-light);
   --foreground: var(--color-cream);
 }
 
@@ -83,7 +83,7 @@
   --font-mono: var(--font-geist-mono);
   --font-fc-quantum: var(--font-fc-quantum);
   --font-sov-yeehor: var(--font-sov-yeehor);
-  --font-fragment-glare: var(--font-fragment-glare);
+  --font-ppfragment-glare: var(--font-ppfragment-glare);
   --font-arthemis: var(--font-arthemis);
 }
 

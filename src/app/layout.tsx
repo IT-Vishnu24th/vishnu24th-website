@@ -28,7 +28,7 @@ const sovYeeHor = localFont({
   display: "swap",
 })
 
-const fragmentGlare = localFont({
+const ppFragmentGlare = localFont({
   src: [
     {
       path: "../fonts/PPFragment/PPFragment-GlareLight.otf",
@@ -61,7 +61,7 @@ const fragmentGlare = localFont({
       style: "italic",
     },
   ],
-  variable: "--font-fragment-glare",
+  variable: "--font-ppfragment-glare",
   display: "swap",
 })
 
@@ -98,15 +98,18 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const user = await getAuthUser()
+
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fcQuantum.variable} ${sovYeeHor.variable} ${fragmentGlare.variable} ${arthemis.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fcQuantum.variable} ${sovYeeHor.variable} ${ppFragmentGlare.variable} ${arthemis.variable} h-full antialiased`}
     >
       <body>
         <AuthProvider initialUser={user}>
           <Modal />
-          {children}
+          <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
+            {children}
+          </main>
         </AuthProvider>
       </body>
     </html>
