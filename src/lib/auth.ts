@@ -7,16 +7,16 @@ import type { AuthUser } from "@/types/user"
  * Extracts and verifies the student ID directly from the session cookie.
  */
 async function getAuthenticatedStudentId(): Promise<string | null> {
-  if (process.env.NODE_ENV === "development" && process.env.MOCK_AUTH_USER) {
-    return process.env.MOCK_AUTH_USER
-  }
-
   try {
     const cookieStore = await cookies()
     const sessionCookie = cookieStore.get("session")?.value
 
     if (!sessionCookie) {
       return null
+    }
+
+    if (process.env.NODE_ENV === "development" && sessionCookie.startsWith("mock-session:")) {
+      return sessionCookie.replace("mock-session:", "")
     }
 
     // FIXME: check revocation false for now
@@ -54,5 +54,5 @@ export async function getAuthenticatedRawUser(): Promise<RawUser | null> {
 export async function getAuthUser(): Promise<AuthUser | null> {
   const raw = await getAuthenticatedRawUser()
   if (!raw) return null
-  return { id: raw.id, role: raw.role, group: raw.group, prefLanguage: raw.prefLanguage }
+  return { id: raw.id, name: raw.name, role: raw.role, prefLanguage: raw.prefLanguage }
 }

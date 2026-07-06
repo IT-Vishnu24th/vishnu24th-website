@@ -32,12 +32,7 @@ export interface User {
   answers?: UserAnswers
 }
 
-export interface AuthUser {
-  id: string
-  role: UserRole
-  group: string
-  prefLanguage: keyof MultiLang
-}
+export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage">
 
 export interface UserAnswerHistoryItem {
   id: string

@@ -26,23 +26,38 @@ export async function POST(request: Request) {
     const { idToken } = parseResult.data
 
     // Verify ID token
-    const decodedToken = await adminAuth.verifyIdToken(idToken)
-    const email = decodedToken.email
-    if (!email) {
-      return NextResponse.json(
-        { error: "email-not-provided", message: "No email found" },
-        { status: 400 }
-      )
-    }
+    let studentId = ""
+    let isMock = false
 
-    // Validate email 68 or 69 and ends with 21
-    if (!STUDENT_EMAIL_PATTERN.test(email)) {
-      return NextResponse.json(
-        { error: "invalid-email-domain", message: "This email is not a valid student account" },
-        { status: 403 }
-      )
+    const hasMockConfig = process.env.NODE_ENV === "development" && !!process.env.MOCK_AUTH_USER
+
+    if (hasMockConfig && idToken === "mock-id-token") {
+      studentId = process.env.MOCK_AUTH_USER!
+      isMock = true
+    } else {
+      const decodedToken = await adminAuth.verifyIdToken(idToken)
+      const email = decodedToken.email
+      if (!email) {
+        return NextResponse.json(
+          { error: "email-not-provided", message: "No email found" },
+          { status: 400 }
+        )
+      }
+
+      if (hasMockConfig) {
+        studentId = process.env.MOCK_AUTH_USER!
+        isMock = true
+      } else {
+        // Validate email 68 or 69 and ends with 21
+        if (!STUDENT_EMAIL_PATTERN.test(email)) {
+          return NextResponse.json(
+            { error: "invalid-email-domain", message: "This email is not a valid student account" },
+            { status: 403 }
+          )
+        }
+        studentId = email.split("@")[0]
+      }
     }
-    const studentId = email.split("@")[0]
 
     // Check if user in firestore
     const user = await userService.getRawById(studentId)
@@ -54,15 +69,20 @@ export async function POST(request: Request) {
     }
 
     // Create session cookie
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-      expiresIn: SESSION_EXPIRES_IN_MS,
-    })
+    let sessionCookie: string
+    if (isMock) {
+      sessionCookie = `mock-session:${studentId}`
+    } else {
+      sessionCookie = await adminAuth.createSessionCookie(idToken, {
+        expiresIn: SESSION_EXPIRES_IN_MS,
+      })
+    }
 
     const cookieStore = await cookies()
     cookieStore.set("session", sessionCookie, {
       maxAge: SESSION_EXPIRES_IN_MS / 1000,
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV !== "development",
       sameSite: "lax",
       path: "/",
     })
