@@ -1,51 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { UserRound } from "lucide-react"
 
 import { UserInfoModal } from "@/features/userInfo/components/UserInfoModal"
 import { modalStore } from "@/stores/modalStore"
 import useAuth from "@/hooks/useAuth"
-import type { User } from "@/types/user"
 
 export const UserInfoButton = () => {
-  const { user: auth } = useAuth()
+  const { user } = useAuth()
 
-  const [profile, setProfile] = useState<User | null>(null)
-
-  // fetch user profile (ข้อมูลเต็ม)
-  useEffect(() => {
-    let cancelled = false
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("/api/users/me")
-        if (!res.ok) return
-        const data = await res.json()
-        if (!cancelled) setProfile(data.data)
-      } catch (err) {
-        console.error("Failed to fetch profile:", err)
-      }
-    }
-    fetchProfile()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const lang = profile?.prefLanguage ?? auth?.prefLanguage ?? "th"
-  const name = profile?.name?.[lang]
-
-  const displayName = (() => {
-    if (!name) return "ข้อมูล"
-
-    const base = name.nickname || name.firstName
-
-    if (auth?.role === "participant") {
-      return `น้อง ${base}`
-    }
-
-    return base
-  })()
+  const name = user ? user.name[user.prefLanguage] : null
 
   return (
     <button
@@ -55,7 +19,10 @@ export const UserInfoButton = () => {
     >
       <UserRound size={20} color="turquoise" strokeWidth={2.5} />
 
-      <span className="text-md font-kanit text-turqoise">{displayName}</span>
+      <span className="text-md font-kanit text-turqoise">
+        {user?.role === "participant" ? "น้อง" : ""}
+        {name?.nickname || name?.firstName || "ข้อมูล"}
+      </span>
     </button>
   )
 }
