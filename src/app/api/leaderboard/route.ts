@@ -1,16 +1,22 @@
 import { success, failure } from "@/utils/apiHelpers"
 import groupService from "@/services/groupService"
 import leaderboardService from "@/services/leaderboardService"
+import featureFlagsService from "@/services/featureFlagService"
 import { getAuthenticatedRawUser } from "@/lib/auth"
-import type { LeaderboardResponse } from "@/types/leaderboard"
+import type { LeaderboardEntry, LeaderboardResponse } from "@/types/leaderboard"
 
 export async function GET() {
   const unknownVessel = { en: "Unknown Vessel", th: "Unknown Vessel" }
   try {
-    const user = await getAuthenticatedRawUser()
+    const [user, groups, liveScanFlag] = await Promise.all([
+      getAuthenticatedRawUser(),
+      groupService.rawList(),
+      featureFlagsService.getFlag("live-scan-leaderboard"),
+    ])
 
-    const entries = await leaderboardService.rawList()
-    const groups = await groupService.rawList()
+    const entries: LeaderboardEntry[] = liveScanFlag
+      ? groups.map(({ label, scanScore }) => ({ group: label, score: scanScore }))
+      : await leaderboardService.rawList()
 
     // Sort by score desc, then by label asc to keep order deterministic
     const sorted = [...entries].sort((a, b) => b.score - a.score || a.group.localeCompare(b.group))

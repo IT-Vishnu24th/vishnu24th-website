@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       label: g.label,
       vesselName: g.vesselName.th,
       scanScore: typeof g.scanScore === "number" ? g.scanScore : 0,
-      score: typeof g.score === "number" ? g.score : 0,
+      score: groupService.totalScore(g),
     }))
 
     const format = req.nextUrl.searchParams.get("format")

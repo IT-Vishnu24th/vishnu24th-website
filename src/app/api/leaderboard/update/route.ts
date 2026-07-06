@@ -9,7 +9,12 @@ export async function PUT() {
 
     const groups = await groupService.rawList()
 
-    await leaderboardService.updateAll(groups)
+    const scores: Record<string, number> = {}
+    for (const group of groups) {
+      scores[group.label] = groupService.totalScore(group)
+    }
+
+    await leaderboardService.updateAll(scores)
     return success<boolean>(true)
   } catch (error) {
     console.error("Error in PUT /api/leaderboard/update:", error)
