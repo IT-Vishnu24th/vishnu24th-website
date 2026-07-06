@@ -79,7 +79,7 @@ export default function FooterNavigation() {
         className="object-fill scale-103 translate-y-2"
       />
 
-      <div className="absolute bottom-0 left-0 w-full flex justify-between px-5 pb-4 pt-1.5 bg-[#2D3542]">
+      <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 pb-4 pt-1.5 bg-[#2D3542]">
         {menus.map((item) => {
           const Icon = item.icon
           const selected = pathname === item.path
