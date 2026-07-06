@@ -23,11 +23,6 @@ const wasteSortPlayerCollection = adminDb.collection("wasteSortPlayer").withConv
   toFirestore: (data: wasteSortPlayer) => data,
 })
 
-// `groups` already exists and is shared by several mini-games. We read it
-// through a converter (typed to just the fields we care about) but write to
-// it through the raw, un-converted reference so we can safely do dot-path
-// updates like "scoreSources.sustainScore" without needing to know — or
-// risk overwriting — the rest of the document's fields.
 const groupsCollectionRaw = adminDb.collection("groups")
 const groupsCollection = groupsCollectionRaw.withConverter({
   fromFirestore: (snapshot) => {
@@ -47,11 +42,6 @@ const wasteSortPlayerService = {
     return data
   },
 
-  /**
-   * Create a new player document. `uid` should be a stable id you control
-   * (e.g. an auth uid, or a slug generated at signup) — the doc is created
-   * with exactly the fields you pass in `player`.
-   */
   async create(uid: string, player: wasteSortPlayer): Promise<wasteSortPlayer | null> {
     const ref = wasteSortPlayerCollection.doc(uid)
 
@@ -61,12 +51,6 @@ const wasteSortPlayerService = {
     return result.data() ?? null
   },
 
-  /**
-   * Convenience helper for signup flows: looks up the group's vesselName so
-   * you don't have to pass it in manually, and fills in the zeroed defaults
-   * (playCount / sustainScore). Returns the existing player instead of
-   * erroring if `uid` is already registered.
-   */
   async createNewPlayer(
     uid: string,
     input: { name: string; group: string }
@@ -191,3 +175,5 @@ const wasteSortPlayerService = {
 }
 
 export default wasteSortPlayerService
+
+/* Note - waste sort complete -> do markdown for popkaewapi and wastesort and phase then pull request */
