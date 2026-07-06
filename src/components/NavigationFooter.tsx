@@ -1,57 +1,35 @@
 "use client"
 
-import { Home, Compass, Ship, Gamepad, ShieldCheck } from "lucide-react"
+import { Home, Compass, Ship, Gamepad2, UserRoundKey } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
+import useAuth from "@/hooks/useAuth"
 
 export default function FooterNavigation() {
   const router = useRouter()
   const pathname = usePathname()
+  const { user } = useAuth()
 
   const [holdItem, setHoldItem] = useState<string | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const isLongPress = useRef(false)
-  const [isAdmin, setIsAdmin] = useState(false)
 
-  // เช็ค role ของ user ปัจจุบัน ว่าเป็น admin ไหม
-  useEffect(() => {
-    let cancelled = false
-
-    const fetchRole = async () => {
-      try {
-        const res = await fetch("/api/users/me")
-        if (!res.ok) return
-
-        const { data } = await res.json()
-        if (!cancelled && data?.role === "admin") {
-          setIsAdmin(true)
-        }
-      } catch (err) {
-        console.error("Failed to fetch user role:", err)
-      }
-    }
-
-    fetchRole()
-
-    return () => {
-      cancelled = true
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-      }
-    }
-  }, [])
+  const isLoggedIn = !!user
+  const isAdmin = user?.role === "admin"
 
   const menus = [
-    { name: "Home", icon: Home, path: "/" },
-    { name: "Explore", icon: Compass, path: "/explore" },
-    { name: "Ranking", icon: Ship, path: "/ranking" },
-    { name: "Game", icon: Gamepad, path: "/game" },
-    ...(isAdmin ? [{ name: "Admin", icon: ShieldCheck, path: "/admin" }] : []),
+    { name: "Home", icon: Home, path: "/", requiresAuth: false },
+    { name: "Explore", icon: Compass, path: "/explore", requiresAuth: false },
+    { name: "Ranking", icon: Ship, path: "/ranking", requiresAuth: true },
+    { name: "Game", icon: Gamepad2, path: "/game", requiresAuth: true },
+    ...(isAdmin ? [{ name: "Admin", icon: UserRoundKey, path: "/admin", requiresAuth: true }] : []),
   ]
 
   // กดค้างเริ่มแสดง text
   const handlePressStart = (item: (typeof menus)[0]) => {
+    if (item.requiresAuth && !isLoggedIn) return
+
     if (timerRef.current) {
       clearTimeout(timerRef.current)
     }
@@ -76,6 +54,8 @@ export default function FooterNavigation() {
 
   // ปล่อยมือ
   const handlePressEnd = (item: (typeof menus)[0]) => {
+    if (item.requiresAuth && !isLoggedIn) return
+
     if (timerRef.current) {
       clearTimeout(timerRef.current)
     }
@@ -91,12 +71,12 @@ export default function FooterNavigation() {
   }
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 h-40">
+    <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[825px] z-50 h-40">
       <Image
         src="/navbar/navbar.svg"
         alt="navbar"
         fill
-        className="object-fill scale-105 translate-y-2"
+        className="object-fill scale-103 translate-y-2"
       />
 
       <div className="absolute bottom-0 left-0 w-full flex justify-between px-5 pb-4 pt-1.5 bg-[#2D3542]">
@@ -104,11 +84,15 @@ export default function FooterNavigation() {
           const Icon = item.icon
           const selected = pathname === item.path
           const showHold = holdItem === item.name
+          const disabled = item.requiresAuth && !isLoggedIn
 
           return (
             <button
               key={item.name}
-              className="relative flex flex-col items-center w-full"
+              disabled={disabled}
+              className={`relative flex flex-col items-center w-full ${
+                disabled ? "opacity-40 cursor-not-allowed" : ""
+              }`}
               onMouseDown={() => handlePressStart(item)}
               onMouseUp={() => handlePressEnd(item)}
               onMouseLeave={handlePressCancel}
