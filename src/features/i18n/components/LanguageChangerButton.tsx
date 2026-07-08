@@ -13,10 +13,10 @@ export const LanguageChangerButton = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="bg-black text-white rounded-4xl px-4 py-3 flex items-center gap-2 hover:bg-neutral-800 transition"
+      className="bg-midnight border-3 border-midnight-light text-white rounded-4xl px-3 py-2 flex items-center gap-2 transition"
     >
-      <Globe size={20} />
-      <span className="text-lg">{lang}</span>
+      <Globe size={20} color="turquoise" strokeWidth={2.5} />
+      <span className="text-md text-turqoise font-kanit">{lang}</span>
     </button>
   )
 }

@@ -14,9 +14,9 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="w-full pt-10 pb-24">
+    <footer className="w-full pt-10 pb-60 bg-[#F0865C]">
       <div className="max-w-6xl mx-auto px-3">
-        <h2 className="text-center text-xl font-semibold mb-8">ขอขอบคุณผู้สนับสนุน</h2>
+        <h2 className="text-center text-4xl font-sov-yeehor mb-8">ขอขอบคุณผู้สนับสนุน</h2>
 
         {/* BIG */}
         <div className="flex justify-center gap-5 mb-8">
