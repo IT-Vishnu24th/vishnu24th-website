@@ -5,6 +5,7 @@ import { AuthProvider } from "@/features/auth/providers/AuthProvider"
 import { getAuthUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
 import localFont from "next/font/local"
+import { QueryProvider } from "@/lib/react-query"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,12 +106,14 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fcQuantum.variable} ${sovYeeHor.variable} ${ppFragmentGlare.variable} ${arthemis.variable} h-full antialiased`}
     >
       <body>
-        <AuthProvider initialUser={user}>
-          <Modal />
-          <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
-            {children}
-          </main>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider initialUser={user}>
+            <Modal />
+            <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
+              {children}
+            </main>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )
