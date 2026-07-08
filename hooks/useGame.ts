@@ -1,344 +1,656 @@
 "use client";
 
-import { useRef, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
-import useAnimation from "@/hooks/useAnimation";
-import useSpawner from "@/hooks/useSpawner";
-import useTimer from "@/hooks/useTimer";
 
 import {
-  checkCollision,
-  CollisionBox,
-} from "@/utils/collision";
+  GAME_DURATION,
+} from "@/data/trash";
 
-import { calculateNextY } from "@/utils/physics";
+
+import {
+  saveGameResult,
+} from "@/utils/storage";
+
+
+import {
+  removeOffscreenTrash,
+  updateTrashPositions,
+} from "@/utils/physics";
+
+
+import useAnimation from "./useAnimation";
+import useSpawner from "./useSpawner";
+import useTimer from "./useTimer";
+
 
 import type {
+  BinState,
   FallingTrash,
   GameStatus,
-  TrashType,
 } from "@/types/game";
 
 
-const GAME_DURATION = 30;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
 
+const BIN_WIDTH = 120;
+const BIN_HEIGHT = 90;
+
+
+
+const INITIAL_BINS: BinState[] = [
+  {
+    type: "recycle",
+    label: "♻️ Recycle",
+    x: 120,
+    y: GAME_HEIGHT - 120,
+    width: BIN_WIDTH,
+    height: BIN_HEIGHT,
+  },
+
+  {
+    type: "general",
+    label: "🗑️ General",
+    x: 340,
+    y: GAME_HEIGHT - 120,
+    width: BIN_WIDTH,
+    height: BIN_HEIGHT,
+  },
+
+  {
+    type: "food",
+    label: "🍎 Food",
+    x: 560,
+    y: GAME_HEIGHT - 120,
+    width: BIN_WIDTH,
+    height: BIN_HEIGHT,
+  },
+];
+
+
+
+
+
+function checkCollision(
+  trash: {
+    x:number;
+    y:number;
+    width:number;
+    height:number;
+  },
+
+  bin: {
+    x:number;
+    y:number;
+    width:number;
+    height:number;
+  }
+) {
+
+  return (
+
+    trash.x <
+      bin.x + bin.width &&
+
+    trash.x + trash.width >
+      bin.x &&
+
+    trash.y <
+      bin.y + bin.height &&
+
+    trash.y + trash.height >
+      bin.y
+
+  );
+
+}
+
+
+
+
+
+
 export function useGame() {
 
-  const trashRef =
-    useRef<FallingTrash[]>([]);
+
+  const [status, setStatus] =
+    useState<GameStatus>("idle");
 
 
-  const binsRef =
-    useRef<
-      Partial<Record<
-        TrashType,
-        CollisionBox
-      >>
-    >({});
+  const [trash, setTrash] =
+    useState<FallingTrash[]>([]);
 
 
-  const [
-    trash,
-    setTrash,
-  ] = useState<FallingTrash[]>([]);
+  const [score, setScore] =
+    useState(0);
 
 
-  const [
-    score,
-    setScore,
-  ] = useState(0);
-
-
-  const [
-    status,
-    setStatus,
-  ] = useState<GameStatus>("ready");
+  const [elapsedSeconds, setElapsedSeconds] =
+    useState(0);
 
 
 
-  function syncTrash() {
-    setTrash([
-      ...trashRef.current,
-    ]);
-  }
+
+
+  const [bins] =
+    useState<BinState[]>(
+      INITIAL_BINS
+    );
 
 
 
-  function updateBins(
-    bins: Record<
-      TrashType,
-      CollisionBox
-    >
-  ) {
-
-    binsRef.current = bins;
-
-  }
 
 
 
-  function endGame() {
+  const addTrash =
+    useCallback(
+      (
+        item:FallingTrash
+      )=>{
 
-    setStatus("finished");
+        setTrash(current=>[
+          ...current,
+          item,
+        ]);
 
-    trashRef.current = [];
-
-    setTrash([]);
-
-  }
+      },
+      []
+    );
 
 
-
-  const {
-    timeLeft,
-    start,
-    reset,
-  } = useTimer({
-    duration: GAME_DURATION,
-    onComplete: endGame,
-  });
 
 
 
   const {
     updateSpawner,
     resetSpawner,
+
   } = useSpawner({
 
-    gameWidth: GAME_WIDTH,
+    gameWidth:
+      GAME_WIDTH,
 
-    onSpawn: (
-      newTrash
-    ) => {
-
-      trashRef.current.push(
-        newTrash
-      );
-
-    },
+    onSpawn:
+      addTrash,
 
   });
 
 
 
-  function updateFrame(
-    deltaTime: number
-  ) {
-
-    if (
-      status !== "playing"
-    ) {
-      return;
-    }
 
 
 
-    updateSpawner(
-      deltaTime
-    );
+
+  const finishGame =
+    useCallback(()=>{
+
+
+      setStatus(
+        "finished"
+      );
+
+
+      saveGameResult({
+
+        score,
+
+        date:
+          new Date()
+            .toISOString(),
+
+      });
+
+
+    },[
+      score,
+    ]);
 
 
 
-    trashRef.current =
-      trashRef.current
-        .map(
-          (item) => ({
-            ...item,
 
-            y:
-              calculateNextY(
-                item.y,
-                item.speed,
-                deltaTime
-              ),
 
-          })
-        )
-        .filter(
-          (item) =>
-            item.y < GAME_HEIGHT
+
+  const {
+
+    timeLeft,
+
+    start:
+      startTimer,
+
+    stop:
+      stopTimer,
+
+    reset:
+      resetTimer,
+
+  } = useTimer({
+
+    duration:
+      GAME_DURATION,
+
+    onComplete:
+      finishGame,
+
+  });
+
+
+
+
+
+
+
+
+  const gameLoop =
+    useCallback(
+      (
+        dt:number
+      )=>{
+
+
+        setElapsedSeconds(
+          value =>
+            value + dt
         );
 
 
 
-    syncTrash();
+        updateSpawner(
+          dt
+        );
 
-  }
+
+
+        setTrash(
+          current => {
+
+
+            const updated =
+              updateTrashPositions(
+                current.filter(
+                  item =>
+                    !item.isDragging
+                ),
+
+                dt,
+
+                elapsedSeconds
+              );
+
+
+
+            const dragging =
+              current.filter(
+                item =>
+                  item.isDragging
+              );
+
+
+
+            return removeOffscreenTrash(
+              [
+                ...updated,
+                ...dragging,
+              ],
+
+              GAME_HEIGHT
+            );
+
+
+          }
+        );
+
+
+      },
+      [
+        updateSpawner,
+        elapsedSeconds,
+      ]
+    );
+
+
 
 
 
   useAnimation(
-    updateFrame,
+    gameLoop,
     status === "playing"
   );
+    const resetGame =
+    useCallback(()=>{
 
 
+      setTrash([]);
 
-  function startGame() {
+      setScore(0);
 
-    trashRef.current = [];
-
-    setTrash([]);
-
-    setScore(0);
+      setElapsedSeconds(0);
 
 
-    resetSpawner();
+      resetSpawner();
 
-    reset();
-
-
-    setStatus(
-      "playing"
-    );
+      resetTimer();
 
 
-    start();
-
-  }
-
-function closeGame() {
-  setStatus("ready");
-}
-
-  function handleDragStart(
-    id: string
-  ) {}
-
-
-
-  function handleDragMove(
-    id: string,
-    position:{
-      x:number;
-      y:number;
-    }
-  ) {
-
-    if (
-      status !== "playing"
-    ) return;
-
-
-
-    const item =
-      trashRef.current.find(
-        t =>
-          t.id === id
+      setStatus(
+        "idle"
       );
 
 
-    if (!item) return;
-
-
-
-    item.x =
-      position.x;
-
-    item.y =
-      position.y;
-
-  }
+    },[
+      resetSpawner,
+      resetTimer,
+    ]);
 
 
 
 
-  function handleDragEnd(
-    id:string,
-    position:{
-      x:number;
-      y:number;
-    }
-  ) {
-
-    if (
-      status !== "playing"
-    ) return;
 
 
 
-    const item =
-      trashRef.current.find(
-        t =>
-          t.id === id
+  const startGame =
+    useCallback(()=>{
+
+
+      resetGame();
+
+
+      setStatus(
+        "playing"
       );
 
 
-    if (!item) return;
+      startTimer();
+
+
+    },[
+      resetGame,
+      startTimer,
+    ]);
 
 
 
-    const bin =
-      binsRef.current[
-        item.type
-      ];
 
 
 
-    if (
-      bin &&
-      checkCollision(
-        {
-          x:item.x,
-          y:item.y,
-          size:50,
-        },
-        bin
-      )
-    ) {
-
-      setScore(
-        value =>
-          value + 1
-      );
 
 
-      trashRef.current =
-        trashRef.current.filter(
-          t =>
-            t.id !== id
+
+  const handleDragStart =
+    useCallback(
+      (
+        id:string
+      )=>{
+
+
+        setTrash(
+          current =>
+
+            current.map(
+              item => {
+
+
+                if(
+                  item.id !== id
+                ) {
+                  return item;
+                }
+
+
+                return {
+
+                  ...item,
+
+                  grabbed:true,
+
+                  isDragging:true,
+
+                };
+
+
+              }
+            )
+
         );
 
 
-    }
+      },
+      []
+    );
 
 
 
-    syncTrash();
 
-  }
+
+
+
+
+
+  const handleDragMove =
+    useCallback(
+      (
+        id:string,
+
+        x:number,
+
+        y:number
+
+      )=>{
+
+
+        setTrash(
+          current =>
+
+            current.map(
+              item=>{
+
+
+                if(
+                  item.id !== id
+                ){
+                  return item;
+                }
+
+
+
+                return {
+
+                  ...item,
+
+                  x,
+
+                  y,
+
+                };
+
+
+              }
+            )
+
+        );
+
+
+      },
+      []
+    );
+
+
+
+
+
+
+
+
+
+  const handleDragEnd =
+    useCallback(
+      (
+        id:string
+      )=>{
+
+
+        setTrash(
+          current=>{
+
+
+            const item =
+              current.find(
+                trash =>
+                  trash.id === id
+              );
+
+
+
+            if(!item){
+              return current;
+            }
+
+
+
+
+
+            const matchedBin =
+              bins.find(
+                bin =>
+
+                  bin.type === item.type &&
+
+                  checkCollision(
+                    item,
+                    bin
+                  )
+              );
+
+
+
+
+
+            if(matchedBin){
+
+
+              setScore(
+                value =>
+                  value + 10
+              );
+
+
+
+              return current.filter(
+                trash =>
+                  trash.id !== id
+              );
+
+
+            }
+
+
+
+
+
+
+
+            return current.map(
+              trash=>{
+
+
+                if(
+                  trash.id !== id
+                ){
+                  return trash;
+                }
+
+
+
+                return {
+
+                  ...trash,
+
+                  grabbed:false,
+
+                  isDragging:false,
+
+                };
+
+
+              }
+            );
+
+
+          }
+        );
+
+
+      },
+      [
+        bins,
+      ]
+    );
+
+
+
+
+
+
+
+
+
+  const state =
+    useMemo(
+      ()=>({
+
+        trash,
+
+        bins,
+
+        score,
+
+        timeLeft,
+
+        status,
+
+
+      }),
+      [
+        trash,
+        bins,
+        score,
+        timeLeft,
+        status,
+      ]
+    );
+
+
+
+
 
 
 
   return {
 
-  trash,
 
-  score,
-
-  timeLeft,
-
-  status,
+    ...state,
 
 
-  startGame,
+    startGame,
 
-  closeGame,
+    finishGame,
+
+    resetGame,
 
 
-  updateBins,
+    handleDragStart,
+
+    handleDragMove,
+
+    handleDragEnd,
 
 
-  handleDragStart,
-
-  handleDragMove,
-
-  handleDragEnd,
-
-};
+  };
 
 }

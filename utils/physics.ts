@@ -1,9 +1,13 @@
-import { FallingTrash } from "@/types/game";
+
 import {
   INITIAL_FALL_SPEED,
   MAX_FALL_SPEED,
   SPEED_INCREASE,
 } from "@/data/trash";
+import type {
+  FallingTrash,
+  TrashItem,
+} from "@/types/game";
 
 /**
  * Calculates the global falling speed based on
@@ -64,14 +68,30 @@ export function removeOffscreenTrash(
  */
 export function createFallingTrash(
   id: string,
-  base: Omit<FallingTrash, "id" | "x" | "y" | "speed">,
+  base: TrashItem,
   x: number
 ): FallingTrash {
   return {
     ...base,
+
     id,
+
     x,
+
     y: -40,
+
+    width: 64,
+
+    height: 64,
+
     speed: INITIAL_FALL_SPEED,
+
+    grabbed: false,
+
+    isDragging: false,
+
+    offsetX: 0,
+
+    offsetY: 0,
   };
 }

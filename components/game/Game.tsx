@@ -1,88 +1,279 @@
 "use client";
 
-import GameCanvas from "@/components/game/GameCanvas";
-import ScoreBoard from "@/components/game/ScoreBoard";
-import Timer from "@/components/game/Timer";
-import GameOverModal from "@/components/game/GameOverModal";
+import GameCanvas from "./GameCanvas";
+import ScoreBoard from "./ScoreBoard";
+import Timer from "./Timer";
+import GameOverModal from "./GameOverModal";
 
-import { useGame } from "@/hooks/useGame";
+import {
+  getBestScore,
+  getRemainingPlays,
+} from "@/utils/storage";
+
+import {
+  useGame,
+} from "@/hooks/useGame";
 
 
-export default function Game() {
+
+
+
+export default function Game(){
+
+
   const {
-    trash,
-    score,
-    timeLeft,
+  trash,
+  bins,
+  score,
+  timeLeft,
+  status,
 
-    status,
+  startGame,
+  finishGame,
+  resetGame,
 
-    startGame,
-    closeGame,
+  handleDragStart,
+  handleDragMove,
+  handleDragEnd,
 
-    updateBins,
+} = useGame();
 
-    handleDragStart,
-    handleDragMove,
-    handleDragEnd,
-  } = useGame();
-
+const bestScore = getBestScore();
+const remainingPlays = getRemainingPlays();
 
   return (
-    <section className="flex w-full flex-col items-center gap-5">
 
-      <div className="flex w-full max-w-3xl items-center justify-between rounded-xl bg-white p-4 shadow">
+    <div
+
+      className="
+        flex
+        flex-col
+        items-center
+        gap-6
+        w-full
+      "
+
+    >
+
+
+
+
+
+      <div
+
+        className="
+          flex
+          justify-between
+          items-center
+          w-full
+          max-w-3xl
+        "
+
+      >
+
+
         <ScoreBoard
-          score={score}
-          bestScore={score}
-          remainingPlays={3}
-        />
 
-        <Timer
-          timeLeft={timeLeft}
-        />
-      </div>
+  score={
+    score
+  }
 
+  bestScore={
+    bestScore
+  }
 
-      <GameCanvas
-  trash={trash}
-  onDragStart={handleDragStart}
-  onDragMove={handleDragMove}
-  onDragEnd={handleDragEnd}
-  onBinsUpdate={updateBins}
+  remainingPlays={
+    remainingPlays
+  }
+
 />
 
 
-      {status === "ready" && (
-        <button
-          onClick={startGame}
-          className="
-            rounded-xl
-            bg-green-600
-            px-8
-            py-3
-            text-lg
-            font-semibold
-            text-white
-            shadow-md
-            transition
-            hover:bg-green-700
-            active:scale-95
-          "
-        >
-          Start Sorting
-        </button>
-      )}
+
+        <Timer
+
+          timeLeft={
+            timeLeft
+          }
+
+        />
 
 
-      <GameOverModal
-        open={status === "finished"}
-        score={score}
-        bestScore={score}
-        remainingPlays={3}
-        onPlayAgain={startGame}
-        onClose={closeGame}
-      />
+      </div>
 
-    </section>
+
+
+
+
+
+
+
+
+      {
+        status === "idle" && (
+
+          <button
+
+            onClick={
+              startGame
+            }
+
+
+            className="
+              rounded-xl
+              bg-green-600
+              px-8
+              py-3
+              font-bold
+              text-white
+              hover:bg-green-700
+            "
+
+          >
+
+            Start Game
+
+          </button>
+
+        )
+      }
+
+
+
+
+
+
+
+
+
+      {
+        status === "playing" && (
+
+          <GameCanvas
+
+
+            trash={
+              trash
+            }
+
+
+            bins={
+              bins
+            }
+
+
+
+            onDragStart={
+              handleDragStart
+            }
+
+
+            onDragMove={
+              handleDragMove
+            }
+
+
+            onDragEnd={
+              handleDragEnd
+            }
+
+
+          />
+
+        )
+      }
+
+
+
+
+
+
+
+
+
+      {
+        status === "playing" && (
+
+          <button
+
+            onClick={
+              finishGame
+            }
+
+
+            className="
+              rounded-lg
+              bg-red-500
+              px-6
+              py-2
+              font-semibold
+              text-white
+            "
+
+          >
+
+            End Game
+
+          </button>
+
+        )
+      }
+
+
+
+
+
+
+
+
+
+{
+  status === "finished" && (
+
+    <GameOverModal
+
+      open={
+        true
+      }
+
+
+      score={
+        score
+      }
+
+
+      bestScore={
+        bestScore
+      }
+
+
+      remainingPlays={
+        remainingPlays
+      }
+
+
+      onPlayAgain={
+        startGame
+      }
+
+
+      onClose={
+        resetGame
+      }
+
+    />
+
+  )
+}
+
+
+
+
+
+
+
+    </div>
+
   );
+
 }

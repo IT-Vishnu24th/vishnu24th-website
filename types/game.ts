@@ -4,41 +4,65 @@ export type TrashType =
   | "food";
 
 
+export type TrashItem = {
+  templateId: number;
+  name: string;
+  type: TrashType;
+  emoji: string;
+};
+
+
+export type FallingTrash = TrashItem & {
+  id: string;
+
+  x: number;
+  y: number;
+
+  width: number;
+  height: number;
+
+  speed: number;
+
+  grabbed: boolean;
+  isDragging: boolean;
+
+  offsetX: number;
+  offsetY: number;
+};
+
+
+export type BinData = {
+  type: TrashType;
+  label: string;
+};
+
+
+export type BinState = {
+  type: TrashType;
+
+  label: string;
+
+  x: number;
+  y: number;
+
+  width: number;
+  height: number;
+};
+
+
 export type GameStatus =
-  | "ready"
+  | "idle"
   | "playing"
   | "finished";
 
 
-export interface TrashItem {
-  templateId: number;
-  name: string;
-  type: TrashType;
-  emoji: string;
-}
-
-
-export interface FallingTrash {
-  id: string;
-
-  templateId: number;
-
-  name: string;
-
-  type: TrashType;
-
-  emoji: string;
-
-  x: number;
-
-  y: number;
-
-  speed: number;
-}
-
-
-export interface GameResult {
+export type GameResult = {
   score: number;
-  bestScore: number;
-  playedAt: number;
-}
+  date: string;
+};
+
+
+export type PlayHistory = {
+  date: string;
+  plays: number;
+};

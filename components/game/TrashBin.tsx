@@ -1,122 +1,80 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
-import type { TrashType } from "@/types/game";
-
-import type { CollisionBox } from "@/utils/collision";
+import type {
+  CSSProperties,
+} from "react";
 
 
-interface TrashBinProps {
-  type: TrashType;
-  label: string;
-
-  onRegister?: (
-    type: TrashType,
-    box: CollisionBox
-  ) => void;
-}
+import type {
+  BinState,
+} from "@/types/game";
 
 
-const BIN_SIZE = {
-  width: 100,
-  height: 100,
+
+type TrashBinProps = {
+
+  bin:BinState;
+
 };
 
 
+
+
+
+
 export default function TrashBin({
-  type,
-  label,
-  onRegister,
-}: TrashBinProps) {
-
-  const binRef =
-    useRef<HTMLDivElement | null>(null);
+  bin,
+}:TrashBinProps){
 
 
-  useEffect(() => {
-    const element =
-      binRef.current;
 
-    if (!element || !onRegister) {
-      return;
-    }
+  const style:CSSProperties = {
 
+    position:"absolute",
 
-    const updatePosition = () => {
-      const rect =
-  element.getBoundingClientRect();
+    left:bin.x,
 
+    top:bin.y,
 
-const parent =
-  element.parentElement
-    ?.getBoundingClientRect();
+    width:bin.width,
+
+    height:bin.height,
+
+  };
 
 
-if (!parent) {
-  return;
-}
 
-
-onRegister(
-  type,
-  {
-    x: rect.left - parent.left,
-    y: rect.top - parent.top,
-    width: rect.width,
-    height: rect.height,
-  }
-);
-    };
-
-
-    updatePosition();
-
-
-    window.addEventListener(
-      "resize",
-      updatePosition
-    );
-
-
-    return () => {
-      window.removeEventListener(
-        "resize",
-        updatePosition
-      );
-    };
-
-  }, [
-    type,
-    onRegister,
-  ]);
 
 
   return (
+
     <div
-      ref={binRef}
+
+      style={
+        style
+      }
+
+
       className="
         flex
-        h-24
-        w-24
-        flex-col
         items-center
         justify-center
         rounded-xl
-        bg-white
+        border-4
+        border-white
+        bg-white/70
         shadow-md
-        select-none
+        text-center
+        font-bold
+        text-sm
       "
-    >
-      <div className="text-3xl">
-        {type === "recycle" && "♻️"}
-        {type === "general" && "🗑️"}
-        {type === "food" && "🍎"}
-      </div>
 
-      <span className="text-xs font-semibold">
-        {label}
-      </span>
+    >
+
+      {bin.label}
+
     </div>
+
   );
+
 }

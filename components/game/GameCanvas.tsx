@@ -1,199 +1,468 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import {
+  useCallback,
+  useRef,
+} from "react";
 
-import Trash from "@/components/game/Trash";
-import TrashBin from "@/components/game/TrashBin";
+
+import Trash from "./Trash";
+import TrashBin from "./TrashBin";
+
 
 import type {
   FallingTrash,
-  TrashType,
+  BinState,
 } from "@/types/game";
 
-import type {
-  CollisionBox,
-} from "@/utils/collision";
 
 
-type GameCanvasProps = {
-  trash: FallingTrash[];
-
-  onDragStart?: (id: string) => void;
-
-  onDragMove?: (
-    id: string,
-    position: {
-      x: number;
-      y: number;
-    }
-  ) => void;
-
-  onDragEnd?: (
-    id: string,
-    position: {
-      x: number;
-      y: number;
-    }
-  ) => void;
-
-
-  onBinsUpdate?: (
-    bins: Record<
-      TrashType,
-      CollisionBox
-    >
-  ) => void;
+type PointerPosition = {
+  x:number;
+  y:number;
 };
 
 
-const binList: {
-  type: TrashType;
-  label: string;
-}[] = [
-  {
-    type: "recycle",
-    label: "Recycle",
-  },
-  {
-    type: "general",
-    label: "General",
-  },
-  {
-    type: "food",
-    label: "Food",
-  },
-];
+
+type DragState = {
+  id:string;
+
+  offsetX:number;
+  offsetY:number;
+};
+
+
+
+
+type GameCanvasProps = {
+
+  trash:FallingTrash[];
+
+  bins:BinState[];
+
+
+  onDragStart?:
+    (
+      id:string
+    )=>void;
+
+
+  onDragMove?:
+    (
+      id:string,
+      x:number,
+      y:number
+    )=>void;
+
+
+  onDragEnd?:
+    (
+      id:string
+    )=>void;
+
+};
+
+
+
+
+const WIDTH = 800;
+const HEIGHT = 600;
+
+
+
 
 
 export default function GameCanvas({
+
   trash,
+
+  bins,
+
+
   onDragStart,
+
   onDragMove,
+
   onDragEnd,
-  onBinsUpdate,
-}: GameCanvasProps) {
+
+}:GameCanvasProps){
+
 
 
   const canvasRef =
-    useRef<HTMLDivElement | null>(null);
-
-
-  const binsRef =
-    useRef<
-      Partial<Record<
-        TrashType,
-        CollisionBox
-      >>
-    >({});
+    useRef<HTMLDivElement|null>(
+      null
+    );
 
 
 
-  const registerBin =
+  const dragRef =
+    useRef<DragState|null>(
+      null
+    );
+
+
+
+
+
+
+
+  const getPointerPosition =
     useCallback(
       (
-        type: TrashType,
-        box: CollisionBox
-      ) => {
-
-        binsRef.current[type] =
-          box;
+        event:React.PointerEvent
+      ):PointerPosition => {
 
 
-        if (
-          binsRef.current.recycle &&
-          binsRef.current.general &&
-          binsRef.current.food
-        ) {
+        const element =
+          canvasRef.current;
 
-          onBinsUpdate?.(
-            binsRef.current as Record<
-              TrashType,
-              CollisionBox
-            >
-          );
 
+        if(!element){
+          return {
+            x:0,
+            y:0,
+          };
         }
+
+
+
+        const rect =
+          element.getBoundingClientRect();
+
+
+
+        const scaleX =
+          WIDTH /
+          rect.width;
+
+
+        const scaleY =
+          HEIGHT /
+          rect.height;
+
+
+
+        return {
+
+          x:
+            (event.clientX -
+            rect.left)
+            *
+            scaleX,
+
+
+          y:
+            (event.clientY -
+            rect.top)
+            *
+            scaleY,
+
+        };
+
+      },
+      []
+    );
+
+
+
+
+
+
+
+  const findTrash =
+    useCallback(
+      (
+        x:number,
+        y:number
+      )=>{
+
+
+        return trash
+          .slice()
+          .reverse()
+          .find(item=>{
+
+
+            return (
+
+              x >= item.x &&
+
+              x <= item.x +
+              item.width &&
+
+
+              y >= item.y &&
+
+              y <= item.y +
+              item.height
+
+            );
+
+          });
+
 
       },
       [
-        onBinsUpdate,
+        trash,
       ]
     );
 
 
 
+
+
+
+
+
+  const handlePointerDown =
+    useCallback(
+      (
+        event:React.PointerEvent
+      )=>{
+
+
+        const position =
+          getPointerPosition(
+            event
+          );
+
+
+        const target =
+          findTrash(
+            position.x,
+            position.y
+          );
+
+
+
+        if(!target){
+          return;
+        }
+
+
+
+
+        event.currentTarget
+          .setPointerCapture(
+            event.pointerId
+          );
+
+
+
+        dragRef.current =
+        {
+
+          id:
+            target.id,
+
+
+          offsetX:
+            position.x -
+            target.x,
+
+
+          offsetY:
+            position.y -
+            target.y,
+
+        };
+
+
+
+        onDragStart?.(
+          target.id
+        );
+
+      },
+      [
+        findTrash,
+        getPointerPosition,
+        onDragStart,
+      ]
+    );
+  const handlePointerMove =
+    useCallback(
+      (
+        event:React.PointerEvent
+      )=>{
+
+
+        const drag =
+          dragRef.current;
+
+
+        if(!drag){
+          return;
+        }
+
+
+
+        const position =
+          getPointerPosition(
+            event
+          );
+
+
+
+        onDragMove?.(
+          drag.id,
+
+          position.x -
+          drag.offsetX,
+
+          position.y -
+          drag.offsetY
+        );
+
+      },
+      [
+        getPointerPosition,
+        onDragMove,
+      ]
+    );
+
+
+
+
+
+
+  const handlePointerUp =
+    useCallback(
+      (
+        event:React.PointerEvent
+      )=>{
+
+
+        const drag =
+          dragRef.current;
+
+
+
+        if(!drag){
+          return;
+        }
+
+
+
+        dragRef.current =
+          null;
+
+
+
+
+        try {
+
+          event.currentTarget
+            .releasePointerCapture(
+              event.pointerId
+            );
+
+        } catch {
+
+          // pointer already released
+
+        }
+
+
+
+
+        onDragEnd?.(
+          drag.id
+        );
+
+
+      },
+      [
+        onDragEnd,
+      ]
+    );
+    
   return (
+
     <div
+
       ref={canvasRef}
+
       className="
         relative
-        h-[600px]
-        w-full
         overflow-hidden
+        select-none
+        touch-none
+        w-full
+        aspect-[4/3]
+        bg-sky-100
         rounded-xl
-        bg-green-50
       "
+
+      onPointerDown={
+        handlePointerDown
+      }
+
+      onPointerMove={
+        handlePointerMove
+      }
+
+      onPointerUp={
+        handlePointerUp
+      }
+
+      onPointerCancel={
+        handlePointerUp
+      }
+
+      style={{
+        touchAction:"none",
+      }}
+
     >
 
-      {trash.map(
-        (item) => (
-          <Trash
-            key={item.id}
-            trash={item}
 
-            canvasRef={canvasRef}
 
-            onDragStart={
-              onDragStart
+      {
+        bins.map(bin=>(
+
+          <TrashBin
+
+            key={
+              bin.type
             }
 
-            onDragMove={
-              onDragMove
+            bin={
+              bin
             }
 
-            onDragEnd={
-              onDragEnd
-            }
           />
-        )
-      )}
+
+        ))
+      }
 
 
 
-      <div
-        className="
-          absolute
-          bottom-4
-          left-0
-          flex
-          w-full
-          justify-center
-          gap-4
-          px-4
-        "
-      >
 
-        {binList.map(
-          (bin) => (
 
-            <TrashBin
-              key={bin.type}
+      {
+        trash.map(item=>(
 
-              type={bin.type}
+          <Trash
 
-              label={bin.label}
+            key={
+              item.id
+            }
 
-              onRegister={
-                registerBin
-              }
-            />
+            trash={
+              item
+            }
 
-          )
-        )}
+          />
 
-      </div>
+        ))
+      }
+
 
 
     </div>
+
   );
+
 }
