@@ -1,4 +1,4 @@
-import { WebsitePhaseBlock } from "@/features/websitePhase/components/WebsitePhaseBlock"
+import { WebsitePhaseBlock } from "@/features/admin/websitePhase/components/WebsitePhaseBlock"
 
 const websitePhaseSections = [
   {

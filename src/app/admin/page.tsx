@@ -8,19 +8,19 @@ import SponsorFooter from "@/components/SponsorFooter"
 const adminActions = [
   {
     label: "ฟีเจอร์",
-    href: "/admin/website-settings",
+    href: "/admin/website_settings",
     icon: Star,
   },
   {
     label: "สถานะชมรม",
-    href: "/admin/club-status",
+    href: "/admin/stage_status",
     icon: Volleyball,
   },
 ]
 
 export default function AdminPage() {
   return (
-    <main className="flex min-h-svh min-w-svw justify-center bg-neutral-100">
+    <main className="flex min-h-svh w-full justify-center bg-neutral-100">
       <div className="w-full max-w-98.25 bg-white pb-40 text-black">
         <Header />
 
