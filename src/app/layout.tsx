@@ -24,7 +24,7 @@ const fcQuantum = localFont({
 })
 
 const sovYeeHor = localFont({
-  src: "../fonts/SOV_YEEHOR.ttf",
+  src: "../fonts/SOV_YeeHor.ttf",
   variable: "--font-sov-yeehor",
   display: "swap",
 })
