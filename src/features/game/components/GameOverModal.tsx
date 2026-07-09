@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
 interface GameOverModalProps {
-  open: boolean;
-  score: number;
-  bestScore: number;
-  remainingPlays: number;
-  onPlayAgain: () => void;
-  onClose: () => void;
+  open: boolean
+  score: number
+  bestScore: number
+  remainingPlays: number
+  onPlayAgain: () => void
+  onClose: () => void
 }
 
 export default function GameOverModal({
@@ -18,33 +18,22 @@ export default function GameOverModal({
   onClose,
 }: GameOverModalProps) {
   if (!open) {
-    return null;
+    return null
   }
 
-  const isNewBest = score >= bestScore && score > 0;
+  const isNewBest = score >= bestScore && score > 0
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-        <h2 className="text-center text-3xl font-bold">
-          🎉 Game Over
-        </h2>
+        <h2 className="text-center text-3xl font-bold">🎉 Game Over</h2>
 
         <div className="mt-8 space-y-4">
-          <StatRow
-            label="Final Score"
-            value={score}
-          />
+          <StatRow label="Final Score" value={score} />
 
-          <StatRow
-            label="Best Score"
-            value={bestScore}
-          />
+          <StatRow label="Best Score" value={bestScore} />
 
-          <StatRow
-            label="Plays Remaining"
-            value={remainingPlays}
-          />
+          <StatRow label="Plays Remaining" value={remainingPlays} />
         </div>
 
         {isNewBest && (
@@ -71,27 +60,20 @@ export default function GameOverModal({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface StatRowProps {
-  label: string;
-  value: number;
+  label: string
+  value: number
 }
 
-function StatRow({
-  label,
-  value,
-}: StatRowProps) {
+function StatRow({ label, value }: StatRowProps) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
-      <span className="text-gray-600">
-        {label}
-      </span>
+      <span className="text-gray-600">{label}</span>
 
-      <span className="text-xl font-bold">
-        {value}
-      </span>
+      <span className="text-xl font-bold">{value}</span>
     </div>
-  );
+  )
 }

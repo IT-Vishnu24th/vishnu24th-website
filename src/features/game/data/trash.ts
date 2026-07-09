@@ -1,4 +1,4 @@
-import { TrashItem, BinData } from "@/types/game";
+import { TrashItem, BinData } from "../types/game"
 
 export const TRASH_ITEMS: TrashItem[] = [
   // Recycle
@@ -114,7 +114,7 @@ export const TRASH_ITEMS: TrashItem[] = [
     type: "food",
     emoji: "🍞",
   },
-];
+]
 
 export const BINS: BinData[] = [
   {
@@ -129,16 +129,16 @@ export const BINS: BinData[] = [
     type: "food",
     label: "🍎 Food",
   },
-];
+]
 
-export const GAME_DURATION = 30;
+export const GAME_DURATION = 30
 
-export const INITIAL_FALL_SPEED = 120;
+export const INITIAL_FALL_SPEED = 120
 
-export const MAX_FALL_SPEED = 320;
+export const MAX_FALL_SPEED = 320
 
-export const SPEED_INCREASE = 5;
+export const SPEED_INCREASE = 5
 
-export const SPAWN_INTERVAL = 900;
+export const SPAWN_INTERVAL = 900
 
-export const MAX_PLAYS_PER_DAY = 3;
+export const MAX_PLAYS_PER_DAY = 3

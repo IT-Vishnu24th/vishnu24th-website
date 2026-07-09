@@ -1,22 +1,14 @@
-"use client";
+"use client"
 
-import type { CSSProperties } from "react";
+import type { CSSProperties } from "react"
 
-import type {
-  FallingTrash,
-} from "@/types/game";
-
+import type { FallingTrash } from "../types/game"
 
 type TrashProps = {
-  trash: FallingTrash;
-};
+  trash: FallingTrash
+}
 
-
-export default function Trash({
-  trash,
-}: TrashProps) {
-
-
+export default function Trash({ trash }: TrashProps) {
   const style: CSSProperties = {
     position: "absolute",
 
@@ -32,10 +24,8 @@ export default function Trash({
 
     userSelect: "none",
 
-
     pointerEvents: "none",
-  };
-
+  }
 
   return (
     <div
@@ -50,5 +40,5 @@ export default function Trash({
     >
       {trash.emoji}
     </div>
-  );
+  )
 }
