@@ -5,6 +5,8 @@ import { Hand } from "lucide-react"
 import BuildingInfo from "@/features/map/components/BuildingInfo"
 import { useRouter } from "next/navigation"
 import { buildingData } from "@/features/map/const/mock"
+import Image from "next/image"
+import Sponsor from "@/components/SponsorFooter"
 
 export default function MapPage() {
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
@@ -31,42 +33,59 @@ export default function MapPage() {
   const selected = selectedBuilding ? buildingData[selectedBuilding] : null
 
   return (
-    <div className="mx-auto pb-8 font-sans">
-      <Header />
+    <div className="">
       {/* Top Bar */}
-      <div className="flex items-center px-4 pt-4 pb-2">
-        <button
-          onClick={() => router.push("/")}
-          className="text-2xl bg-transparent border-none cursor-pointer p-0 mr-2"
-          aria-label="กลับ"
-        >
-          ←
-        </button>
-        <h1 className="flex-1 text-center text-3xl font-bold font-serif pr-8">แผนที่</h1>
+
+      <div className="text-center bg-gradient-to-b from-midnight to-brownie">
+        <Header />
+        <div className="relative flex items-center justify-center px-4 pb-2">
+          <button
+            onClick={() => router.push("/explore")}
+            className="absolute left-6 top-10 text-2xl bg-transparent border-none cursor-pointer p-0"
+            aria-label="กลับ"
+          >
+            ←
+          </button>
+          <h1 className="text-7xl font-sov-yeehor">แผนที่</h1>
+        </div>
+        <h3 className="text-md text-clay-light font-fc-quantum pt-2">
+          ดูรายชื่อกิจกรรม และรอบเวลา <br></br>ของเวทีลานเกียร์
+        </h3>
+        <div className="relative w-full h-8 overflow-hidden">
+          <Image
+            src="/map/map-line.png"
+            alt=""
+            fill
+            className="object-fill scale-102 translate-y- z-index-20"
+          />
+        </div>
       </div>
 
       {/* Map Area */}
-      <div className="mx-4 my-3 overflow-hidden rounded-2xl bg-white">
-        <iframe
-          src="/map/engineer.html"
-          title="แผนที่"
-          className="block w-full aspect-[4/3] border-0"
-          scrolling="no"
-        />
-      </div>
-
-      {/* text */}
-      <div className="flex items-center gap-2 px-4 py-3 text-base">
-        <Hand size={20} className="text-gray-700" />
-        <span>แตะบนอาคารที่ต้องการดูแผนที่ชมรม</span>
+      <div className="bg-cream-tanned py-3 z-0 -mt-5 pb-10">
+        <div className="mx-4 mt-10 my-3 overflow-hidden rounded-2xl bg-cream-tanned">
+          <iframe
+            src="/map/engineer.html"
+            title="แผนที่"
+            className="block w-full aspect-[4/3] border-0"
+          />
+        </div>
+        {/* text */}
+        <div className="flex items-center gap-2 px-4 py-3 text-base text-brownie-light">
+          <Image src="/map/hand.png" alt="" width={23} height={21} />
+          <span>แตะบนอาคารที่ต้องการดูแผนที่ชมรม</span>
+        </div>
       </div>
 
       {/* Building Info - โผล่ขึ้นมาในหน้าเดียวกันเมื่อเลือกตึก */}
-      {selected && (
-        <div ref={infoRef}>
-          <BuildingInfo buildingName={selected.name} clubs={selected.clubs} />
-        </div>
-      )}
+      <div className="">
+        {selected && (
+          <div ref={infoRef}>
+            <BuildingInfo buildingName={selected.name} clubs={selected.clubs} />
+          </div>
+        )}
+      </div>
+      <Sponsor />
     </div>
   )
 }
