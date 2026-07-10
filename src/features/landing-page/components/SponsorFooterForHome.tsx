@@ -16,44 +16,23 @@ export default function Footer() {
         <h2 className="mb-8 text-center text-4xl font-sov-yeehor">ขอขอบคุณผู้สนับสนุน</h2>
 
         {/* BIG */}
-        <div className="mb-8 flex flex-col items-center gap-5 z-50">
-          {/* แถวบน 2 อัน */}
-          <div className="flex justify-center gap-5">
-            {bigSponsors.slice(0, 2).map((sponsor) => (
-              <div
-                key={sponsor.name}
-                className="relative h-20 w-28 overflow-hidden rounded-xl bg-neutral-200"
-              >
-                <Image
-                  src={`/sponsor/brand/${sponsor.image}`}
-                  alt={sponsor.name}
-                  fill
-                  className="object-contain p-2"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* แถวล่าง 1 อัน */}
-          <div className="flex justify-center">
-            <div className="relative h-20 w-28 overflow-hidden rounded-xl bg-neutral-200">
+        <div className="mb-8 flex flex-col items-center ">
+          {bigSponsors.map((sponsor) => (
+            <div key={sponsor.name} className="relative h-25 w-35 overflow-hidden">
               <Image
-                src={`/sponsor/brand/${bigSponsors[2].image}`}
-                alt={bigSponsors[2].name}
+                src={`/sponsor/brand/${sponsor.image}`}
+                alt={sponsor.name}
                 fill
-                className="object-contain p-2"
+                className="object-contain"
               />
             </div>
-          </div>
+          ))}
         </div>
 
         {/* MEDIUM */}
         <div className="mb-8 flex flex-wrap justify-center gap-4">
           {mediumSponsors.map((sponsor) => (
-            <div
-              key={sponsor.name}
-              className="relative h-14 w-20 overflow-hidden rounded-lg bg-neutral-200"
-            >
+            <div key={sponsor.name} className="relative h-15 w-20 overflow-hidden bg-white">
               <Image
                 src={`/sponsor/brand/${sponsor.image}`}
                 alt={sponsor.name}
@@ -67,10 +46,7 @@ export default function Footer() {
         {/* SMALL */}
         <div className="flex flex-wrap justify-center gap-3">
           {smallSponsors.map((sponsor) => (
-            <div
-              key={sponsor.name}
-              className="relative h-10 w-14 overflow-hidden rounded-md bg-neutral-200"
-            >
+            <div key={sponsor.name} className="relative h-13 w-15 overflow-hidden bg-white">
               <Image
                 src={`/sponsor/brand/${sponsor.image}`}
                 alt={sponsor.name}
