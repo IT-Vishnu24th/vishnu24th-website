@@ -87,12 +87,9 @@ export default function HomePage() {
         </div>
 
         {/* <AuthResult isSucess={true} /> */}
-        <div className="-mt-3 md:-mt-4 relative ">
-          <div className="absolute -top-30 inset-0 z-50 pointer-events-none">
-            <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
-          </div>
 
-          <div className="z-20">
+        <div className="z-20">
+          <div className="-mt-3 md:-mt-4 relative ">
             <SponsorFooter />
           </div>
 

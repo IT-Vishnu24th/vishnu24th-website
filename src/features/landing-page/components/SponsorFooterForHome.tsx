@@ -1,55 +1,82 @@
+import Image from "next/image"
+import { bigSponsors, mediumSponsors, smallSponsors } from "@/features/sponsor/const/data"
+
 export default function Footer() {
-  const bigSponsors = ["Sponsor 1", "Sponsor 2"]
-
-  const mediumSponsors = ["Sponsor 3", "Sponsor 4", "Sponsor 5", "Sponsor 6"]
-
-  const smallSponsors = [
-    "Sponsor 7",
-    "Sponsor 8",
-    "Sponsor 9",
-    "Sponsor 10",
-    "Sponsor 11",
-    "Sponsor 12",
-    "Sponsor 13",
-  ]
-
   return (
-    <footer className="w-full pt-10 pb-60 bg-[#F0865C]">
-      <div className="max-w-6xl mx-auto px-3">
-        <h2 className="text-center text-4xl font-sov-yeehor mb-8">ขอขอบคุณผู้สนับสนุน</h2>
+    <footer className="relative w-full pt-10 pb-60">
+      {/* bg สีส้ม แยกเป็น layer ล่างสุด */}
+      <div className="absolute inset-0 z-0 bg-[#F0865C]" />
+
+      {/* sponsor art: อยู่เหนือ bg แต่ใต้เนื้อหา โผล่พ้นขอบบนของ footer ได้ */}
+      <div className="absolute -top-30 inset-0 z-10 pointer-events-none">
+        <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
+      </div>
+
+      <div className="relative z-20 mx-auto max-w-6xl px-3">
+        <h2 className="mb-8 text-center text-4xl font-sov-yeehor">ขอขอบคุณผู้สนับสนุน</h2>
 
         {/* BIG */}
-        <div className="flex justify-center gap-5 mb-8">
-          {bigSponsors.map((name) => (
-            <div
-              key={name}
-              className="w-28 h-20 rounded-xl bg-neutral-200 flex items-center justify-center text-sm text-neutral-500"
-            >
-              {name}
+        <div className="mb-8 flex flex-col items-center gap-5 z-50">
+          {/* แถวบน 2 อัน */}
+          <div className="flex justify-center gap-5">
+            {bigSponsors.slice(0, 2).map((sponsor) => (
+              <div
+                key={sponsor.name}
+                className="relative h-20 w-28 overflow-hidden rounded-xl bg-neutral-200"
+              >
+                <Image
+                  src={`/sponsor/brand/${sponsor.image}`}
+                  alt={sponsor.name}
+                  fill
+                  className="object-contain p-2"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* แถวล่าง 1 อัน */}
+          <div className="flex justify-center">
+            <div className="relative h-20 w-28 overflow-hidden rounded-xl bg-neutral-200">
+              <Image
+                src={`/sponsor/brand/${bigSponsors[2].image}`}
+                alt={bigSponsors[2].name}
+                fill
+                className="object-contain p-2"
+              />
             </div>
-          ))}
+          </div>
         </div>
 
         {/* MEDIUM */}
-        <div className="flex justify-center gap-4 mb-8 flex-wrap">
-          {mediumSponsors.map((name) => (
+        <div className="mb-8 flex flex-wrap justify-center gap-4">
+          {mediumSponsors.map((sponsor) => (
             <div
-              key={name}
-              className="w-20 h-14 rounded-lg bg-neutral-200 flex items-center justify-center text-xs text-neutral-500"
+              key={sponsor.name}
+              className="relative h-14 w-20 overflow-hidden rounded-lg bg-neutral-200"
             >
-              {name}
+              <Image
+                src={`/sponsor/brand/${sponsor.image}`}
+                alt={sponsor.name}
+                fill
+                className="object-contain p-2"
+              />
             </div>
           ))}
         </div>
 
         {/* SMALL */}
         <div className="flex flex-wrap justify-center gap-3">
-          {smallSponsors.map((name) => (
+          {smallSponsors.map((sponsor) => (
             <div
-              key={name}
-              className="w-14 h-10 rounded-md bg-neutral-200 flex items-center justify-center text-[10px] text-neutral-500"
+              key={sponsor.name}
+              className="relative h-10 w-14 overflow-hidden rounded-md bg-neutral-200"
             >
-              {name}
+              <Image
+                src={`/sponsor/brand/${sponsor.image}`}
+                alt={sponsor.name}
+                fill
+                className="object-contain p-1"
+              />
             </div>
           ))}
         </div>
