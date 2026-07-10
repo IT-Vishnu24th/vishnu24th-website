@@ -13,7 +13,7 @@ export default function Footer() {
       </div>
 
       <div className="relative z-20 mx-auto max-w-6xl px-3">
-        <h2 className="mb-8 text-center text-4xl font-sov-yeehor">ขอขอบคุณผู้สนับสนุน</h2>
+        <h2 className="mb-8 text-center text-5xl font-sov-yeehor ">ขอขอบคุณผู้สนับสนุน</h2>
 
         {/* BIG */}
         <div className="mb-8 flex flex-col items-center ">
