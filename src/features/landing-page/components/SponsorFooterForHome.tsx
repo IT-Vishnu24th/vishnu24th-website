@@ -4,10 +4,10 @@ import { bigSponsors, mediumSponsors, smallSponsors } from "@/features/sponsor/c
 export default function Footer() {
   return (
     <footer className="relative w-full pt-10 pb-60">
-      {/* bg สีส้ม แยกเป็น layer ล่างสุด */}
+      {/* bg สีส้ม */}
       <div className="absolute inset-0 z-0 bg-[#F0865C]" />
 
-      {/* sponsor art: อยู่เหนือ bg แต่ใต้เนื้อหา โผล่พ้นขอบบนของ footer ได้ */}
+      {/* sponsor art*/}
       <div className="absolute -top-30 inset-0 z-10 pointer-events-none">
         <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
       </div>

@@ -16,7 +16,7 @@ export default function HomePage() {
           src="/landingpage/art-background.png"
           alt=""
           fill
-          className="object-contain object-[center_10%]"
+          className="object-contain object-[center_6%]"
         />
       </div>
 
