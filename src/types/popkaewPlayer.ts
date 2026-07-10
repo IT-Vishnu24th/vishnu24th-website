@@ -4,7 +4,6 @@ import { User } from "./user"
 export interface popkaewPlayer {
   name: string
   vessel: string
-  group: string
   popkaewscore: number
   lastClickAt: Timestamp
 }

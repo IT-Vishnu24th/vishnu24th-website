@@ -4,7 +4,7 @@ import { popkaewPlayer } from "@/types/popkaewPlayer"
 import { popkaewVessel } from "@/types/popkaewVessel"
 
 export async function click(playerId: string) {
-  const playerRef = adminDb.collection("popkaewPlayer").doc(playerId)
+  const playerRef = await adminDb.collection("popkaewPlayer").doc(playerId)
 
   let newScore = 0
 
@@ -18,7 +18,7 @@ export async function click(playerId: string) {
 
     const player = playerDoc.data() as popkaewPlayer
 
-    const playergroup = adminDb.collection("popkaewVessel").doc(player.vessel)
+    const playergroup = await adminDb.collection("popkaewVessel").doc(player.vessel)
 
     transaction.update(playerRef, {
       popkaewscore: FieldValue.increment(1),

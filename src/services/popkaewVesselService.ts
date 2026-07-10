@@ -56,7 +56,7 @@ const popkaewVesselService = {
     })
   },
 
-  async leaderboard(limit = 10) {
+  async leaderboard(limit = 3) {
     const snapshot = await vesselCollection.orderBy("popkaewscore", "desc").limit(limit).get()
 
     return snapshot.docs.map((doc, index) => ({
