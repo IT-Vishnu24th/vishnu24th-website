@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { LoginButton } from "@/features/auth/components/LoginButton"
 import { LanguageChangerButton } from "@/features/i18n/components/LanguageChangerButton"
-import { UserInfoButton } from "@/features/userInfo/components/UserInfoButton"
+import { UserInfoButton } from "@/features/auth/components/UserInfoButton"
 
 export const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
