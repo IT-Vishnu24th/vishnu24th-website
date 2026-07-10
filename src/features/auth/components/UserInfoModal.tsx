@@ -3,16 +3,17 @@
 import * as Dialog from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
-import { UserProfileSection } from "@/features/userInfo/components/UserProfileSection"
-import { YarnSection } from "@/features/userInfo/components/YarnSection"
+import { UserProfileSection } from "@/features/auth/components/UserProfileSection"
+import { YarnSection } from "@/features/auth/components/YarnSection"
 import { modalStore } from "@/stores/modalStore"
-import { getMockUser } from "../const/mock"
 import { UserInfoSection } from "./UserInfoSection"
 import { motion } from "motion/react"
 import { LanguageChangerButton } from "@/features/i18n/components/LanguageChangerButton"
+import { useMe } from "@/hooks/useApi"
 
 export const UserInfoModal = () => {
-  const displayUser = getMockUser()
+  const { data, isLoading } = useMe()
+  const user = data?.data
 
   return (
     <section className="fixed inset-y-0 left-1/2 z-60 min-h-svh w-full -translate-x-1/2 overflow-y-auto bg-[linear-gradient(180deg,#2D3542_0%,#2D4B5F_42.31%,rgba(147,78,67,0.8)_100%)] focus-visible:outline-none">
@@ -21,7 +22,7 @@ export const UserInfoModal = () => {
         แสดงข้อมูลนิสิต กลุ่ม ยาน และข้อมูลส่วนตัว
       </Dialog.Description>
 
-      <div className="flex items-center justify-between px-4.5 pt-12">
+      <div className="flex items-center justify-between px-4.5 pt-6">
         <LanguageChangerButton />
         <button
           type="button"
@@ -33,15 +34,17 @@ export const UserInfoModal = () => {
         </button>
       </div>
 
-      <motion.div
-        key={modalStore.isOpen() ? "open" : "closed"}
-        initial={{ y: 18, opacity: 0 }}
-        animate={{ y: [18, 62, 62], opacity: [0, 1, 1] }}
-      >
-        <UserProfileSection user={displayUser} />
-        <YarnSection user={displayUser} />
-        <UserInfoSection user={displayUser} />
-      </motion.div>
+      {user && !isLoading && (
+        <motion.div
+          key={modalStore.isOpen() ? "open" : "closed"}
+          initial={{ y: 18, opacity: 0 }}
+          animate={{ y: [18, 62, 62], opacity: [0, 1, 1] }}
+        >
+          <UserProfileSection user={user} />
+          <YarnSection user={user} />
+          <UserInfoSection user={user} />
+        </motion.div>
+      )}
     </section>
   )
 }
