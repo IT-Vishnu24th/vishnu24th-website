@@ -41,7 +41,7 @@ export default function MapPage() {
       <div className="bg-cream-tanned py-3 -mt-5 pb-10">
         <div className="mx-4 mt-10 overflow-hidden rounded-2xl">
           <Image
-            src="/map/Map.png"
+            src="/map/map.svg"
             alt="Map"
             width={1000}
             height={700}

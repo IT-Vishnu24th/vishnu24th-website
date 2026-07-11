@@ -21,13 +21,13 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
         <h2 className="text-center font-sov-yeehor text-5xl mb-5">{buildingName}</h2>
 
         <div className="mx-4 my-3 overflow-hidden rounded-2xl">
-          {/* <Image
-            src="/map/larngear.png"
+          <Image
+            src="/map/larngear-map.svg"
             alt="ลานเกียร์"
             width={800}
             height={500}
             className="w-full rounded-2xl"
-          /> */}
+          />
           {/* TODO : add img */}
         </div>
 
