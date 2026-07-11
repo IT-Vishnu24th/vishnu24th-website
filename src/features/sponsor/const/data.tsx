@@ -9,12 +9,12 @@ export const bigSponsors: Sponsor[] = [
     image: "pocari.png",
   },
   {
-    name: "gulf",
-    image: "gulf.png",
-  },
-  {
     name: "bright hair",
     image: "brighthair.png",
+  },
+  {
+    name: "gulf",
+    image: "gulf.png",
   },
 ]
 
