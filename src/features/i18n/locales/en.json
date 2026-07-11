@@ -24,6 +24,7 @@
     "ANSWER_ALREADY_SUBMITTED": "You've already submitted an answer for this question.",
     "SUBMISSION_CLOSED": "The submission window for this question is closed.",
     "GAME_NOT_ACTIVE": "The club scanning game is not active right now.",
-    "ALREADY_SCANNED": "You've already scanned this club."
+    "ALREADY_SCANNED": "You've already scanned this club.",
+    "DAILY_LIMIT_REACHED": "You've reached today's play limit."
   }
 }

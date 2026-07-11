@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
-
+import { NextRequest } from "next/server"
+import { success, failure } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import wasteSortPlayerService, { MAX_PLAYS_PER_DAY } from "@/services/wasteSortPlayerService"
 
 type RouteParams = { params: Promise<{ uid: string }> }
@@ -11,12 +12,12 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
   const player = await wasteSortPlayerService.getById(uid)
 
   if (!player) {
-    return NextResponse.json({ error: "Player not found" }, { status: 404 })
+    return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
   }
 
   const playsToday = await wasteSortPlayerService.getPlaysToday(uid)
 
-  return NextResponse.json({
+  return success({
     playsToday,
     maxPlaysPerDay: MAX_PLAYS_PER_DAY,
     playsRemaining: Math.max(0, MAX_PLAYS_PER_DAY - playsToday),
@@ -31,31 +32,31 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
   const score = Number(body?.score)
 
   if (!Number.isFinite(score)) {
-    return NextResponse.json({ error: "score must be a number" }, { status: 400 })
+    return failure(400, AppErrorCode.INVALID_BODY, "score must be a number")
   }
 
   try {
     const player = await wasteSortPlayerService.recordRound(uid, score)
 
     if (!player) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 })
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
-    return NextResponse.json({ player })
+    return success({ player })
   } catch (err) {
     if (err instanceof Error && err.message === "DAILY_LIMIT_REACHED") {
-      return NextResponse.json(
-        {
-          error: "DAILY_LIMIT_REACHED",
-          message: `Already played ${MAX_PLAYS_PER_DAY} times today`,
-        },
-        { status: 429 }
+      return failure(
+        429,
+        AppErrorCode.DAILY_LIMIT_REACHED,
+        `Already played ${MAX_PLAYS_PER_DAY} times today`
       )
     }
 
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to record round" },
-      { status: 400 }
+    console.error("Record round error:", err)
+    return failure(
+      500,
+      AppErrorCode.INTERNAL_ERROR,
+      err instanceof Error ? err.message : "Failed to record round"
     )
   }
 }
