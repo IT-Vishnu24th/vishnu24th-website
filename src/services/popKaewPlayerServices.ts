@@ -60,7 +60,7 @@ const popkaewPlayerService = {
     if (!player) return null
 
     // player.group contains "H", "A", "B", etc.
-    return await popkaewVesselService.getById(player.group)
+    return await popkaewVesselService.getById(player.vessel)
   },
 }
 

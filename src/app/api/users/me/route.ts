@@ -2,6 +2,7 @@ import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import userService, { User } from "@/services/userService"
 import { success, failure, protect, parseBody } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { NextRequest } from "next/server"
 
 export async function GET() {
@@ -12,7 +13,7 @@ export async function GET() {
     return success<User>(user)
   } catch (error) {
     console.error("Error in GET /api/users/me:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -34,11 +35,11 @@ export async function PATCH(req: NextRequest) {
     const updated = await userService.update(user.id, payload)
     return success<User>(updated)
   } catch (error) {
-    if (error instanceof ZodError) return failure(400, "Invalid body")
+    if (error instanceof ZodError) return failure(400, AppErrorCode.INVALID_BODY, "Invalid body")
     if (error instanceof Error && "code" in error && error.code === GrpcStatus.NOT_FOUND)
-      return failure(404, "Not found")
+      return failure(404, AppErrorCode.USER_NOT_FOUND, "Not found")
 
     console.error("Error in PATCH /api/users/me:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

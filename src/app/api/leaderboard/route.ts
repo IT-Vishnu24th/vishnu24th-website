@@ -1,4 +1,5 @@
 import { success, failure } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import groupService from "@/services/groupService"
 import leaderboardService from "@/services/leaderboardService"
 import featureFlagsService from "@/services/featureFlagService"
@@ -37,6 +38,6 @@ export async function GET() {
     return success<LeaderboardResponse>({ top3, rank })
   } catch (error) {
     console.error("Failed to fetch ranking:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

@@ -1,5 +1,6 @@
 import groupService, { type CommitScanBonusResult } from "@/services/groupService"
 import { failure, protectRaw, success } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
 export async function PUT() {
   try {
@@ -10,6 +11,6 @@ export async function PUT() {
     return success<CommitScanBonusResult[]>(result)
   } catch (error) {
     console.error("Error in PUT /api/users/commitScanBonus:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

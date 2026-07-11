@@ -2,6 +2,7 @@ import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import featureFlagsService, { FeatureFlag } from "@/services/featureFlagService"
 import { success, failure, protectRaw, parseBody } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { NextRequest } from "next/server"
 import { multiLangSchema } from "@/types/util"
 
@@ -11,7 +12,7 @@ export async function GET() {
     return success<FeatureFlag[]>(flags)
   } catch (error) {
     console.error(`Error in GET /api/flags:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -32,12 +33,12 @@ export async function POST(req: NextRequest) {
     const featureFlag = await featureFlagsService.createFlag(payload)
     return success<FeatureFlag>(featureFlag)
   } catch (error) {
-    if (error instanceof ZodError) return failure(400, "Invalid body")
+    if (error instanceof ZodError) return failure(400, AppErrorCode.INVALID_BODY, "Invalid body")
     if (error instanceof Error && "code" in error && error.code === GrpcStatus.ALREADY_EXISTS)
-      return failure(409, "Conflict")
+      return failure(409, AppErrorCode.CONFLICT, "Conflict")
 
     console.error(`Error in POST /api/flags:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -54,11 +55,11 @@ export async function PATCH(req: NextRequest) {
     await featureFlagsService.updateFlags(payload)
     return success<boolean>(true)
   } catch (error) {
-    if (error instanceof ZodError) return failure(400, "Invalid body")
+    if (error instanceof ZodError) return failure(400, AppErrorCode.INVALID_BODY, "Invalid body")
     if (error instanceof Error && "code" in error && error.code === GrpcStatus.NOT_FOUND)
-      return failure(404, "Not found")
+      return failure(404, AppErrorCode.FLAG_NOT_FOUND, "Not found")
 
     console.error(`Error in PATCH /api/flags:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
