@@ -1,9 +1,8 @@
-import { NextRequest } from "next/server"
 import { click } from "@/services/popkaewClickService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
 import { AppErrorCode } from "@/types/appErrorCode"
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
