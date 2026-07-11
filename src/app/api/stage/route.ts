@@ -1,6 +1,7 @@
 import z, { ZodError } from "zod"
 import stageService, { type StagePerformance } from "@/services/stageService"
 import { failure, parseBody, protectRaw, success } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { NextRequest } from "next/server"
 import { multiLangSchema } from "@/types/util"
 
@@ -10,7 +11,7 @@ export async function GET() {
     return success<StagePerformance[]>(stages)
   } catch (error) {
     console.error(`Error in GET /api/stage:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -34,9 +35,9 @@ export async function POST(req: NextRequest) {
     const stage = await stageService.create(payload)
     return success<string>(stage)
   } catch (error) {
-    if (error instanceof ZodError) return failure(400, "Invalid body")
+    if (error instanceof ZodError) return failure(400, AppErrorCode.INVALID_BODY, "Invalid body")
 
     console.error(`Error in POST /api/stage:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

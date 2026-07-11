@@ -5,6 +5,8 @@ import { AuthProvider } from "@/features/auth/providers/AuthProvider"
 import { getAuthUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
 import localFont from "next/font/local"
+import { QueryProvider } from "@/lib/react-query"
+import { toast, Toaster } from "sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +25,7 @@ const fcQuantum = localFont({
 })
 
 const sovYeeHor = localFont({
-  src: "../fonts/SOV_YEEHOR.ttf",
+  src: "../fonts/SOV_YeeHor.ttf",
   variable: "--font-sov-yeehor",
   display: "swap",
 })
@@ -105,12 +107,28 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fcQuantum.variable} ${sovYeeHor.variable} ${ppFragmentGlare.variable} ${arthemis.variable} h-full antialiased`}
     >
       <body>
-        <AuthProvider initialUser={user}>
-          <Modal />
-          <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
-            {children}
-          </main>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider initialUser={user}>
+            <Modal />
+            <Toaster
+              toastOptions={{
+                unstyled: true,
+                classNames: {
+                  toast:
+                    "rounded-xl border px-4 py-3 shadow-lg flex items-center [&>div>div]:pb-1 w-full gap-3 rounded-[12px] font-fc-quantum",
+                  success: "bg-status-green-dark border-status-green text-status-green",
+                  error: "bg-status-red-dark border-status-red text-status-red",
+                  warning: "bg-status-yellow-dark border-status-yellow text-status-yellow",
+                  info: "bg-midnight border-turqoise text-turqoise",
+                },
+              }}
+              position="top-center"
+            />
+            <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
+              {children}
+            </main>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )

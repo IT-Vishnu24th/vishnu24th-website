@@ -2,6 +2,7 @@ import { GrpcStatus } from "firebase-admin/firestore"
 import { NextRequest } from "next/server"
 import z from "zod"
 import { success, failure, protectRaw, parseBody } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import userService from "@/services/userService"
 import { getMissionPhase } from "@/services/phaseService"
 import type { UserAnswers, UserAnswersResponse } from "@/types/user"
@@ -37,7 +38,7 @@ export async function GET() {
     return success<UserAnswersResponse>({ answers: historyList })
   } catch (error) {
     console.error("Error in GET /api/users/me/missions:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -57,31 +58,51 @@ export async function POST(req: NextRequest) {
     const { id, answer } = payload
     const question = QUESTIONS[id]
     if (!question) {
-      return failure(400, "Invalid question ID")
+      return failure(400, AppErrorCode.INVALID_QUESTION_ID, "Invalid question ID")
     }
 
     if (question.type === "multi-choice") {
       if (!Array.isArray(answer)) {
-        return failure(400, "Answer must be an array of strings for multi-choice questions")
+        return failure(
+          400,
+          AppErrorCode.INVALID_ANSWER_FORMAT,
+          "Answer must be an array of strings for multi-choice questions"
+        )
       }
     } else {
       if (typeof answer !== "string") {
-        return failure(400, "Answer must be a single string for this question type")
+        return failure(
+          400,
+          AppErrorCode.INVALID_ANSWER_FORMAT,
+          "Answer must be a single string for this question type"
+        )
       }
     }
 
     const missionPhase = await getMissionPhase()
     if (!missionPhase) {
-      return failure(500, "Mission phase configuration not found in DB")
+      return failure(
+        500,
+        AppErrorCode.INTERNAL_ERROR,
+        "Mission phase configuration not found in DB"
+      )
     }
 
     if (missionPhase.current !== question.phaseId) {
-      return failure(403, "The submission window for this question is currently closed")
+      return failure(
+        403,
+        AppErrorCode.SUBMISSION_CLOSED,
+        "The submission window for this question is currently closed"
+      )
     }
 
     const userAnswers = await userService.getUserAnswers(user.id)
     if (userAnswers[id as keyof UserAnswers] !== null) {
-      return failure(409, "You have already submitted an answer for this question")
+      return failure(
+        409,
+        AppErrorCode.ANSWER_ALREADY_SUBMITTED,
+        "You have already submitted an answer for this question"
+      )
     }
 
     await userService.submitAnswer(user.id, id, answer)
@@ -89,10 +110,10 @@ export async function POST(req: NextRequest) {
     return success({ message: "Answer submitted successfully" })
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === GrpcStatus.NOT_FOUND) {
-      return failure(404, "User profile not found")
+      return failure(404, AppErrorCode.USER_NOT_FOUND, "User profile not found")
     }
 
     console.error("Error in POST /api/users/me/missions:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

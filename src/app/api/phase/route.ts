@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import z from "zod"
 import { success, failure, parseBody, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import {
   getRegistrationPhase,
   getMissionPhase,
@@ -19,7 +20,7 @@ export async function GET() {
     })
   } catch (error) {
     console.error(error)
-    return failure(500, "Failed to fetch phases")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Failed to fetch phases")
   }
 }
 
@@ -49,7 +50,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (tasks.length === 0) {
-      return failure(400, "No phase provided")
+      return failure(400, AppErrorCode.MISSING_PHASE, "No phase provided")
     }
 
     await Promise.all(tasks)
@@ -66,6 +67,6 @@ export async function PATCH(req: NextRequest) {
     })
   } catch (error) {
     console.error(error)
-    return failure(500, "Failed to update phase")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Failed to update phase")
   }
 }

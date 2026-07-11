@@ -37,16 +37,16 @@ const EventText = ({
   active?: boolean
 }) => {
   return (
-    <div className="flex w-48.25 shrink-0 flex-col items-start justify-center gap-2 ml-9 h-47.5">
+    <div className="flex max-w-48.25 w-full flex-col items-start justify-center ml-9 h-47.5">
       {active && (
-        <div className="flex items-center gap-2 px-2 py-1 bg-status-yellow rounded-full mb-2">
+        <div className="flex items-center gap-2 px-2 py-1 bg-status-yellow rounded-full mb-1.5">
           <div className="w-1.5 h-1.5 bg-status-yellow-dark rounded-full"></div>
           <div className="text-[12px] text-status-yellow-dark">LIVE</div>
         </div>
       )}
       <h2
         className={cn(
-          "whitespace-nowrap text-4xl font-bold leading-none tracking-[0.02em]",
+          "whitespace-nowrap text-[64px] h-13 translate-y-[-0.3em] font-sov-yeehor font-normal tracking-[0.02em] leading-none",
           active && "text-white"
         )}
       >
@@ -54,7 +54,7 @@ const EventText = ({
       </h2>
       <p
         className={cn(
-          "w-full text-left text-[16px] font-normal leading-[1.4] whitespace-pre-line",
+          "w-full text-left text-[16px] font-normal leading-none font-fc-quantum whitespace-pre-line",
           active && "text-status-yellow"
         )}
       >
@@ -100,30 +100,32 @@ export const EventCard = ({
       </div>
       <div
         className={cn(
-          "w-full flex items-center bg-cream-tanned text-brick-orange",
+          "w-full bg-cream-tanned text-brick-orange",
           index % 2 === 0 && "bg-cream",
           active && "bg-status-yellow-dark"
         )}
       >
-        {index % 2 === 0 ? (
-          <>
-            <EventImage
-              imageUrl={imageUrl}
-              active={active}
-              imagePositionStyle={imagePositionStyle}
-            />
-            <EventText title={title} description={description} active={active} />
-          </>
-        ) : (
-          <>
-            <EventText title={title} description={description} active={active} />
-            <EventImage
-              imageUrl={imageUrl}
-              active={active}
-              imagePositionStyle={imagePositionStyle}
-            />
-          </>
-        )}
+        <div className="max-w-98.25 mx-auto w-full flex items-center justify-between">
+          {index % 2 === 0 ? (
+            <>
+              <EventImage
+                imageUrl={imageUrl}
+                active={active}
+                imagePositionStyle={imagePositionStyle}
+              />
+              <EventText title={title} description={description} active={active} />
+            </>
+          ) : (
+            <>
+              <EventText title={title} description={description} active={active} />
+              <EventImage
+                imageUrl={imageUrl}
+                active={active}
+                imagePositionStyle={imagePositionStyle}
+              />
+            </>
+          )}
+        </div>
       </div>
     </Link>
   )

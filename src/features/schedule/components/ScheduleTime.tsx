@@ -1,25 +1,39 @@
 import { cn } from "@/utils/cn"
-import { scheduleStatusStyles, type ScheduleStatus } from "../const/schedule"
+import { scheduleStatusStyles } from "../const/schedule"
+import { StagePerformanceStatus } from "@/types/stagePerformance"
 
 interface ScheduleTimeProps {
-  isFirst?: boolean
-  isLast?: boolean
-  status: ScheduleStatus
-  time: string
+  status: StagePerformanceStatus
+  date: string
 }
 
-export const ScheduleTime = ({ isFirst, isLast, status, time }: ScheduleTimeProps) => {
+export const ScheduleTime = ({ status, date }: ScheduleTimeProps) => {
   const statusStyle = scheduleStatusStyles[status]
+  const time = new Date(date).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
 
   return (
     <div className="flex shrink-0 self-stretch">
-      <div className={cn("mr-1 flex h-full w-10 items-center text-xs", statusStyle.time)}>
-        {time}
-      </div>
-      <div className="flex h-full w-3 flex-col items-center py-2">
-        <div className={cn("w-0.5 grow", statusStyle.timeline, isFirst && "invisible")}></div>
-        <div className={cn("size-3 shrink-0 rounded-full", statusStyle.timeline)}></div>
-        <div className={cn("w-0.5 grow", statusStyle.timeline, isLast && "invisible")}></div>
+      <div className="flex relative h-full flex-col items-center px-8">
+        <div
+          className={cn(
+            "absolute py-0.5 px-2.5 top-1/2 -translate-y-1/2 rounded-full pb-4 justify-center text-[32px] font-sov-yeehor tracking-[0.64px] leading-4",
+            statusStyle.time,
+            statusStyle.timeline
+          )}
+        >
+          {time}
+        </div>
+        <div>
+          <img
+            src={`/explore/schedule/line_${status}.svg`}
+            className="h-full object-cover"
+            alt="line"
+          />
+        </div>
       </div>
     </div>
   )

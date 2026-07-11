@@ -1,28 +1,42 @@
 export const scheduleStatusStyles = {
   upcoming: {
+    card: "bg-midnight-light border-midnight-light text-turqoise",
+    badge: "border-turqoise text-turqoise",
+    timeline: "bg-turqoise",
+    title: "text-white",
+    time: "text-midnight",
+    img: "border-turqoise",
+    footer: "text-turqoise-light",
+    status: "Upcoming",
+  },
+  live: {
+    card: "bg-status-yellow-dark border-status-yellow text-status-yellow",
+    badge: "text-status-yellow-dark bg-status-yellow",
+    timeline: "bg-status-yellow",
+    title: "text-white",
+    time: "text-status-yellow-dark",
+    img: "border-status-yellow",
+    footer: "",
+    status: "LIVE",
+  },
+  complete: {
+    card: "bg-midnight border-midnight-light text-turqoise",
+    badge: "border-midnight-light text-turqoise",
+    timeline: "bg-midnight-light",
+    title: "",
+    time: "text-turqoise",
+    img: "border-midnight-light",
+    footer: "",
+    status: "Completed",
+  },
+  delayed: {
     card: "bg-neutral-500 text-white",
     badge: "border-white text-white",
     timeline: "bg-black",
+    title: "",
     time: "text-black",
-  },
-  ongoing: {
-    card: "bg-black text-white",
-    badge: "border-red-400 text-red-400",
-    timeline: "bg-black",
-    time: "text-black",
-  },
-  completed: {
-    card: "bg-white text-neutral-300",
-    badge: "border-neutral-300 text-neutral-300",
-    timeline: "bg-white",
-    time: "text-white",
-  },
-  cancelled: {
-    card: "bg-neutral-500 text-white",
-    badge: "border-white text-white",
-    timeline: "bg-black",
-    time: "text-black",
+    img: "border-turqoise",
+    footer: "",
+    status: "Delayed",
   },
 } as const
-
-export type ScheduleStatus = keyof typeof scheduleStatusStyles

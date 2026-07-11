@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server"
 import { click } from "@/services/popkaewClickService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
@@ -14,11 +14,11 @@ export async function POST(_req: NextRequest) {
     return success(result)
   } catch (error) {
     if (error instanceof Error && error.message === "Player not found") {
-      return failure(404, "Player not found")
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
     console.error(error)
 
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

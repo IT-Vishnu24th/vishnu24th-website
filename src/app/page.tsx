@@ -16,7 +16,7 @@ export default function HomePage() {
           src="/landingpage/art-background.png"
           alt=""
           fill
-          className="object-contain object-[center_10%]"
+          className="object-contain object-[center_6%]"
         />
       </div>
 
@@ -77,7 +77,7 @@ export default function HomePage() {
             </button>
             <button className="flex items-center gap-1 rounded-full bg-[#2D3542] border border-[#2D3542] border-2 px-2 py-2.5 text-[#74DDCF] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
               <Ship size={18} strokeWidth={3} />
-              ยานอาคาเรียม
+              ยานอาควาเรียม
             </button>
           </div>
         </div>
@@ -87,12 +87,9 @@ export default function HomePage() {
         </div>
 
         {/* <AuthResult isSucess={true} /> */}
-        <div className="-mt-3 md:-mt-4 relative ">
-          <div className="absolute -top-30 inset-0 z-50 pointer-events-none">
-            <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
-          </div>
 
-          <div className="z-20">
+        <div className="z-20">
+          <div className="-mt-3 md:-mt-4 relative ">
             <SponsorFooter />
           </div>
 
