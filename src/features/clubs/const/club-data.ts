@@ -1,0 +1,148 @@
+import { Club } from "../types/club"
+
+export const club_data: Club[] = [
+  {
+    id: "1",
+    name: "FE",
+    imageUrl: "FE-camp.png",
+    categoryId: "",
+  },
+  {
+    id: "2",
+    name: "วิชาการ",
+    imageUrl: "Intania-Academic-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "3",
+    name: "วิศวพัฒน์",
+    imageUrl: "Voluntary-Intania-Camp.png",
+    categoryId: "",
+  },
+  {
+    id: "4",
+    name: "MARCOM",
+    imageUrl: "you check by your own",
+    categoryId: "",
+  },
+  {
+    id: "5",
+    name: "VESC",
+    imageUrl: "Voluntary-Engineering-Student-camps-VESC.png",
+    categoryId: "",
+  },
+  {
+    id: "6",
+    name: "Board Game",
+    imageUrl: "Intania-Board-Game-Club.jpg",
+    categoryId: "",
+  },
+  {
+    id: "7",
+    name: "Expats",
+    imageUrl: "Engineering-Expats-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "8",
+    name: "Debate",
+    imageUrl: "Intania-Debate-Club.jpg",
+    categoryId: "",
+  },
+  {
+    id: "9",
+    name: "Running",
+    imageUrl: "Intania-Chula-Running-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "10",
+    name: "Volleyball",
+    imageUrl: "Intania-Volleyball-Club.jpeg",
+    categoryId: "",
+  },
+  {
+    id: "11",
+    name: "Badminton",
+    imageUrl: "Intania-Badminton-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "12",
+    name: "Rugby",
+    imageUrl: "Intania-Rugby-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "13",
+    name: "Thinc.",
+    imageUrl: "Thinc..png",
+    categoryId: "",
+  },
+  {
+    id: "14",
+    name: "IPH",
+    imageUrl: "Intania-Production-House.png",
+    categoryId: "",
+  },
+  {
+    id: "15",
+    name: "Stepout",
+    imageUrl: "StepOut.png",
+    categoryId: "",
+  },
+  {
+    id: "16",
+    name: "Google",
+    imageUrl: "Google-Developer-Group-on-Campus-Chulalongkorn-University.png",
+    categoryId: "",
+  },
+  {
+    id: "17",
+    name: "game",
+    imageUrl: "Game-Research-and-Development-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "18",
+    name: "ฟุตบอล",
+    imageUrl: "Intania-football-club.png",
+    categoryId: "",
+  },
+  {
+    id: "19",
+    name: "Rapid",
+    imageUrl: "Rapidamente.png",
+    categoryId: "",
+  },
+  {
+    id: "20",
+    name: "MMA",
+    imageUrl: "MMA-INTANIA-CLUB.png",
+    categoryId: "",
+  },
+  {
+    id: "21",
+    name: "IIC",
+    imageUrl: "Intania-Innovation-Contest.png",
+    categoryId: "",
+  },
+  {
+    id: "22",
+    name: "ละคร",
+    imageUrl: "Intania-Stage-Play.jpeg",
+    categoryId: "",
+  },
+  {
+    id: "23",
+    name: "Ping Pong",
+    imageUrl: "Intania-Table-Tennis-Club.png",
+    categoryId: "",
+  },
+  {
+    id: "24",
+    name: "Basketball",
+    imageUrl: "Intania-basketball-club.png",
+    categoryId: "",
+  },
+]
