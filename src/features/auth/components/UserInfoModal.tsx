@@ -10,6 +10,7 @@ import { UserInfoSection } from "./UserInfoSection"
 import { motion } from "motion/react"
 import { LanguageChangerButton } from "@/features/i18n/components/LanguageChangerButton"
 import { useMe } from "@/hooks/useApi"
+import { LogoutButton } from "./LogoutButton"
 
 export const UserInfoModal = () => {
   const { data, isLoading } = useMe()
@@ -43,6 +44,9 @@ export const UserInfoModal = () => {
           <UserProfileSection user={user} />
           <YarnSection user={user} />
           <UserInfoSection user={user} />
+          <div className="w-full flex justify-center">
+            <LogoutButton />
+          </div>
         </motion.div>
       )}
     </section>
