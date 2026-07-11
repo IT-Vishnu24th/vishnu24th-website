@@ -2,17 +2,18 @@ import { GrpcStatus } from "firebase-admin/firestore"
 import z, { ZodError } from "zod"
 import featureFlagsService, { FeatureFlag } from "@/services/featureFlagService"
 import { success, failure, protectRaw, parseBody } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { NextRequest } from "next/server"
 
 export async function GET(req: NextRequest, { params }: RouteContext<"/api/flags/[id]">) {
   const { id } = await params
   try {
     const featureFlag = await featureFlagsService.getFlag(id)
-    if (!featureFlag) return failure(404, "Not found")
+    if (!featureFlag) return failure(404, AppErrorCode.FLAG_NOT_FOUND, "Not found")
     return success<FeatureFlag>(featureFlag)
   } catch (error) {
     console.error(`Error in GET /api/flags/${id}:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -32,11 +33,11 @@ export async function PUT(req: NextRequest, { params }: RouteContext<"/api/flags
     const featureFlag = await featureFlagsService.setFlag(id, payload.enabled)
     return success<FeatureFlag>(featureFlag)
   } catch (error) {
-    if (error instanceof ZodError) return failure(400, "Invalid body")
+    if (error instanceof ZodError) return failure(400, AppErrorCode.INVALID_BODY, "Invalid body")
     if (error instanceof Error && "code" in error && error.code === GrpcStatus.NOT_FOUND)
-      return failure(404, "Not found")
+      return failure(404, AppErrorCode.FLAG_NOT_FOUND, "Not found")
 
     console.error(`Error in PUT /api/flags/${id}:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

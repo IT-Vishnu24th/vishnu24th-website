@@ -1,0 +1,29 @@
+{
+  "errors": {
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "UNAUTHORIZED": "Please sign in to continue.",
+    "FORBIDDEN": "You don't have permission to do this.",
+    "INVALID_BODY": "Invalid request. Please check your input.",
+    "NOT_FOUND": "The requested item was not found.",
+    "CONFLICT": "This action conflicts with existing data.",
+
+    "USER_NOT_FOUND": "User not found.",
+    "PLAYER_NOT_FOUND": "Player not found.",
+    "GROUP_NOT_FOUND": "Your group could not be found.",
+    "CLUB_NOT_FOUND": "This club could not be found.",
+    "ANSWER_NOT_FOUND": "No answer found for this question.",
+    "REGISTRATION_POINT_NOT_FOUND": "Registration point not found for your group.",
+    "FLAG_NOT_FOUND": "This feature flag doesn't exist.",
+    "STAGE_NOT_FOUND": "This stage doesn't exist.",
+
+    "MISSING_QUERY_PARAM": "Missing required information in the request.",
+    "MISSING_PHASE": "No phase was provided to update.",
+    "INVALID_QUESTION_ID": "This question does not exist.",
+    "INVALID_ANSWER_FORMAT": "Your answer format is invalid for this question.",
+
+    "ANSWER_ALREADY_SUBMITTED": "You've already submitted an answer for this question.",
+    "SUBMISSION_CLOSED": "The submission window for this question is closed.",
+    "GAME_NOT_ACTIVE": "The club scanning game is not active right now.",
+    "ALREADY_SCANNED": "You've already scanned this club."
+  }
+}

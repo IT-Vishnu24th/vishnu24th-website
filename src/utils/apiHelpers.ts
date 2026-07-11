@@ -7,6 +7,7 @@ import type {
   ApiFailure,
   PaginationMeta,
 } from "@/types/apiResponse"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { User, UserRole } from "@/types/user"
 import type { RawUser } from "@/services/userService"
 
@@ -16,18 +17,18 @@ export const success = <T>(data: T) =>
 export const successPaginated = <T>(data: T[], pagination: PaginationMeta) =>
   NextResponse.json({ data, pagination } satisfies ApiPaginatedSuccess<T>, { status: 200 })
 
-export const failure = (status: number, message: string) =>
-  NextResponse.json({ message } satisfies ApiFailure, { status })
+export const failure = (status: number, code: AppErrorCode, message: string) =>
+  NextResponse.json({ code, message } satisfies ApiFailure, { status })
 
 type MiddlewareResult<T> = [error: NextResponse, null] | [null, result: T]
 
 export type ProtectResult = MiddlewareResult<User>
 export const protect = async (role?: UserRole): Promise<ProtectResult> => {
   const user = await getAuthenticatedUser()
-  if (!user) return [failure(401, "Not logged in"), null]
+  if (!user) return [failure(401, AppErrorCode.UNAUTHORIZED, "Not logged in"), null]
   if (role) {
     if (user.role !== "admin" && user.role !== role) {
-      return [failure(403, "Forbidden"), null]
+      return [failure(403, AppErrorCode.FORBIDDEN, "Forbidden"), null]
     }
   }
   return [null, user]
@@ -36,10 +37,10 @@ export const protect = async (role?: UserRole): Promise<ProtectResult> => {
 export type ProtectRawResult = MiddlewareResult<RawUser>
 export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => {
   const user = await getAuthenticatedRawUser()
-  if (!user) return [failure(401, "Not logged in"), null]
+  if (!user) return [failure(401, AppErrorCode.UNAUTHORIZED, "Not logged in"), null]
   if (role) {
     if (user.role !== "admin" && user.role !== role) {
-      return [failure(403, "Forbidden"), null]
+      return [failure(403, AppErrorCode.FORBIDDEN, "Forbidden"), null]
     }
   }
   return [null, user]
@@ -53,7 +54,7 @@ export const parseBody = async <T>(
     const payload = schema.parse(await req.json())
     return [null, payload]
   } catch {
-    return [failure(400, "Invalid body"), null]
+    return [failure(400, AppErrorCode.INVALID_BODY, "Invalid body"), null]
   }
 }
 

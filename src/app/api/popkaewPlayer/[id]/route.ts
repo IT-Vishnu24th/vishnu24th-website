@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import popkaewPlayerService from "@/services/popKaewPlayerServices"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const player = await popkaewPlayerService.getById(id)
 
     if (!player) {
-      return failure(404, "Player not found")
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
     return success({
@@ -23,6 +24,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
   } catch (error) {
     console.error("Get player error:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
