@@ -33,7 +33,7 @@ export default function Footer() {
         {/* MEDIUM + SMALL */}
         <div className="flex flex-wrap justify-center gap-3">
           {allSmallSponsors.map((sponsor) => (
-            <div key={sponsor.name} className="relative h-14 w-14 overflow-hidden">
+            <div key={sponsor.name} className="relative h-14 w-14 overflow-hidden bg-white">
               <Image
                 src={`/sponsor/brand/${sponsor.image}`}
                 alt={sponsor.name}

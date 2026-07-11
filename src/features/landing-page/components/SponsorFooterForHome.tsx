@@ -16,9 +16,9 @@ export default function Footer() {
         <h2 className="mb-8 text-center text-5xl font-sov-yeehor ">ขอขอบคุณผู้สนับสนุน</h2>
 
         {/* BIG */}
-        <div className="mb-8 flex flex-col items-center ">
+        <div className="mb-5 flex flex-wrap items-center justify-center">
           {bigSponsors.map((sponsor) => (
-            <div key={sponsor.name} className="relative h-25 w-35 overflow-hidden">
+            <div key={sponsor.name} className="relative h-24 w-36 overflow-hidden">
               <Image
                 src={`/sponsor/brand/${sponsor.image}`}
                 alt={sponsor.name}
@@ -30,7 +30,7 @@ export default function Footer() {
         </div>
 
         {/* MEDIUM */}
-        <div className="mb-8 flex flex-wrap justify-center gap-4">
+        <div className="mb-5 flex flex-wrap justify-center gap-4">
           {mediumSponsors.map((sponsor) => (
             <div key={sponsor.name} className="relative h-15 w-20 overflow-hidden bg-white">
               <Image
