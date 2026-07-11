@@ -13,7 +13,7 @@ export default function useAnimation(callback: AnimationCallback, isRunning: boo
     callbackRef.current = callback
   }, [callback])
 
-  const animate = useCallback((time: number) => {
+  const animate = useCallback(function animate(time: number) {
     if (previousTimeRef.current === null) {
       previousTimeRef.current = time
     }
@@ -37,7 +37,7 @@ export default function useAnimation(callback: AnimationCallback, isRunning: boo
       return
     }
 
-    frameRef.current = requestAnimationFrame(animate)
+    frameRef.current = requestAnimationFrame((time) => animate(time))
 
     return () => {
       if (frameRef.current !== null) {
