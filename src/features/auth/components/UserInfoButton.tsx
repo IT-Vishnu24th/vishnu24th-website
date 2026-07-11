@@ -22,8 +22,8 @@ export const UserInfoButton = () => {
         {name?.nickname || name?.firstName || "ข้อมูล"}
       </span>
       <img
-        src={`/auth/profile/profile_${(Number(user?.id) || 0) % 3}.png`}
-        className="absolute size-10 rounded-full object-cover right-0"
+        src={`/auth/profile/profile_${(Number(user?.id) || 0) % 4}.png`}
+        className="absolute size-9 rounded-full object-cover right-0 mr-0.5"
       />
     </button>
   )

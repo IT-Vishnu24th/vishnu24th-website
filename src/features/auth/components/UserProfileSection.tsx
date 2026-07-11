@@ -11,8 +11,8 @@ export const UserProfileSection = ({ user }: UserProfileSectionProps) => {
   return (
     <section className="flex w-full flex-col items-center px-7 pt-18 text-center">
       <img
-        src={`/auth/profile/profile_${(Number(user?.id) || 0) % 3}.png`}
-        className="size-25 rounded-full object-cover"
+        src={`/auth/profile/profile_${(Number(user?.id) || 0) % 4}.png`}
+        className="size-25 rounded-full object-cover border-5 border-midnight"
       />
 
       <h1 className="text-[64px] font-sov-yeehor leading-[0.9] tracking-[1.28px] text-mint">
