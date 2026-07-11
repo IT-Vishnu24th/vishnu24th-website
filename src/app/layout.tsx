@@ -6,6 +6,7 @@ import { getAuthUser } from "@/lib/auth"
 import { Modal } from "@/components/Modal"
 import localFont from "next/font/local"
 import { QueryProvider } from "@/lib/react-query"
+import { toast, Toaster } from "sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,6 +110,21 @@ export default async function RootLayout({
         <QueryProvider>
           <AuthProvider initialUser={user}>
             <Modal />
+            <Toaster
+              toastOptions={{
+                unstyled: true,
+                classNames: {
+                  toast:
+                    "rounded-xl border px-4 py-3 shadow-lg flex items-center [&>div>div]:pb-1 w-full gap-2 font-fc-quantum",
+                  default: "bg-midnight border-turqoise text-turqoise",
+                  success: "bg-status-green-dark border-status-green text-status-green",
+                  error: "bg-status-red-dark border-status-red text-status-red",
+                  warning: "bg-status-yellow-dark border-status-yellow text-status-yellow",
+                  info: "bg-midnight border-turqoise text-turqoise",
+                },
+              }}
+              position="top-center"
+            />
             <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
               {children}
             </main>
