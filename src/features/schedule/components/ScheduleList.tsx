@@ -4,22 +4,41 @@ import { useStages } from "@/hooks/useApi"
 import { ScheduleCard } from "./ScheduleCard"
 import { ScheduleTime } from "./ScheduleTime"
 import Link from "next/link"
+import { motion } from "motion/react"
 
 export const ScheduleList = () => {
-  const { data, isLoading } = useStages()
+  const { data } = useStages()
   const schedule = data?.data
   return (
-    <div className="min-h-svh w-full grow bg-midnight pt-17">
+    <div className=" w-full grow bg-midnight py-17 pt-20">
       <div className="pt-4">
-        {schedule?.map((e) => (
-          <>
-            <Link href={"/club"} key={e.id} className="flex px-4">
+        {schedule?.map((e, index) => (
+          <Link href="/club" key={e.id} className="flex px-4">
+            <motion.div
+              initial={{ x: -40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
+            >
               <ScheduleTime status={e.status} date={e.start} />
-              <div className="ml-6 min-w-0 flex-1 py-1">
-                <ScheduleCard stage={e} />
-              </div>
-            </Link>
-          </>
+            </motion.div>
+
+            <motion.div
+              className="ml-6 min-w-0 flex-1 py-1"
+              initial={{ x: 40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: index * 0.1 + 0.05,
+                ease: "easeOut",
+              }}
+            >
+              <ScheduleCard stage={e} />
+            </motion.div>
+          </Link>
         ))}
       </div>
     </div>
