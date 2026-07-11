@@ -115,8 +115,7 @@ export default async function RootLayout({
                 unstyled: true,
                 classNames: {
                   toast:
-                    "rounded-xl border px-4 py-3 shadow-lg flex items-center [&>div>div]:pb-1 w-full gap-2 font-fc-quantum",
-                  default: "bg-midnight border-turqoise text-turqoise",
+                    "rounded-xl border px-4 py-3 shadow-lg flex items-center [&>div>div]:pb-1 w-full gap-3 rounded-[12px] font-fc-quantum",
                   success: "bg-status-green-dark border-status-green text-status-green",
                   error: "bg-status-red-dark border-status-red text-status-red",
                   warning: "bg-status-yellow-dark border-status-yellow text-status-yellow",
