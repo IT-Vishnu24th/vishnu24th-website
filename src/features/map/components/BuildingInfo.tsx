@@ -18,9 +18,9 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
       </div>
 
       <div className="bg-brick-orange -mt-1">
-        <h2 className="text-center font-sov-yeehor text-5xl mb-5">{buildingName}</h2>
+        <h2 className="text-center font-sov-yeehor text-6xl mb-10 pt-3">{buildingName}</h2>
 
-        <div className="mx-4 my-3 overflow-hidden rounded-2xl">
+        <div className="mx-4 my-3 overflow-hidden rounded-2xl border-2 border-brownie">
           <Image
             src="/map/larngear-map.svg"
             alt="ลานเกียร์"
@@ -46,18 +46,29 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
 
             <div className="flex flex-col gap-3">
               {clubs.map((club) => (
-                <div key={club.id} className="flex items-center gap-3">
-                  <span className="text-cream-tanned w-5">{club.id}</span>
+                <div
+                  key={club.id}
+                  className="flex items-center gap-3 rounded-2xl bg-brownie mx-2 pr-4"
+                >
+                  {/* กล่องเข้มคลุมทั้งวงกลม + เลข */}
+                  <div className="flex items-center gap-2 rounded-full bg-brownie-dark py-1 pl-1 pr-3">
+                    {/* วงกลมเทา (placeholder รูปชมรม) */}
+                    <div className="h-9 w-9 shrink-0 rounded-full bg-gray-400" aria-hidden="true">
+                      {/* <Image
+              src={`/club/${club.image}`}
+              alt={club.name}
+              width={36}
+              height={36}
+              className="rounded-full object-cover"
+            /> */}
+                    </div>
 
-                  {/* <Image
-                    src={`/club/${club.image}`}
-                    alt={club.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  /> */}
+                    <span className="font-sov-yeehor text-3xl leading-none text-cream-tanned -translate-y-1.5 px-1">
+                      {club.id}
+                    </span>
+                  </div>
 
-                  <span>{club.name}</span>
+                  <span className="truncate text-cream-tanned">{club.name}</span>
                 </div>
               ))}
             </div>
