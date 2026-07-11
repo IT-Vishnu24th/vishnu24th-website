@@ -4,7 +4,6 @@ import { adminDb } from "@/firebase/admin"
 import type { wasteSortPlayer } from "@/types/wasteSort"
 import type { wasteSortGroup } from "@/types/wasteSort"
 import { Group } from "./groupService"
-import userService, { User } from "./userService"
 
 export type * from "@/types/wasteSort"
 
@@ -115,7 +114,6 @@ const wasteSortPlayerService = {
    */
   async recordRound(uid: string, roundScore: number): Promise<wasteSortPlayer | null> {
     const safeScore = Math.max(0, roundScore)
-    const getPlayerGroupById = (await userService.getById(uid)) as User
 
     const playerRef = wasteSortPlayerCollection.doc(uid)
     const today = todayKey()

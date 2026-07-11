@@ -1,5 +1,6 @@
 import popkaewVesselService from "@/services/popkaewVesselService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
 export async function GET() {
   try {
@@ -12,6 +13,6 @@ export async function GET() {
   } catch (error) {
     console.error(error)
 
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

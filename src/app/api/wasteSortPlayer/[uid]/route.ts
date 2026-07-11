@@ -1,35 +1,33 @@
-import { NextRequest, NextResponse } from "next/server"
-import userService, { RawUser } from "@/services/userService"
+import { NextRequest } from "next/server"
+import userService from "@/services/userService"
 import { User } from "@/types/user"
-import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { success, failure } from "@/utils/apiHelpers"
 import wasteSortPlayerService, { wasteSortPlayer } from "@/services/wasteSortPlayerService"
-import { Timestamp } from "firebase-admin/firestore"
-import { Group } from "@/types/group"
-import { adminDb } from "@/firebase/admin"
+import { AppErrorCode } from "@/types/appErrorCode"
 
 type RouteParams = { params: Promise<{ uid: string }> }
 
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   try {
     const { uid } = await params
-    const playerDoc = await adminDb.collection("wasteSortPlayer").doc(uid).get()
+    const player = await wasteSortPlayerService.getById(uid)
 
-    if (!playerDoc.exists) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 })
+    if (!player) {
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
-    const data = playerDoc.data() as wasteSortPlayer
-    return NextResponse.json({
-      name: data.name,
-      playCount: data.playCount,
-      vesselName: data.vesselName,
-      group: data.group,
-      sustainScore: data.sustainScore,
-      playsToday: data.playsToday,
-      lastPlayDate: data.lastPlayDate,
+
+    return success({
+      name: player.name,
+      playCount: player.playCount,
+      vesselName: player.vesselName,
+      group: player.group,
+      sustainScore: player.sustainScore,
+      playsToday: player.playsToday,
+      lastPlayDate: player.lastPlayDate,
     })
   } catch (error) {
     console.error("Get player error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -40,35 +38,34 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
   const player = await wasteSortPlayerService.update(uid, body)
 
   if (!player) {
-    return NextResponse.json({ error: "Player not found" }, { status: 404 })
+    return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
   }
 
-  return NextResponse.json({ player })
+  return success({ player })
 }
 
 // DELETE /api/wasteSortPlayer/[uid]
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
   const { uid } = await params
   await wasteSortPlayerService.delete(uid)
-  return NextResponse.json({ ok: true })
+  return success({ ok: true })
 }
 
-export async function POST(req: NextRequest, { params }: { params: { uid: string } }) {
+export async function POST(req: NextRequest, { params }: RouteParams) {
   try {
     const { uid } = await params
     const checkPlayer = await wasteSortPlayerService.getById(uid)
 
     if (checkPlayer) {
-      return NextResponse.json({ Message: "Document already exists" })
+      return success({ message: "Document already exists" })
     }
 
-    const wasteSortPlayer = await userService.getById(uid)
-
-    if (wasteSortPlayer == null) {
-      return NextResponse.json({ error: "Player not found in User DataBase" }, { status: 404 })
+    const player = await userService.getById(uid)
+    if (player == null) {
+      return failure(404, AppErrorCode.USER_NOT_FOUND, "Player not found in User DataBase")
     }
-    const newPlayer: User = wasteSortPlayer as User
 
+    const newPlayer: User = player as User
     const newWasteSortPlayer: wasteSortPlayer = {
       name: newPlayer.name.en.firstName,
       playCount: 0,
@@ -78,13 +75,11 @@ export async function POST(req: NextRequest, { params }: { params: { uid: string
       playsToday: 0,
       lastPlayDate: "",
     }
-    console.log(newWasteSortPlayer)
-    const create = await wasteSortPlayerService.create(uid, newWasteSortPlayer)
-    create
-    return NextResponse.json({ Message: "Add wasteSortPlayer Successfully" })
+
+    await wasteSortPlayerService.create(uid, newWasteSortPlayer)
+    return success({ message: "Add wasteSortPlayer Successfully" })
   } catch (error) {
     console.error(error)
-
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

@@ -1,64 +1,64 @@
-import { NextRequest, NextResponse } from "next/server"
-import { adminDb } from "@/firebase/admin"
+import { NextRequest } from "next/server"
 import { popkaewPlayer } from "@/types/popkaewPlayer"
 import popkaewPlayerService from "@/services/popKaewPlayerServices"
-import userService, { RawUser } from "@/services/userService"
+import userService from "@/services/userService"
 import { User } from "@/types/user"
 
 import { Timestamp } from "firebase-admin/firestore"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
-    const playerDoc = await adminDb.collection("popkaewPlayer").doc(id).get()
+    const [error] = await protectRaw("participant")
+    if (error) return error
 
-    if (!playerDoc.exists) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 })
+    const { id } = await params
+    const player = await popkaewPlayerService.getById(id)
+
+    if (!player) {
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
-    const data = playerDoc.data() as popkaewPlayer
-
-    return NextResponse.json({
-      id: playerDoc.id,
-      name: data.name,
-      vesselName: data.vessel,
-      popkaewscore: data.popkaewscore,
-      lastClickAt: data.lastClickAt?.toDate().toISOString() ?? null,
+    return success({
+      id,
+      name: player.name,
+      vesselName: player.vessel,
+      popkaewscore: player.popkaewscore,
+      lastClickAt: player.lastClickAt?.toDate().toISOString() ?? null,
     })
   } catch (error) {
     console.error("Get player error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const checkPlayer = await popkaewPlayerService.getById(id)
 
     if (checkPlayer) {
-      return NextResponse.json({ Message: "Document already exists" })
+      return success({ message: "Document already exists" })
     }
-    const Player = await userService.getById(id)
 
-    if (Player == null) {
-      return NextResponse.json({ error: "Player not found in User DataBase" }, { status: 404 })
+    const player = await userService.getById(id)
+    if (player == null) {
+      return failure(404, AppErrorCode.USER_NOT_FOUND, "Player not found in User DataBase")
     }
-    const newPlayer: User = Player as User
+
+    const newPlayer: User = player as User
     const newPopkaewPlayer: popkaewPlayer = {
       name: newPlayer.name.en.firstName,
       vessel: newPlayer.group.vesselName.en,
       popkaewscore: 0,
       lastClickAt: Timestamp.now(),
     }
-    console.log(newPopkaewPlayer)
-    const create = await popkaewPlayerService.create(id, newPopkaewPlayer)
-    create
-    return NextResponse.json({ Message: "Add user Successfully" })
+
+    await popkaewPlayerService.create(id, newPopkaewPlayer)
+    return success({ message: "Add user Successfully" })
   } catch (error) {
     console.error(error)
-
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

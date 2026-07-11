@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import groupService from "@/services/groupService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import type { GroupStatsResponse } from "@/types/group"
 
 export async function GET(req: NextRequest) {
@@ -45,6 +46,6 @@ export async function GET(req: NextRequest) {
     return success<GroupStatsResponse[]>(stats)
   } catch (error) {
     console.error("Error in GET /api/admin/stats/groups:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

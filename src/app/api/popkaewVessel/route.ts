@@ -1,23 +1,17 @@
-import { NextRequest, NextResponse } from "next/server"
-import { adminDb } from "@/firebase/admin"
-import { popkaewPlayer } from "@/types/popkaewPlayer"
-import popkaewPlayerService from "@/services/popKaewPlayerServices"
-import userService, { RawUser } from "@/services/userService"
-import { User } from "@/types/user"
-
-import { Timestamp } from "firebase-admin/firestore"
-import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { NextRequest } from "next/server"
 import { popkaewVessel } from "@/types/popkaewVessel"
+import { success, failure } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import popkaewVesselService from "@/services/popkaewVesselService"
-import groupService, { Group } from "@/services/groupService"
+import groupService from "@/services/groupService"
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const vesselDoc = await popkaewVesselService.rawList()
-    return NextResponse.json(vesselDoc)
+    return success(vesselDoc)
   } catch (error) {
     console.error("Get popkaewVessel error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
 
@@ -25,15 +19,19 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { group } = body ?? {}
-    const groupVessel = await adminDb.collection("groups").doc(group).get()
-    const data: Group = groupVessel.data() as Group
+
     if (!group) {
-      return NextResponse.json({ error: "group are required" }, { status: 400 })
+      return failure(400, AppErrorCode.INVALID_BODY, "group are required")
     }
 
-    const popkaewVesselDoc = await adminDb.collection("popkaewVessel").doc(data.vesselName.en).get()
-    if (popkaewVesselDoc.exists) {
-      return NextResponse.json({ Message: "Document already exists" })
+    const data = await groupService.getById(group)
+    if (!data) {
+      return failure(404, AppErrorCode.GROUP_NOT_FOUND, "Group not found")
+    }
+
+    const existing = await popkaewVesselService.getById(data.vesselName.en)
+    if (existing) {
+      return success({ message: "Document already exists" })
     }
 
     const newPopkaewVessel: popkaewVessel = {
@@ -42,12 +40,10 @@ export async function POST(req: NextRequest) {
       group: data.label,
     }
 
-    const create = popkaewVesselService.create(newPopkaewVessel)
-    create
-    return NextResponse.json({ Message: "Add popkaewVessel Successfully" })
+    await popkaewVesselService.create(newPopkaewVessel)
+    return success({ message: "Add popkaewVessel Successfully" })
   } catch (error) {
     console.error(error)
-
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

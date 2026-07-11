@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import userService from "@/services/userService"
 import groupService from "@/services/groupService"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
 import type { UserAnswers } from "@/types/user"
 
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
     const id = req.nextUrl.searchParams.get("id") || undefined
 
     if (id && !QUESTIONS[id]) {
-      return failure(400, "Invalid question ID")
+      return failure(400, AppErrorCode.INVALID_QUESTION_ID, "Invalid question ID")
     }
 
     const [users, groups] = await Promise.all([userService.rawList(), groupService.rawList()])
@@ -90,6 +91,6 @@ export async function GET(req: NextRequest) {
     return success<MissionStatsResponse>(report)
   } catch (error) {
     console.error("Error in GET /api/admin/stats/game-mission:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }
