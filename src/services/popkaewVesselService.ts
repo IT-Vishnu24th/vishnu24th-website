@@ -30,8 +30,9 @@ const popkaewVesselService = {
     return doc.data()!
   },
 
+  /** doc id = group label, matching the `groups` collection */
   async create(popkaewVessel: popkaewVessel): Promise<popkaewVessel | null> {
-    const ref = vesselCollection.doc(popkaewVessel.vesselName.en)
+    const ref = vesselCollection.doc(popkaewVessel.group)
 
     await ref.create(popkaewVessel)
 
@@ -56,13 +57,19 @@ const popkaewVesselService = {
     })
   },
 
-  async leaderboard(limit = 3) {
-    const snapshot = await vesselCollection.orderBy("popkaewscore", "desc").limit(limit).get()
+  /** all vessels sorted by score desc (vesselName.en asc tie-break), standard competition ranking (1224) */
+  async leaderboard() {
+    const snapshot = await vesselCollection.get()
+    const vessels = snapshot.docs.map((doc) => doc.data())
 
-    return snapshot.docs.map((doc, index) => ({
-      rank: index + 1,
-      id: doc.id,
-      ...this.mapToPublic(doc.data()),
+    const sorted = [...vessels].sort(
+      (a, b) => b.popkaewscore - a.popkaewscore || a.vesselName.en.localeCompare(b.vesselName.en)
+    )
+    const getRank = (score: number) => sorted.filter((v) => v.popkaewscore > score).length + 1
+
+    return sorted.map((v) => ({
+      rank: getRank(v.popkaewscore),
+      ...this.mapToPublic(v),
     }))
   },
 

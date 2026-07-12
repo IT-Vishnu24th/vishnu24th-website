@@ -298,11 +298,42 @@ components:
     ErrorResponse:
       type: object
       required:
+        - code
         - message
       properties:
+        code:
+          $ref: "#/components/schemas/AppErrorCode"
         message:
           type: string
           example: Error message description
+    AppErrorCode:
+      type: string
+      description: Machine-readable error code (`src/types/appErrorCode.ts`). Frontend switches on this instead of parsing `message`.
+      enum:
+        - INTERNAL_ERROR
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - INVALID_BODY
+        - NOT_FOUND
+        - CONFLICT
+        - USER_NOT_FOUND
+        - PLAYER_NOT_FOUND
+        - GROUP_NOT_FOUND
+        - CLUB_NOT_FOUND
+        - ANSWER_NOT_FOUND
+        - REGISTRATION_POINT_NOT_FOUND
+        - FLAG_NOT_FOUND
+        - STAGE_NOT_FOUND
+        - MISSING_QUERY_PARAM
+        - MISSING_PHASE
+        - INVALID_QUESTION_ID
+        - INVALID_ANSWER_FORMAT
+        - ANSWER_ALREADY_SUBMITTED
+        - SUBMISSION_CLOSED
+        - GAME_NOT_ACTIVE
+        - ALREADY_SCANNED
+        - DAILY_LIMIT_REACHED
+      example: INTERNAL_ERROR
     AuthErrorResponse:
       type: object
       required:
@@ -466,6 +497,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -514,6 +546,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -522,6 +555,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -530,6 +564,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "409":
           description: Feature flag already exists
@@ -538,6 +573,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: CONFLICT
                 message: Conflict
         "500":
           description: Unexpected server error
@@ -546,6 +582,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -565,7 +602,7 @@ paths:
                 type: boolean
               example:
                 reveal-vessel: true
-                popkaew-active: false
+                game-popkaew: false
       responses:
         "200":
           description: Flags updated
@@ -586,6 +623,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -594,6 +632,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -602,6 +641,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Flag not found
@@ -610,6 +650,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -618,6 +659,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/flags/{id}:
     parameters:
@@ -652,6 +694,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -660,6 +703,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     put:
       tags:
@@ -700,6 +744,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -708,6 +753,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -716,6 +762,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -724,6 +771,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -732,6 +780,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/leaderboard:
     get:
@@ -800,6 +849,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "500":
           description: Unexpected server error
@@ -808,6 +858,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/leaderboard/update:
     put:
@@ -838,6 +889,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -846,6 +898,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -854,6 +907,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/scan:
     post:
@@ -916,6 +970,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -924,6 +979,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Club scanning game is not active (closed)
@@ -932,6 +988,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: GAME_NOT_ACTIVE
                 message: Club scanning game is not active
         "404":
           description: Club, user, or group not found
@@ -940,6 +997,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: CLUB_NOT_FOUND
                 message: Club not found
         "409":
           description: Already scanned this club
@@ -948,6 +1006,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ALREADY_SCANNED
                 message: You have already scanned this club
         "500":
           description: Unexpected server error
@@ -956,6 +1015,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage:
     get:
@@ -985,6 +1045,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -1052,6 +1113,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1060,6 +1122,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1068,6 +1131,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1076,6 +1140,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage/live:
     put:
@@ -1121,6 +1186,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1129,6 +1195,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1137,6 +1204,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Stage not found
@@ -1145,6 +1213,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1153,6 +1222,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage/{id}:
     parameters:
@@ -1187,6 +1257,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1195,6 +1266,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -1253,6 +1325,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1261,6 +1334,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1269,6 +1343,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -1277,6 +1352,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1285,6 +1361,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     delete:
       tags:
@@ -1314,6 +1391,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1322,6 +1400,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -1330,6 +1409,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1338,6 +1418,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/users/me:
     get:
@@ -1366,6 +1447,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "500":
           description: Unexpected server error
@@ -1374,6 +1456,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -1419,6 +1502,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1427,6 +1511,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "404":
           description: User profile not found
@@ -1435,6 +1520,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: USER_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1443,6 +1529,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/registration-point:
     get:
@@ -1481,6 +1568,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: MISSING_QUERY_PARAM
                 message: "Missing required query parameter: studentId"
         "404":
           description: User or group registration point not found
@@ -1491,9 +1579,11 @@ paths:
               examples:
                 userNotFound:
                   value:
+                    code: USER_NOT_FOUND
                     message: User not found
                 regNotFound:
                   value:
+                    code: REGISTRATION_POINT_NOT_FOUND
                     message: Registration point not found for user's group
         "500":
           description: Unexpected server error
@@ -1502,6 +1592,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/phase:
     get:
@@ -1550,6 +1641,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Failed to fetch phases
     patch:
       tags:
@@ -1610,9 +1702,11 @@ paths:
               examples:
                 noPhase:
                   value:
+                    code: MISSING_PHASE
                     message: No phase provided
                 invalidBody:
                   value:
+                    code: INVALID_BODY
                     message: Invalid body
         "401":
           description: Not authenticated
@@ -1621,6 +1715,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1629,6 +1724,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Failed to update phase
@@ -1637,6 +1733,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Failed to update phase
   /api/admin/stats/groups:
     get:
@@ -1698,6 +1795,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1706,6 +1804,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1714,6 +1813,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/admin/stats/game-mission:
     get:
@@ -1771,6 +1871,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_QUESTION_ID
                 message: Invalid question ID
         "401":
           description: Not authenticated
@@ -1779,6 +1880,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1787,6 +1889,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1795,6 +1898,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/users/me/missions:
     get:
@@ -1816,14 +1920,9 @@ paths:
                   - data
                 properties:
                   data:
-                    type: object
-                    required:
-                      - answers
-                    properties:
-                      answers:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/UserAnswerHistoryItem"
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserAnswerHistoryItem"
         "401":
           description: Not authenticated
           content:
@@ -1831,6 +1930,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1839,6 +1939,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1847,6 +1948,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -1904,12 +2006,15 @@ paths:
               examples:
                 invalidBody:
                   value:
+                    code: INVALID_BODY
                     message: Invalid body
                 invalidQuestion:
                   value:
+                    code: INVALID_QUESTION_ID
                     message: Invalid question ID
                 typeMismatch:
                   value:
+                    code: INVALID_ANSWER_FORMAT
                     message: Answer must be an array of strings for multi-choice questions
         "401":
           description: Not authenticated
@@ -1918,6 +2023,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Submission window is closed or insufficient role
@@ -1925,8 +2031,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-              example:
-                message: The submission window for this question is currently closed
+              examples:
+                submissionClosed:
+                  value:
+                    code: SUBMISSION_CLOSED
+                    message: The submission window for this question is currently closed
+                forbidden:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
         "404":
           description: User profile not found
           content:
@@ -1934,6 +2047,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: USER_NOT_FOUND
                 message: User profile not found
         "409":
           description: Answer already submitted
@@ -1942,6 +2056,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ANSWER_ALREADY_SUBMITTED
                 message: You have already submitted an answer for this question
         "500":
           description: Unexpected server error
@@ -1949,8 +2064,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-              example:
-                message: Internal server error
+              examples:
+                internal:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal server error
+                missingPhase:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Mission phase configuration not found in DB
   /api/users/me/missions/{id}:
     parameters:
       - name: id
@@ -1986,6 +2108,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_QUESTION_ID
                 message: Invalid question ID
         "401":
           description: Not authenticated
@@ -1994,6 +2117,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -2002,6 +2126,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Answer not found
@@ -2010,6 +2135,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ANSWER_NOT_FOUND
                 message: Answer not found for this question
         "500":
           description: Unexpected server error
@@ -2018,19 +2144,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewClick:
+  /api/popkaew/click:
     post:
       tags:
         - Popkaew
       operationId: submitPopkaewClick
       summary: Submit click event for PopKaew game
-      description: Participant only. Increments score of user and user's vessel by 1. Recomputes top 3 vessel leaderboard.
+      description: Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off). Increments score of user and user's vessel by 1.
       security:
         - sessionCookie: []
       responses:
         "200":
-          description: Click processed and updated score & leaderboard returned
+          description: Click processed, updated player score returned
           content:
             application/json:
               schema:
@@ -2041,33 +2168,11 @@ paths:
                   data:
                     type: object
                     required:
-                      - success
                       - score
-                      - leaderboard
                     properties:
-                      success:
-                        type: boolean
-                        example: true
                       score:
                         type: number
                         example: 101
-                      leaderboard:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - vesselName
-                            - popkaewscore
-                            - rank
-                          properties:
-                            vesselName:
-                              $ref: "#/components/schemas/MultiLang"
-                            popkaewscore:
-                              type: number
-                              example: 450
-                            rank:
-                              type: integer
-                              example: 1
         "401":
           description: Not authenticated
           content:
@@ -2075,6 +2180,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -2083,6 +2189,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Player profile not found
@@ -2091,6 +2198,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: PLAYER_NOT_FOUND
                 message: Player not found
         "500":
           description: Unexpected server error
@@ -2099,14 +2207,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewLeaderboard:
+  /api/popkaew/leaderboard:
     get:
       tags:
         - Popkaew
       operationId: getPopkaewLeaderboard
       summary: Get PopKaew leaderboard
-      description: Participant only. Returns vessel rank leaderboard.
+      description: Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off). Returns all vessels sorted by score desc with standard competition ranking (ties share rank).
       security:
         - sessionCookie: []
       responses:
@@ -2120,26 +2229,33 @@ paths:
                   - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      type: object
-                      required:
-                        - rank
-                        - id
-                        - vesselName
-                        - popkaewscore
-                      properties:
-                        rank:
-                          type: integer
-                          example: 1
-                        id:
-                          type: string
-                          example: Vessel A
-                        vesselName:
-                          $ref: "#/components/schemas/MultiLang"
-                        popkaewscore:
-                          type: number
-                          example: 450
+                    type: object
+                    required:
+                      - vessels
+                      - vesselIndex
+                    properties:
+                      vessels:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - rank
+                            - vesselName
+                            - popkaewscore
+                          properties:
+                            rank:
+                              type: integer
+                              example: 1
+                            vesselName:
+                              $ref: "#/components/schemas/MultiLang"
+                            popkaewscore:
+                              type: number
+                              example: 450
+                      vesselIndex:
+                        type: integer
+                        nullable: true
+                        description: Index of the authenticated user's vessel in `vessels`, for row highlighting (null if not found)
+                        example: 4
         "401":
           description: Not authenticated
           content:
@@ -2147,6 +2263,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -2155,6 +2272,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -2163,21 +2281,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewPlayer/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        example: "6900001121"
+  /api/popkaew/me:
     get:
       tags:
         - Popkaew
-      operationId: getPopkaewPlayer
-      summary: Get PopKaew player score details by ID
-      description: Participant only. Retrieves scoring info for a specific participant.
+      operationId: getPopkaewMe
+      summary: Get current user's PopKaew stats
+      description: Participant only. Retrieves scoring info for the authenticated participant.
       security:
         - sessionCookie: []
       responses:
@@ -2193,21 +2305,16 @@ paths:
                   data:
                     type: object
                     required:
-                      - id
                       - name
                       - vesselName
                       - popkaewscore
                       - lastClickAt
                     properties:
-                      id:
-                        type: string
-                        example: "6900001121"
                       name:
                         type: string
                         example: John Doe
                       vesselName:
-                        type: string
-                        example: Vessel A
+                        $ref: "#/components/schemas/MultiLang"
                       popkaewscore:
                         type: integer
                         example: 101
@@ -2223,6 +2330,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -2231,6 +2339,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Player not found
@@ -2239,6 +2348,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: PLAYER_NOT_FOUND
                 message: Player not found
         "500":
           description: Unexpected server error
@@ -2247,4 +2357,5 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
