@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     return success<ScanResponse>({
       createdAt: result.createdAt,
-      club: result.club,
+      code: result.code,
       score: result.score,
     })
   } catch (error) {

@@ -1,5 +1,4 @@
 import { adminDb } from "@/firebase/admin"
-import type { Club } from "@/types/club"
 import type { Scan } from "@/types/scan"
 import clubService from "@/services/clubService"
 import featureFlagsService from "@/services/featureFlagService"
@@ -23,7 +22,7 @@ const scanService = {
     userGroup: string,
     clubId: string
   ): Promise<
-    | ({ success: true; club: Club } & Omit<Scan, "createdAt"> & { createdAt: string })
+    | ({ success: true; code: string } & Omit<Scan, "createdAt"> & { createdAt: string })
     | { success: false; error: AppErrorCode }
   > {
     const docRef = scanCollection.doc(`${userId}_${clubId}`)
@@ -77,7 +76,7 @@ const scanService = {
       ...scan,
       // result in UTC timezone
       createdAt: now.toDate().toISOString(),
-      club,
+      code: club.code,
     }
   },
 }

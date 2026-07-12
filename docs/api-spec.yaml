@@ -946,20 +946,17 @@ paths:
                     type: object
                     required:
                       - createdAt
-                      - club
+                      - code
                       - score
                     properties:
                       createdAt:
                         type: string
                         format: date-time
                         example: "2026-07-04T09:00:00.000Z"
-                      club:
-                        type: object
-                        required:
-                          - name
-                        properties:
-                          name:
-                            $ref: "#/components/schemas/MultiLang"
+                      code:
+                        type: string
+                        description: Stable club code (from the club's `code` field)
+                        example: intania-badminton-club
                       score:
                         type: number
                         example: 10
