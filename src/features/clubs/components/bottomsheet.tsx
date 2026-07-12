@@ -4,7 +4,7 @@ import { useRef } from "react"
 import Image from "next/image"
 import { CATEGORIES } from "../const/categories"
 import { Club } from "../types/club"
-import { House } from "lucide-react"
+import { House, MapPin } from "lucide-react"
 
 function getCategoryLabel(categoryId: string) {
   const found = CATEGORIES.find((c) => c.id === categoryId)
@@ -30,7 +30,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-black/40" onClick={onClose}>
       <div
-        className="relative flex h-[75vh] w-full flex-col rounded-t-2xl bg-white"
+        className="relative flex h-[75vh] w-full flex-col rounded-t-2xl bg-cream-tanned"
         onClick={(e) => e.stopPropagation()}
       >
         {/* handle */}
@@ -52,22 +52,22 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
             startY.current = null
           }}
         >
-          <div className="h-1 w-10 rounded-full bg-gray-300" />
+          <div className="h-1 w-10 rounded-full bg-brick-orange" />
         </div>
 
         {/* content */}
         <div className="flex-1 overflow-y-auto px-5 pb-5">
           <div className="flex items-start gap-3 pt-2">
-            <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-gray-100">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-white p-1 ring-1 ring-brownie/20">
               {club.imageUrl && (
-                <Image src={club.imageUrl} alt={club.name} fill className="object-cover" />
+                <Image src={club.imageUrl} alt={club.name} fill className="object-contain" />
               )}
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <h2 className="text-lg font-bold text-gray-900">{club.name}</h2>
+            <div className="flex flex-col gap-1.5  -translate-y-2">
+              <h2 className="font-sov-yeehor text-4xl leading-tight text-brownie">{club.name}</h2>
 
-              <span className="w-fit rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+              <span className="w-fit rounded-full bg-brick-orange px-3 py-1 text-xs text-cream-tanned">
                 {getCategoryLabel(club.categoryId)}
               </span>
             </div>
@@ -75,21 +75,23 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
 
           {club.description && (
             <div className="mt-5">
-              <h3 className="font-bold text-gray-900">รายละเอียด</h3>
+              <h3 className="font-fc-quantum text-xl text-brownie">รายละเอียด</h3>
 
-              <p className="mt-2 text-sm text-gray-700">{club.description}</p>
+              <p className="mt-2 text-sm leading-relaxed text-fc-quantum text-brick-orange">
+                {club.description}
+              </p>
             </div>
           )}
 
           {club.havebooth && (
             <div className="mt-5">
-              <h3 className="text-center font-bold text-gray-900">พิกัดบูธ</h3>
+              <h3 className="text-center font-fc-quantum text-xl text-brownie">พิกัดบูธ</h3>
 
-              <div className="relative mt-3 h-[260px] w-full overflow-hidden rounded-xl bg-gray-50">
+              <div className="relative mt-3 h-[260px] w-full overflow-hidden bg-white">
                 {club.mapimageUrl ? (
                   <Image src={club.mapimageUrl} alt="map" fill className="object-contain" />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                  <div className="flex h-full items-center justify-center text-sm text-brownie/60">
                     Placeholder Map
                   </div>
                 )}
@@ -99,15 +101,16 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
         </div>
 
         {/* bottom bar */}
-        <div className="border-t border-gray-100 bg-white px-3 pb-4 pt-3">
+        <div className="border-t border-gray-100 px-3 pb-4 pt-3">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 rounded-full bg-gray-900 px-4 py-3 text-sm text-white whitespace-nowrap">
+            <div className="flex items-center gap-2 rounded-full bg-midnight-light px-4 py-3 text-sm text-white whitespace-nowrap">
               <House size={16} />
               <span>{club.boothcount ?? 0}</span>
             </div>
 
-            <div className="flex-1 truncate rounded-full bg-black px-3 py-3 text-center text-sm text-white">
-              {club.location ?? "ยังไม่ระบุพิกัด"}
+            <div className="flex flex-1 items-center justify-center gap-1.5 truncate rounded-full bg-midnight-light px-3 py-3 text-center text-sm text-white">
+              <MapPin size={16} className="shrink-0" />
+              <span className="truncate">{club.location ?? "ยังไม่ระบุพิกัด"}</span>
             </div>
 
             {instagramUrl && (
@@ -115,7 +118,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
                 href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-pink-500 text-white"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-midnight-light text-white"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <rect
