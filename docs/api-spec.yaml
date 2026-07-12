@@ -33,6 +33,8 @@ tags:
     description: Event phase management (admin only for mutations)
   - name: Popkaew
     description: PopKaew clicker game integration (participant only)
+  - name: WasteSort
+    description: Waste-sorting mini-game (participant only, gated by the `game-sustain` feature flag)
   - name: Stats
     description: Admin statistics and reports (admin only)
 components:
@@ -169,6 +171,7 @@ components:
         - group
         - department
         - prefLanguage
+        - yarnAccepted
       properties:
         id:
           type: string
@@ -193,6 +196,10 @@ components:
             - en
             - th
           example: th
+        yarnAccepted:
+          type: boolean
+          description: Missing on the Firestore doc is treated as false
+          example: false
     FeatureFlag:
       type: object
       required:
@@ -246,6 +253,39 @@ components:
           type: string
           format: date-time
           example: "2026-07-04T09:30:00.000Z"
+    WasteSortPlayer:
+      type: object
+      description: Public wasteSort player shape (the internal `group` label is never exposed).
+      required:
+        - name
+        - playCount
+        - vesselName
+        - sustainScore
+        - playsToday
+        - lastPlayDate
+      properties:
+        name:
+          type: string
+          description: Player's English first name (denormalized at creation)
+          example: John
+        playCount:
+          type: integer
+          description: Lifetime rounds played
+          example: 7
+        vesselName:
+          $ref: "#/components/schemas/MultiLang"
+        sustainScore:
+          type: number
+          description: Lifetime accumulated score across all rounds
+          example: 420
+        playsToday:
+          type: integer
+          description: Rounds played on `lastPlayDate` (only meaningful when `lastPlayDate` is today)
+          example: 2
+        lastPlayDate:
+          type: string
+          description: Date key (YYYY-MM-DD, Asia/Bangkok) of the most recent round; empty string if never played
+          example: "2026-07-13"
     UserAnswerHistoryItem:
       type: object
       required:
@@ -909,6 +949,74 @@ paths:
               example:
                 code: INTERNAL_ERROR
                 message: Internal server error
+  /api/groups/commitScanBonus:
+    put:
+      tags:
+        - Leaderboard
+      operationId: commitScanBonus
+      summary: Apply ranked scan-score bonuses to all groups
+      description: Admin only. Ranks groups by scan score and commits the rank-based bonus to each group.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Bonuses committed; per-group results returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - group
+                        - scanScore
+                        - scanRank
+                        - scanRankBonus
+                      properties:
+                        group:
+                          type: string
+                          example: A1
+                        scanScore:
+                          type: number
+                          example: 350
+                        scanRank:
+                          type: integer
+                          example: 2
+                        scanRankBonus:
+                          type: number
+                          example: 1800
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: FORBIDDEN
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
   /api/scan:
     post:
       tags:
@@ -986,7 +1094,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
                 code: GAME_NOT_ACTIVE
-                message: Club scanning game is not active
+                message: Game is not active
         "404":
           description: Club, user, or group not found
           content:
@@ -2180,14 +2288,14 @@ paths:
                 code: UNAUTHORIZED
                 message: Not logged in
         "403":
-          description: Insufficient role permissions
+          description: Insufficient role permissions or game not active
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                code: FORBIDDEN
-                message: Forbidden
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
         "404":
           description: Player profile not found
           content:
@@ -2197,6 +2305,223 @@ paths:
               example:
                 code: PLAYER_NOT_FOUND
                 message: Player not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+  /api/wastesort/me:
+    get:
+      tags:
+        - WasteSort
+      operationId: getWasteSortMe
+      summary: Get current user's wasteSort player profile
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        404 until the player has submitted their first round — the player doc is auto-created on
+        first round submission, so treat 404 as the zero-state, not an error.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Player profile retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WasteSortPlayer"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "404":
+          description: Player has not played any round yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: PLAYER_NOT_FOUND
+                message: Player not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+  /api/wastesort/me/round:
+    get:
+      tags:
+        - WasteSort
+      operationId: getWasteSortRoundQuota
+      summary: Check remaining wasteSort plays today
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        Never 404s — a player who has never played gets the full quota. Quota resets at midnight
+        Asia/Bangkok (calendar day), independent of feature-flag windows.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Today's play quota
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - playsToday
+                      - maxPlaysPerDay
+                      - playsRemaining
+                      - canPlay
+                    properties:
+                      playsToday:
+                        type: integer
+                        example: 1
+                      maxPlaysPerDay:
+                        type: integer
+                        example: 3
+                      playsRemaining:
+                        type: integer
+                        example: 2
+                      canPlay:
+                        type: boolean
+                        example: true
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+    post:
+      tags:
+        - WasteSort
+      operationId: submitWasteSortRound
+      summary: Submit a finished wasteSort round
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        Call once per finished round (each of the up-to-3 daily plays). Atomically: auto-creates
+        the player doc on the first-ever round, enforces the daily play limit, adds the (floored
+        at 0) score to the player's lifetime `sustainScore`, and rolls the same amount into the
+        group's `scoreSources.sustainScore`. Score accumulates — it is never overwritten.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - score
+              properties:
+                score:
+                  type: number
+                  description: Final score of the round (negative values are floored to 0)
+                  example: 120
+      responses:
+        "200":
+          description: Round recorded, updated player returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - player
+                    properties:
+                      player:
+                        $ref: "#/components/schemas/WasteSortPlayer"
+        "400":
+          description: Score missing or not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INVALID_BODY
+                message: score must be a number
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "429":
+          description: Daily play limit reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: DAILY_LIMIT_REACHED
+                message: Already played 3 times today
         "500":
           description: Unexpected server error
           content:
@@ -2263,14 +2588,14 @@ paths:
                 code: UNAUTHORIZED
                 message: Not logged in
         "403":
-          description: Insufficient role permissions
+          description: Insufficient role permissions or game not active
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                code: FORBIDDEN
-                message: Forbidden
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
         "500":
           description: Unexpected server error
           content:
@@ -2286,7 +2611,9 @@ paths:
         - Popkaew
       operationId: getPopkaewMe
       summary: Get current user's PopKaew stats
-      description: Participant only. Retrieves scoring info for the authenticated participant.
+      description: >-
+        Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off).
+        Retrieves scoring info for the authenticated participant.
       security:
         - sessionCookie: []
       responses:
@@ -2302,14 +2629,10 @@ paths:
                   data:
                     type: object
                     required:
-                      - name
                       - vesselName
                       - popkaewscore
                       - lastClickAt
                     properties:
-                      name:
-                        type: string
-                        example: John Doe
                       vesselName:
                         $ref: "#/components/schemas/MultiLang"
                       popkaewscore:

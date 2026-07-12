@@ -12,6 +12,7 @@ export interface RawUser {
   group: string
   department: MultiLang
   prefLanguage: "en" | "th"
+  yarnAccepted?: boolean
   answers?: UserAnswers
 }
 
@@ -34,6 +35,7 @@ const populateGroup = async (user: RawUser): Promise<User> => {
     name: user.name,
     department: user.department,
     prefLanguage: user.prefLanguage,
+    yarnAccepted: user.yarnAccepted ?? false,
     group: groupService.mapToPublic(group, revealVessel),
   }
 }

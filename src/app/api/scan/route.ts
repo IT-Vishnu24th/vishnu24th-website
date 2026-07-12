@@ -2,7 +2,7 @@ import { NextRequest } from "next/server"
 import z from "zod"
 import scanService from "@/services/scanService"
 import { ScanResponse } from "@/types/scan"
-import { protectRaw, success, failure, parseBody } from "@/utils/apiHelpers"
+import { protectRaw, success, failure, parseBody, requireFlag } from "@/utils/apiHelpers"
 import { AppErrorCode } from "@/types/appErrorCode"
 
 const scanPayloadSchema = z.object({
@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
+
+    const [flagErr] = await requireFlag("game-clubscan")
+    if (flagErr) return flagErr
 
     const [parseErr, payload] = await parseBody(req, scanPayloadSchema)
     if (parseErr) return parseErr
@@ -25,9 +28,6 @@ export async function POST(req: NextRequest) {
 
     const result = await scanService.scan(user.id, user.group, clubId)
     if (!result.success) {
-      if (result.error === AppErrorCode.GAME_NOT_ACTIVE) {
-        return failure(403, AppErrorCode.GAME_NOT_ACTIVE, "Club scanning game is not active")
-      }
       if (result.error === AppErrorCode.CLUB_NOT_FOUND) {
         return failure(404, AppErrorCode.CLUB_NOT_FOUND, "Club not found")
       }

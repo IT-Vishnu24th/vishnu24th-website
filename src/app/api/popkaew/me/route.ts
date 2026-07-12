@@ -19,7 +19,6 @@ export async function GET() {
 
     // player.group (label) stays server-side
     return success({
-      name: player.name,
       vesselName: player.vesselName,
       popkaewscore: player.popkaewscore,
       lastClickAt: player.lastClickAt?.toDate().toISOString() ?? null,

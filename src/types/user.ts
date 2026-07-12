@@ -29,9 +29,11 @@ export interface User {
   group: Vessel
   department: MultiLang
   prefLanguage: keyof MultiLang
+  /** missing on old docs = false */
+  yarnAccepted: boolean
 }
 
-export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage">
+export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage" | "yarnAccepted">
 
 export interface UserAnswerHistoryItem {
   id: string
