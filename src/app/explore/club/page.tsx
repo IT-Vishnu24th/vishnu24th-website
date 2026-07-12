@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { ChevronLeft, ChevronDown, ChevronUp, Search, MoreHorizontal, Check } from "lucide-react"
 import { Header } from "@/components/Headers"
 
-import { MOCK_CLUBS } from "@/features/clubs/const/mock"
+import { club_data } from "@/features/clubs/const/club-data"
 import { CATEGORIES } from "@/features/clubs/const/categories"
 import { useClubFilter, type BoothFilter } from "@/features/clubs/hooks/useClubFilter"
 import ClubBottomSheet from "@/features/clubs/components/bottomsheet"
@@ -31,7 +31,7 @@ export default function Page() {
   const [boothFilter, setBoothFilter] = useState<BoothFilter>("all")
   const [selectedClub, setSelectedClub] = useState<Club | null>(null)
 
-  const clubs = useClubFilter(MOCK_CLUBS, query, selectedCategories, boothFilter)
+  const clubs = useClubFilter(club_data, query, selectedCategories, boothFilter)
 
   function toggleCategory(id: string) {
     setSelectedCategories((prev) =>
