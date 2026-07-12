@@ -19,7 +19,7 @@ export const PhaseSaveButton = ({
       }}
       aria-disabled={disabled}
     >
-      <div className="relative flex h-50 w-full justify-center overflow-hidden">
+      <div className="relative flex h-60 w-full justify-center overflow-hidden">
         <img src="/admin/tanned_globe.png" className="absolute max-w-140" alt="" />
         <div className="absolute text-brownie hover:text-brownie-dark duration-300 flex flex-col items-center pt-17">
           <Save className="size-8" />
