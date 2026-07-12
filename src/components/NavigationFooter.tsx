@@ -29,7 +29,17 @@ export default function FooterNavigation() {
     },
     { name: "Ranking", icon: Ship, path: "/ranking", requiresAuth: true },
     { name: "Game", icon: Gamepad2, path: "/game", requiresAuth: true },
-    ...(isAdmin ? [{ name: "Admin", icon: UserRoundKey, path: "/admin", requiresAuth: true }] : []),
+    ...(isAdmin
+      ? [
+          {
+            name: "Admin",
+            icon: UserRoundKey,
+            path: "/admin",
+            requiresAuth: true,
+            subpaths: ["/admin/website_settings", "/admin/stage_status"],
+          },
+        ]
+      : []),
   ]
 
   // กดค้างเริ่มแสดง text

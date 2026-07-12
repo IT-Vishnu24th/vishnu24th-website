@@ -4,26 +4,30 @@ import * as Switch from "@radix-ui/react-switch"
 interface WebsitePhaseToggleRowProps {
   id: string
   label: string
-  defaultChecked?: boolean
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
 }
 
 export const WebsitePhaseToggleRow = ({
   id,
   label,
-  defaultChecked = false,
+  checked,
+  onCheckedChange,
 }: WebsitePhaseToggleRowProps) => {
   return (
     <Label.Root
       htmlFor={id}
-      className="flex min-h-18 items-center justify-between gap-6 px-8 text-base"
+      className="flex py-2 items-center justify-between gap-6 text-brownie-light px-4 text-base"
     >
-      <span>{label}</span>
+      <span className="font-fc-quantum text-[18px] leading-[25.2px]">{label}</span>
+
       <Switch.Root
         id={id}
-        defaultChecked={defaultChecked}
-        className="relative h-10 w-16 shrink-0 rounded-full bg-black transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        className="relative h-8 w-13 shrink-0 rounded-full transition-colors px-1 py-0.5 border-2 bg-none data-[state=checked]:opacity-100 opacity-55 border-brick-orange data-[state=checked]:bg-brick-orange"
       >
-        <Switch.Thumb className="block size-8 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-7" />
+        <Switch.Thumb className="block size-6 bg-brick-orange rounded-full transition-transform data-[state=checked]:bg-cream data-[state=checked]:translate-x-4.75 -translate-x-px" />
       </Switch.Root>
     </Label.Root>
   )

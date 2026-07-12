@@ -1,13 +1,15 @@
 "use client"
 
 import * as Accordion from "@radix-ui/react-accordion"
+
 import { WebsitePhaseHeader } from "./WebsitePhaseHeader"
 import { WebsitePhaseToggleRow } from "./WebsitePhaseToggleRow"
 
 interface WebsitePhaseToggle {
   id: string
   label: string
-  defaultChecked?: boolean
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
 }
 
 interface WebsitePhaseBlockProps {
@@ -28,20 +30,21 @@ export const WebsitePhaseBlock = ({
       type="single"
       collapsible
       defaultValue={defaultOpen ? value : undefined}
-      className="w-full"
+      className="w-full max-w-120"
     >
       <Accordion.Item value={value}>
         <WebsitePhaseHeader title={title} />
 
-        <Accordion.Content className="overflow-hidden">
+        <Accordion.Content
+          className="
+            overflow-hidden
+            data-[state=open]:animate-[accordion-down_300ms_ease-out]
+            data-[state=closed]:animate-[accordion-up_300ms_ease-out]
+          "
+        >
           <div className="py-1">
             {toggles.map((toggle) => (
-              <WebsitePhaseToggleRow
-                key={toggle.id}
-                id={toggle.id}
-                label={toggle.label}
-                defaultChecked={toggle.defaultChecked}
-              />
+              <WebsitePhaseToggleRow key={toggle.id} {...toggle} />
             ))}
           </div>
         </Accordion.Content>
