@@ -15,11 +15,7 @@ export async function GET(
       return failure(404, AppErrorCode.NOT_FOUND, "popkaewVessel not found")
     }
 
-    return success({
-      vesselName: vessel.vesselName,
-      popkaewscore: vessel.popkaewscore,
-      group: vessel.group,
-    })
+    return success(popkaewVesselService.mapToPublic(vessel))
   } catch (error) {
     console.error("Get popkaewVessel error:", error)
     return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")

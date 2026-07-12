@@ -2,6 +2,7 @@ import { FieldValue } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
 import { popkaewPlayer } from "@/types/popkaewPlayer"
 import { popkaewVessel } from "@/types/popkaewVessel"
+import popkaewVesselService from "@/services/popkaewVesselService"
 
 export async function click(playerId: string) {
   const playerRef = await adminDb.collection("popkaewPlayer").doc(playerId)
@@ -40,7 +41,7 @@ export async function click(playerId: string) {
     .get()
 
   const top3 = leaderboardSnapshot.docs.map((doc, index) => ({
-    ...(doc.data() as popkaewVessel),
+    ...popkaewVesselService.mapToPublic(doc.data() as popkaewVessel),
     rank: index + 1,
   }))
 

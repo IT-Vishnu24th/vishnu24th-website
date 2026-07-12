@@ -1,4 +1,4 @@
-import type { Group, Vessel } from "@/types/group"
+import type { Vessel } from "@/types/group"
 import type { MultiLang } from "@/types/util"
 
 export interface Name {
@@ -26,10 +26,9 @@ export interface User {
   id: string // student id
   role: UserRole
   name: MultiLang<Name>
-  group: Group | Vessel
+  group: Vessel
   department: MultiLang
   prefLanguage: keyof MultiLang
-  answers?: UserAnswers
 }
 
 export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage">

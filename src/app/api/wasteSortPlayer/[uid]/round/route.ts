@@ -42,7 +42,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
-    return success({ player })
+    return success({ player: wasteSortPlayerService.mapToPublic(player) })
   } catch (err) {
     if (err instanceof Error && err.message === "DAILY_LIMIT_REACHED") {
       return failure(

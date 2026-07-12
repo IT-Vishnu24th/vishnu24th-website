@@ -8,7 +8,7 @@ import groupService from "@/services/groupService"
 export async function GET() {
   try {
     const vesselDoc = await popkaewVesselService.rawList()
-    return success(vesselDoc)
+    return success(vesselDoc.map((v) => popkaewVesselService.mapToPublic(v)))
   } catch (error) {
     console.error("Get popkaewVessel error:", error)
     return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")

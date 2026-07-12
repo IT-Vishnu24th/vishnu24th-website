@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import userService from "@/services/userService"
-import { User } from "@/types/user"
+import groupService from "@/services/groupService"
 import { success, failure } from "@/utils/apiHelpers"
 import wasteSortPlayerService, { wasteSortPlayer } from "@/services/wasteSortPlayerService"
 import { AppErrorCode } from "@/types/appErrorCode"
@@ -16,15 +16,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
-    return success({
-      name: player.name,
-      playCount: player.playCount,
-      vesselName: player.vesselName,
-      group: player.group,
-      sustainScore: player.sustainScore,
-      playsToday: player.playsToday,
-      lastPlayDate: player.lastPlayDate,
-    })
+    return success(wasteSortPlayerService.mapToPublic(player))
   } catch (error) {
     console.error("Get player error:", error)
     return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
@@ -41,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
   }
 
-  return success({ player })
+  return success({ player: wasteSortPlayerService.mapToPublic(player) })
 }
 
 // DELETE /api/wasteSortPlayer/[uid]
@@ -60,17 +52,21 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       return success({ message: "Document already exists" })
     }
 
-    const player = await userService.getById(uid)
+    const player = await userService.getRawById(uid)
     if (player == null) {
       return failure(404, AppErrorCode.USER_NOT_FOUND, "Player not found in User DataBase")
     }
 
-    const newPlayer: User = player as User
+    const group = await groupService.getById(player.group)
+    if (group == null) {
+      return failure(500, AppErrorCode.INTERNAL_ERROR, `Group '${player.group}' not found`)
+    }
+
     const newWasteSortPlayer: wasteSortPlayer = {
-      name: newPlayer.name.en.firstName,
+      name: player.name.en.firstName,
       playCount: 0,
-      vesselName: newPlayer.group.vesselName,
-      group: newPlayer.group,
+      vesselName: group.vesselName,
+      group: group.label,
       sustainScore: 0,
       playsToday: 0,
       lastPlayDate: "",

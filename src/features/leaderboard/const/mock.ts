@@ -28,6 +28,11 @@ export const MOCK_LEADERBOARD: LeaderboardResponse = {
     },
   ],
   rank: 18,
+  score: 6767,
+  vesselName: {
+    th: "อนาคอนด้า",
+    en: "Anaconda",
+  },
 }
 //ไม่มีใน type
 export const MOCK_MY_VESSEL = {

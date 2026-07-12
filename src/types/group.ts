@@ -8,7 +8,8 @@ export interface Group {
   room: GroupRoom
 }
 
-export type Vessel = Omit<Group, "label">
+/** Public shape of a group: never exposes `label`; `vesselName` only when the `reveal-vessel` flag is on */
+export type Vessel = Omit<Group, "label" | "vesselName"> & { vesselName?: MultiLang }
 
 export interface GroupStatsResponse {
   label: string

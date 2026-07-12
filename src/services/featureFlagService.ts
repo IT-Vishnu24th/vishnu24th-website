@@ -30,6 +30,12 @@ const featureFlagsService = {
     return data
   },
 
+  /** missing flag doc counts as disabled */
+  async isEnabled(id: string): Promise<boolean> {
+    const flag = await this.getFlag(id)
+    return flag?.enabled ?? false
+  },
+
   async setFlag(id: string, enabled: boolean = false): Promise<FeatureFlag> {
     const ref = featureFlagCollection.doc(id)
     await ref.update({ id, enabled })

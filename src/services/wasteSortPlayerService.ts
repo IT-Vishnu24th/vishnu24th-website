@@ -2,8 +2,6 @@ import { FieldValue } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
 
 import type { wasteSortPlayer } from "@/types/wasteSort"
-import type { wasteSortGroup } from "@/types/wasteSort"
-import { Group } from "./groupService"
 
 export type * from "@/types/wasteSort"
 
@@ -25,13 +23,6 @@ const wasteSortPlayerCollection = adminDb.collection("wasteSortPlayer").withConv
 })
 
 const groupsCollectionRaw = adminDb.collection("groups")
-const groupsCollection = groupsCollectionRaw.withConverter({
-  fromFirestore: (snapshot) => {
-    return snapshot.data() as wasteSortGroup
-  },
-
-  toFirestore: (data: wasteSortGroup) => data,
-})
 
 const wasteSortPlayerService = {
   async getById(uid: string): Promise<wasteSortPlayer | null> {
@@ -71,6 +62,18 @@ const wasteSortPlayerService = {
     return snapshot.docs.map((doc) => doc.data())
   },
 
+  /** strips `group` (group label) — never expose it in API responses */
+  mapToPublic(player: wasteSortPlayer): Omit<wasteSortPlayer, "group"> {
+    return {
+      name: player.name,
+      playCount: player.playCount,
+      vesselName: player.vesselName,
+      sustainScore: player.sustainScore,
+      playsToday: player.playsToday,
+      lastPlayDate: player.lastPlayDate,
+    }
+  },
+
   /**
    * How many rounds this player has played so far today (Asia/Bangkok).
    * Does not mutate anything — safe to call just to display "2/3 plays used"
@@ -86,18 +89,6 @@ const wasteSortPlayerService = {
   async canPlayToday(uid: string): Promise<boolean> {
     const playsToday = await this.getPlaysToday(uid)
     return playsToday < MAX_PLAYS_PER_DAY
-  },
-
-  /**
-   * Get the player's group document (from the shared `groups` collection).
-   */
-  async getGroup(uid: string): Promise<wasteSortGroup | null> {
-    const player = await this.getById(uid)
-    const groupPlayer = player?.group as Group
-    if (!groupPlayer) return null
-
-    const doc = await groupsCollection.doc(groupPlayer.label).get()
-    return doc.data() ?? null
   },
 
   /**

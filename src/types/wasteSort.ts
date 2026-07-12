@@ -1,11 +1,11 @@
 import { MultiLang } from "./util"
-import { Group, Vessel } from "./group"
 
 export type wasteSortPlayer = {
   name: string
   playCount: number
   vesselName: MultiLang
-  group: Group | Vessel
+  /** group label (doc id in `groups`); server-side only — never return in API responses */
+  group: string
   sustainScore: number
   /** Rounds played so far on `lastPlayDate`. Resets to 0 whenever the
    * player's first round of a new day (Asia/Bangkok) is recorded. */

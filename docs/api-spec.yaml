@@ -146,8 +146,8 @@ components:
               enum: [""]
     Vessel:
       type: object
+      description: Public group shape. `vesselName` is present only when the `reveal-vessel` feature flag is enabled.
       required:
-        - vesselName
         - registrationPoint
         - room
       properties:
@@ -184,9 +184,7 @@ components:
         name:
           $ref: "#/components/schemas/MultiLangName"
         group:
-          oneOf:
-            - $ref: "#/components/schemas/Group"
-            - $ref: "#/components/schemas/Vessel"
+          $ref: "#/components/schemas/Vessel"
         department:
           $ref: "#/components/schemas/MultiLang"
         prefLanguage:
@@ -204,7 +202,7 @@ components:
       properties:
         id:
           type: string
-          example: show-group
+          example: reveal-vessel
         name:
           $ref: "#/components/schemas/MultiLang"
         enabled:
@@ -490,7 +488,7 @@ paths:
                 id:
                   type: string
                   minLength: 1
-                  example: show-group
+                  example: reveal-vessel
                 name:
                   $ref: "#/components/schemas/MultiLang"
                 enabled:
@@ -566,7 +564,7 @@ paths:
               additionalProperties:
                 type: boolean
               example:
-                show-group: true
+                reveal-vessel: true
                 popkaew-active: false
       responses:
         "200":
@@ -628,7 +626,7 @@ paths:
         required: true
         schema:
           type: string
-        example: show-group
+        example: reveal-vessel
     get:
       tags:
         - Flags
@@ -762,13 +760,14 @@ paths:
                     required:
                       - top3
                       - rank
+                      - score
                     properties:
                       top3:
                         type: array
                         items:
                           type: object
+                          description: "`vesselName` present only when the `reveal-vessel` feature flag is enabled"
                           required:
-                            - vesselName
                             - score
                             - rank
                           properties:
@@ -785,6 +784,15 @@ paths:
                         nullable: true
                         description: Rank of the authenticated user's group (null if group not found)
                         example: 5
+                      score:
+                        type: number
+                        nullable: true
+                        description: Score of the authenticated user's group (null if group not found)
+                        example: 310
+                      vesselName:
+                        allOf:
+                          - $ref: "#/components/schemas/MultiLang"
+                        description: Vessel name of the authenticated user's group; present only when the `reveal-vessel` feature flag is enabled
         "401":
           description: Not authenticated
           content:
@@ -2050,7 +2058,6 @@ paths:
                           required:
                             - vesselName
                             - popkaewscore
-                            - group
                             - rank
                           properties:
                             vesselName:
@@ -2058,9 +2065,6 @@ paths:
                             popkaewscore:
                               type: number
                               example: 450
-                            group:
-                              type: string
-                              example: A1
                             rank:
                               type: integer
                               example: 1
@@ -2124,7 +2128,6 @@ paths:
                         - id
                         - vesselName
                         - popkaewscore
-                        - group
                       properties:
                         rank:
                           type: integer
@@ -2137,9 +2140,6 @@ paths:
                         popkaewscore:
                           type: number
                           example: 450
-                        group:
-                          type: string
-                          example: A1
         "401":
           description: Not authenticated
           content:

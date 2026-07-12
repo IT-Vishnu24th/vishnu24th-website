@@ -62,12 +62,16 @@ const popkaewVesselService = {
     return snapshot.docs.map((doc, index) => ({
       rank: index + 1,
       id: doc.id,
-      ...doc.data(),
+      ...this.mapToPublic(doc.data()),
     }))
   },
 
-  mapToPublic(vessel: popkaewVessel): popkaewVessel {
-    return vessel
+  /** strips `group` (group label) — never expose it in API responses */
+  mapToPublic(vessel: popkaewVessel): Omit<popkaewVessel, "group"> {
+    return {
+      vesselName: vessel.vesselName,
+      popkaewscore: vessel.popkaewscore,
+    }
   },
 }
 

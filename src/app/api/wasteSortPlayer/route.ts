@@ -3,5 +3,5 @@ import wasteSortPlayerService from "@/services/wasteSortPlayerService"
 
 export async function GET() {
   const players = await wasteSortPlayerService.list()
-  return success({ players })
+  return success({ players: players.map((p) => wasteSortPlayerService.mapToPublic(p)) })
 }
