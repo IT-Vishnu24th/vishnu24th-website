@@ -1,72 +1,59 @@
 "use client"
-import { useState, useEffect, useRef } from "react"
+
 import { Header } from "@/components/Headers"
-import { Hand } from "lucide-react"
-import BuildingInfo from "@/features/map/components/BuildingInfo"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { buildingData } from "@/features/map/const/mock"
+import Sponsor from "@/components/SponsorFooter"
+import BuildingInfo from "@/features/map/components/BuildingInfo"
 
 export default function MapPage() {
-  const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
-  const infoRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      if (event.data?.type === "building-click") {
-        setSelectedBuilding(event.data.building)
-      }
-    }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [])
-
-  // เลื่อนหน้าจอลงไปดูข้อมูลตึกที่เพิ่งเลือก
-  useEffect(() => {
-    if (selectedBuilding && infoRef.current) {
-      infoRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
-    }
-  }, [selectedBuilding])
-
-  const selected = selectedBuilding ? buildingData[selectedBuilding] : null
-
   return (
-    <div className="mx-auto pb-8 font-sans">
-      <Header />
+    <div>
       {/* Top Bar */}
-      <div className="flex items-center px-4 pt-4 pb-2">
-        <button
-          onClick={() => router.push("/")}
-          className="text-2xl bg-transparent border-none cursor-pointer p-0 mr-2"
-          aria-label="กลับ"
-        >
-          ←
-        </button>
-        <h1 className="flex-1 text-center text-3xl font-bold font-serif pr-8">แผนที่</h1>
-      </div>
+      <div className="text-center bg-gradient-to-b from-midnight to-brownie">
+        <Header />
 
-      {/* Map Area */}
-      <div className="mx-4 my-3 overflow-hidden rounded-2xl bg-white">
-        <iframe
-          src="/map/engineer.html"
-          title="แผนที่"
-          className="block w-full aspect-[4/3] border-0"
-          scrolling="no"
-        />
-      </div>
+        <div className="relative flex items-center justify-center px-4 pb-2 ">
+          <button
+            onClick={() => router.push("/explore")}
+            className="absolute left-6 top-10 text-2xl bg-transparent border-none cursor-pointer p-0"
+            aria-label="กลับ"
+          >
+            ←
+          </button>
 
-      {/* text */}
-      <div className="flex items-center gap-2 px-4 py-3 text-base">
-        <Hand size={20} className="text-gray-700" />
-        <span>แตะบนอาคารที่ต้องการดูแผนที่ชมรม</span>
-      </div>
-
-      {/* Building Info - โผล่ขึ้นมาในหน้าเดียวกันเมื่อเลือกตึก */}
-      {selected && (
-        <div ref={infoRef}>
-          <BuildingInfo buildingName={selected.name} clubs={selected.clubs} />
+          <h1 className="text-7xl font-sov-yeehor">แผนที่</h1>
         </div>
-      )}
+
+        <h3 className="text-md text-clay-light font-fc-quantum pt-2">
+          ดูรายชื่อกิจกรรม และรอบเวลา <br />
+          ของเวทีลานเกียร์
+        </h3>
+
+        <div className="relative w-full h-8 overflow-hidden mt-3">
+          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102" />
+        </div>
+      </div>
+
+      {/* Map */}
+      <div className="bg-cream-tanned py-3 -mt-5 pb-10">
+        <div className="mx-4 mt-10 overflow-hidden rounded-2xl">
+          <Image
+            src="/map/map.svg"
+            alt="Map"
+            width={1000}
+            height={700}
+            className="w-full h-auto rounded-2xl"
+          />
+        </div>
+      </div>
+
+      {/* Building Info แสดงตลอด */}
+      <BuildingInfo buildingName="ลานเกียร์" />
+
+      <Sponsor />
     </div>
   )
 }
