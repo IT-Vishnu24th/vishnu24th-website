@@ -15,16 +15,16 @@ import Sponsor from "@/components/SponsorFooter"
 
 const BOOTH_OPTIONS: { id: BoothFilter; label: string }[] = [
   { id: "all", label: "ทั้งหมด" },
-  { id: "has", label: "มีบูธ" },
-  { id: "none", label: "ไม่มีบูธ" },
+  { id: "has", label: "จัดบูธ" },
+  { id: "none", label: "ไม่จัดบูธ" },
 ]
 
 // label ที่ใช้แสดงเป็นหัวข้อกลุ่ม (เช่น "วิชาการ", "กีฬา")
 // ถ้า CATEGORIES มี field label อยู่แล้วตรงกับที่ต้องการแสดง
 // สามารถลบ map นี้ออกแล้วใช้ cat.label ตรง ๆ ได้เลย
-function getCategoryLabel(categoryId: string) {
-  const found = CATEGORIES.find((c) => c.id === categoryId)
-  return found?.label ?? categoryId
+function getCategoryLabel(category: string) {
+  const found = CATEGORIES.find((c) => c.id === category)
+  return found?.label ?? category
 }
 
 export default function Page() {
@@ -48,13 +48,13 @@ export default function Page() {
     const groups: Record<string, typeof clubs> = {}
 
     for (const club of clubs) {
-      const key = (club as { categoryId?: string }).categoryId ?? "other"
+      const key = (club as { category?: string }).category ?? "other"
       if (!groups[key]) groups[key] = []
       groups[key].push(club)
     }
 
     const result: {
-      categoryId: string
+      category: string
       title: string
       clubs: ((typeof clubs)[number] & { displayNumber: number })[]
     }[] = []
@@ -70,7 +70,7 @@ export default function Page() {
         enrichedClubs.push({ ...club, displayNumber: counter })
       }
       result.push({
-        categoryId: c.id,
+        category: c.id,
         title: getCategoryLabel(c.id),
         clubs: enrichedClubs,
       })
@@ -96,14 +96,14 @@ export default function Page() {
           <h1 className="text-7xl font-sov-yeehor">ชมรม</h1>
         </div>
         <div className="relative w-full h-8 overflow-hidden mt-3">
-          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102" />
+          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102 " />
         </div>
       </div>
 
       {/* Hero: title + search + filter + category chips ทั้งหมดอยู่บนพื้นหลังส้มเข้ม */}
-      <div className="bg-gradient-to-b from-brick-orange to-cream pb-10">
+      <div className="bg-gradient-to-b from-brick-orange to-cream pb-10 -mt-5">
         {/* Search + filter row */}
-        <div className="flex items-center gap-2 px-4 pt-6 pb-3">
+        <div className="flex items-center gap-2 px-4 pt-12 pb-3">
           <div className="flex flex-1 items-center gap-2 rounded-full border border-white/40 bg-white/90 px-4 py-2.5">
             <input
               value={query}
@@ -179,7 +179,7 @@ export default function Page() {
       <div className="flex flex-col gap-8 px-4 bg-cream -mt-1 pb-20">
         {groupedClubs.length > 0 ? (
           groupedClubs.map((group) => (
-            <section key={group.categoryId}>
+            <section key={group.category}>
               <h2 className="mb-3 text-center font-sov-yeehor text-4xl italic text-brownie">
                 {group.title}
               </h2>
@@ -201,8 +201,9 @@ export default function Page() {
                       <div className="h-14 w-14 shrink-0 overflow-hidden bg-white p-1.5 ring-1 ring-gray-100">
                         {hasImage && (
                           <Image
-                            src={`/club/${club.imageUrl}`}
-                            alt={club.name}
+                            src={`/club/clublogo/${club.imageUrl}`}
+                            // src ="/club/clublogo/Game-Research-and-Development-Club.png"
+                            alt={club.name.th}
                             width={56}
                             height={56}
                             className="h-full w-full object-contain"
@@ -212,7 +213,7 @@ export default function Page() {
 
                       <div className="min-w-0 flex-1">
                         <h3 className="truncate font-fc-quantum text-lg font-medium text-brownie">
-                          {club.name}
+                          {club.name.th}
                         </h3>
                         <p className="truncate font-fc-quantum text-sm text-brick-orange">
                           {club.shortdescription}

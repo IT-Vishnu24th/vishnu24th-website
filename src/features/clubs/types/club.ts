@@ -1,17 +1,21 @@
 export interface Club {
   id: string
-  name: string
+  code: string
+  name: {
+    th: string
+    en: string
+  }
 
   shortdescription?: string
   description?: string
 
   imageUrl?: string
-  mapimageUrl?: string
+  mapimageUrl?: string //ยังไม่ต้องใส่
 
-  categoryId: string
+  category: string
 
-  havebooth?: boolean
-  location?: string
-  instagram?: string
-  boothcount?: number
+  havebooth?: boolean //ยังไม่ต้องใส่
+  location?: string //ยังไม่ต้องใส่
+  instagram?: string //ยังไม่ต้องใส่
+  boothcount?: number //ยังไม่ต้องใส่
 }

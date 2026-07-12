@@ -63,7 +63,7 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
                         {hasImage && (
                           <Image
                             src={`/club/clublogo/${club.imageUrl}`}
-                            alt={club.name}
+                            alt={club.name.th}
                             width={36}
                             height={36}
                             className="h-full w-full rounded-full object-cover"
@@ -76,7 +76,7 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
                       </span>
                     </div>
 
-                    <span className="truncate text-cream-tanned">{club.name}</span>
+                    <span className="truncate text-cream-tanned">{club.name.th}</span>
                   </div>
                 )
               })}

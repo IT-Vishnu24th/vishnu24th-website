@@ -60,15 +60,22 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
           <div className="flex items-start gap-3 pt-2">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-white p-1 ring-1 ring-brownie/20">
               {club.imageUrl && (
-                <Image src={club.imageUrl} alt={club.name} fill className="object-contain" />
+                <Image
+                  src={`/club/clublogo/${club.imageUrl}`}
+                  alt={club.name.th}
+                  fill
+                  className="object-contain"
+                />
               )}
             </div>
 
             <div className="flex flex-col gap-1.5  -translate-y-2">
-              <h2 className="font-sov-yeehor text-4xl leading-tight text-brownie">{club.name}</h2>
+              <h2 className="font-sov-yeehor text-4xl leading-tight text-brownie">
+                {club.name.th}
+              </h2>
 
               <span className="w-fit rounded-full bg-brick-orange px-3 py-1 text-xs text-cream-tanned">
-                {getCategoryLabel(club.categoryId)}
+                {getCategoryLabel(club.category)}
               </span>
             </div>
           </div>
@@ -83,7 +90,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
             </div>
           )}
 
-          {club.havebooth && (
+          {
             <div className="mt-5">
               <h3 className="text-center font-fc-quantum text-xl text-brownie">พิกัดบูธ</h3>
 
@@ -97,7 +104,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
                 )}
               </div>
             </div>
-          )}
+          }
         </div>
 
         {/* bottom bar */}
