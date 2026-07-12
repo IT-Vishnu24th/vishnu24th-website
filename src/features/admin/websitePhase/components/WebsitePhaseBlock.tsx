@@ -35,13 +35,7 @@ export const WebsitePhaseBlock = ({
       <Accordion.Item value={value}>
         <WebsitePhaseHeader title={title} />
 
-        <Accordion.Content
-          className="
-            overflow-hidden
-            data-[state=open]:animate-[accordion-down_300ms_ease-out]
-            data-[state=closed]:animate-[accordion-up_300ms_ease-out]
-          "
-        >
+        <Accordion.Content className="accordion-content">
           <div className="py-1">
             {toggles.map((toggle) => (
               <WebsitePhaseToggleRow key={toggle.id} {...toggle} />

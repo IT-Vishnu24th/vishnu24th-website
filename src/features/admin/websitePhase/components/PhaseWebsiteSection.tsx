@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import { getErrorMessage } from "@/lib/error-message"
 import { useFeatureFlags, useUpdateFeatureFlags } from "@/hooks/useApi"
@@ -31,7 +31,7 @@ const websitePhaseSections = [
   },
   {
     title: "เกมส์",
-    defaultOpen: false,
+    defaultOpen: true,
     toggles: [
       { id: "game-sustain", label: "แยกขยะ" },
       { id: "game-popkaew", label: "ป๊อบแก้ว" },
@@ -45,13 +45,15 @@ export const PhaseWebsiteSection = () => {
   const { mutate: updateFeatureFlags, isPending } = useUpdateFeatureFlags()
 
   const [toggleState, setToggleState] = useState<Record<string, boolean>>({})
+  const [prevData, setPrevData] = useState<typeof data>(undefined)
 
   // Initialize local state from API
-  useEffect(() => {
-    if (!data?.data) return
-
-    setToggleState(Object.fromEntries(data.data.map((flag) => [flag.id, flag.enabled])))
-  }, [data])
+  if (data !== prevData) {
+    setPrevData(data)
+    if (data?.data) {
+      setToggleState(Object.fromEntries(data.data.map((flag) => [flag.id, flag.enabled])))
+    }
+  }
 
   const sections = useMemo(() => {
     const availableFlags = new Set((data?.data ?? []).map((flag) => flag.id))
@@ -97,11 +99,12 @@ export const PhaseWebsiteSection = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col gap-8 items-center pt-25">
+      <div className="w-full flex flex-col gap-8 items-center min-h-140 pt-25">
         {sections.map((section) => (
           <WebsitePhaseBlock
             key={section.title}
             title={section.title}
+            defaultOpen={section.defaultOpen}
             toggles={section.toggles.map((toggle) => ({
               ...toggle,
               checked: toggleState[toggle.id] ?? false,
