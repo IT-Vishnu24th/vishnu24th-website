@@ -70,16 +70,22 @@ on the document is touched.
 
 Score is floored at 0 before being applied (never subtracts).
 
-## API (`app/api/wasteSortPlayer/...`)
+## API (`app/api/wastesort/...`)
 
 Full endpoint list, request/response shapes, and status codes: see `API.md` if you kept it, or
 ask me to regenerate it — the short version:
 
-- `POST /api/wasteSortPlayer` — create (idempotent)
-- `GET /api/wasteSortPlayer` — list all
-- `GET|PATCH|DELETE /api/wasteSortPlayer/[uid]` — single player; PATCH blocks scoring fields
-- `GET /api/wasteSortPlayer/[uid]/round` — check remaining plays today
-- `POST /api/wasteSortPlayer/[uid]/round` — submit a round (`{ score }`)
+- `GET /api/wastesort/me` — own player profile (404 until first round is played)
+- `GET /api/wastesort/me/round` — check remaining plays today (full quota if never played)
+- `POST /api/wastesort/me/round` — submit a round (`{ score }`); auto-creates the player doc
+  on first-ever round, inside the same transaction — there is no separate create endpoint
+
+Identity comes from the session cookie (`protectRaw("participant")`) — there are no
+uid-parameterized routes, so players can only act on their own record. No update/delete
+endpoints — manual fix-ups go through the Firebase console.
+
+All routes require the `game-sustain` feature flag — they return `403 GAME_NOT_ACTIVE` when
+the flag is off or missing (`requireFlag("game-sustain")`).
 
 All routes run on `export const runtime = "nodejs"` (required — `firebase-admin` doesn't work
 on the Edge runtime).
@@ -98,9 +104,8 @@ Use `lib/wasteSortApiClient.ts` (`wasteSortApi`) rather than calling these route
   submitting an inflated `score` for their _own_ round (auth stops spoofing _other_ players,
   not self-inflation). Cheap fix if this ever matters: clamp `score` in `recordRound` to a
   `MAX_SCORE_PER_ROUND` constant based on the max achievable in 30 seconds.
-- **Public/unauthenticated leaderboard reads** — `GET /api/wasteSortPlayer` currently requires
-  sign-in like everything else. Loosen that route specifically if you want an anonymous
-  leaderboard view.
+- **Leaderboard/list reads** — there is no list-all endpoint; add one (with an auth decision)
+  if a wasteSort leaderboard view is ever needed.
 
 ## Deployment checklist
 

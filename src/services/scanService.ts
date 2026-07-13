@@ -1,8 +1,6 @@
 import { adminDb } from "@/firebase/admin"
-import type { Club } from "@/types/club"
 import type { Scan } from "@/types/scan"
 import clubService from "@/services/clubService"
-import featureFlagsService from "@/services/featureFlagService"
 import { AppErrorCode } from "@/types/appErrorCode"
 import { Timestamp, FieldValue } from "firebase-admin/firestore"
 
@@ -23,21 +21,13 @@ const scanService = {
     userGroup: string,
     clubId: string
   ): Promise<
-    | ({ success: true; club: Club } & Omit<Scan, "createdAt"> & { createdAt: string })
+    | ({ success: true; code: string } & Omit<Scan, "createdAt"> & { createdAt: string })
     | { success: false; error: AppErrorCode }
   > {
     const docRef = scanCollection.doc(`${userId}_${clubId}`)
     const groupDocRef = adminDb.collection("groups").doc(userGroup)
 
-    const [groupDoc, club, flag] = await Promise.all([
-      groupDocRef.get(),
-      clubService.getClub(clubId),
-      featureFlagsService.getFlag("game-clubscan"),
-    ])
-
-    if (!flag || !flag.enabled) {
-      return { success: false, error: AppErrorCode.GAME_NOT_ACTIVE }
-    }
+    const [groupDoc, club] = await Promise.all([groupDocRef.get(), clubService.getClub(clubId)])
 
     if (!groupDoc.exists) {
       return { success: false, error: AppErrorCode.GROUP_NOT_FOUND }
@@ -77,7 +67,7 @@ const scanService = {
       ...scan,
       // result in UTC timezone
       createdAt: now.toDate().toISOString(),
-      club,
+      code: club.code,
     }
   },
 }

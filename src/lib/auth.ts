@@ -54,5 +54,11 @@ export async function getAuthenticatedRawUser(): Promise<RawUser | null> {
 export async function getAuthUser(): Promise<AuthUser | null> {
   const raw = await getAuthenticatedRawUser()
   if (!raw) return null
-  return { id: raw.id, name: raw.name, role: raw.role, prefLanguage: raw.prefLanguage }
+  return {
+    id: raw.id,
+    name: raw.name,
+    role: raw.role,
+    prefLanguage: raw.prefLanguage,
+    yarnAccepted: raw.yarnAccepted ?? false,
+  }
 }

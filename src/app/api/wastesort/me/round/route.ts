@@ -1,21 +1,19 @@
 import { NextRequest } from "next/server"
-import { success, failure } from "@/utils/apiHelpers"
+import { success, failure, protectRaw, requireFlag } from "@/utils/apiHelpers"
 import { AppErrorCode } from "@/types/appErrorCode"
 import wasteSortPlayerService, { MAX_PLAYS_PER_DAY } from "@/services/wasteSortPlayerService"
 
-type RouteParams = { params: Promise<{ uid: string }> }
-
-// GET /api/wasteSortPlayer/[uid]/round
+// GET /api/wasteSortPlayer/me/round
 // Check how many rounds the player has left today, without playing one.
-export async function GET(_req: NextRequest, { params }: RouteParams) {
-  const { uid } = await params
-  const player = await wasteSortPlayerService.getById(uid)
+export async function GET() {
+  const [error, user] = await protectRaw("participant")
+  if (error) return error
 
-  if (!player) {
-    return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
-  }
+  const [flagErr] = await requireFlag("game-sustain")
+  if (flagErr) return flagErr
 
-  const playsToday = await wasteSortPlayerService.getPlaysToday(uid)
+  // missing player doc = hasn't played yet = full quota (doc is created on first round)
+  const playsToday = await wasteSortPlayerService.getPlaysToday(user.id)
 
   return success({
     playsToday,
@@ -25,8 +23,12 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
   })
 }
 
-export async function POST(req: NextRequest, { params }: RouteParams) {
-  const { uid } = await params
+export async function POST(req: NextRequest) {
+  const [error, user] = await protectRaw("participant")
+  if (error) return error
+
+  const [flagErr] = await requireFlag("game-sustain")
+  if (flagErr) return flagErr
 
   const body = await req.json()
   const score = Number(body?.score)
@@ -36,13 +38,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
   }
 
   try {
-    const player = await wasteSortPlayerService.recordRound(uid, score)
+    const player = await wasteSortPlayerService.recordRound(user.id, score)
 
     if (!player) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
     }
 
-    return success({ player })
+    return success({ player: wasteSortPlayerService.mapToPublic(player) })
   } catch (err) {
     if (err instanceof Error && err.message === "DAILY_LIMIT_REACHED") {
       return failure(

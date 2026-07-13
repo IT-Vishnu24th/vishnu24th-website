@@ -1,7 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
 import { popkaewPlayer } from "@/types/popkaewPlayer"
-import { popkaewVessel } from "@/types/popkaewVessel"
 
 export async function click(playerId: string) {
   const playerRef = await adminDb.collection("popkaewPlayer").doc(playerId)
@@ -18,7 +17,7 @@ export async function click(playerId: string) {
 
     const player = playerDoc.data() as popkaewPlayer
 
-    const playergroup = await adminDb.collection("popkaewVessel").doc(player.vessel)
+    const playergroup = await adminDb.collection("popkaewVessel").doc(player.group)
 
     transaction.update(playerRef, {
       popkaewscore: FieldValue.increment(1),
@@ -32,27 +31,5 @@ export async function click(playerId: string) {
     newScore = player.popkaewscore + 1
   })
 
-  // Read Top 3 vessels
-  const leaderboardSnapshot = await adminDb
-    .collection("popkaewVessel")
-    .orderBy("popkaewscore", "desc")
-    .limit(3)
-    .get()
-
-  const top3 = leaderboardSnapshot.docs.map((doc, index) => ({
-    ...(doc.data() as popkaewVessel),
-    rank: index + 1,
-  }))
-
-  // Update leaderboard document
-  await adminDb.collection("popkaewLeaderboard").doc("vessel").set({
-    top3,
-    rank: null,
-  })
-
-  return {
-    success: true,
-    score: newScore,
-    leaderboard: top3,
-  }
+  return { score: newScore }
 }

@@ -1,5 +1,4 @@
 import type { Timestamp } from "firebase-admin/firestore"
-import type { Club } from "./club"
 
 export interface Scan {
   userId: string
@@ -10,6 +9,6 @@ export interface Scan {
 
 export interface ScanResponse {
   createdAt: string
-  club: Club
+  code: string
   score: number
 }

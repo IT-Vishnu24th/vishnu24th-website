@@ -33,6 +33,8 @@ tags:
     description: Event phase management (admin only for mutations)
   - name: Popkaew
     description: PopKaew clicker game integration (participant only)
+  - name: WasteSort
+    description: Waste-sorting mini-game (participant only, gated by the `game-sustain` feature flag)
   - name: Stats
     description: Admin statistics and reports (admin only)
 components:
@@ -146,8 +148,8 @@ components:
               enum: [""]
     Vessel:
       type: object
+      description: Public group shape. `vesselName` is present only when the `reveal-vessel` feature flag is enabled.
       required:
-        - vesselName
         - registrationPoint
         - room
       properties:
@@ -169,6 +171,7 @@ components:
         - group
         - department
         - prefLanguage
+        - yarnAccepted
       properties:
         id:
           type: string
@@ -184,9 +187,7 @@ components:
         name:
           $ref: "#/components/schemas/MultiLangName"
         group:
-          oneOf:
-            - $ref: "#/components/schemas/Group"
-            - $ref: "#/components/schemas/Vessel"
+          $ref: "#/components/schemas/Vessel"
         department:
           $ref: "#/components/schemas/MultiLang"
         prefLanguage:
@@ -195,6 +196,10 @@ components:
             - en
             - th
           example: th
+        yarnAccepted:
+          type: boolean
+          description: Missing on the Firestore doc is treated as false
+          example: false
     FeatureFlag:
       type: object
       required:
@@ -204,7 +209,7 @@ components:
       properties:
         id:
           type: string
-          example: show-group
+          example: reveal-vessel
         name:
           $ref: "#/components/schemas/MultiLang"
         enabled:
@@ -248,6 +253,39 @@ components:
           type: string
           format: date-time
           example: "2026-07-04T09:30:00.000Z"
+    WasteSortPlayer:
+      type: object
+      description: Public wasteSort player shape (the internal `group` label is never exposed).
+      required:
+        - name
+        - playCount
+        - vesselName
+        - sustainScore
+        - playsToday
+        - lastPlayDate
+      properties:
+        name:
+          type: string
+          description: Player's English first name (denormalized at creation)
+          example: John
+        playCount:
+          type: integer
+          description: Lifetime rounds played
+          example: 7
+        vesselName:
+          $ref: "#/components/schemas/MultiLang"
+        sustainScore:
+          type: number
+          description: Lifetime accumulated score across all rounds
+          example: 420
+        playsToday:
+          type: integer
+          description: Rounds played on `lastPlayDate` (only meaningful when `lastPlayDate` is today)
+          example: 2
+        lastPlayDate:
+          type: string
+          description: Date key (YYYY-MM-DD, Asia/Bangkok) of the most recent round; empty string if never played
+          example: "2026-07-13"
     UserAnswerHistoryItem:
       type: object
       required:
@@ -300,11 +338,42 @@ components:
     ErrorResponse:
       type: object
       required:
+        - code
         - message
       properties:
+        code:
+          $ref: "#/components/schemas/AppErrorCode"
         message:
           type: string
           example: Error message description
+    AppErrorCode:
+      type: string
+      description: Machine-readable error code (`src/types/appErrorCode.ts`). Frontend switches on this instead of parsing `message`.
+      enum:
+        - INTERNAL_ERROR
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - INVALID_BODY
+        - NOT_FOUND
+        - CONFLICT
+        - USER_NOT_FOUND
+        - PLAYER_NOT_FOUND
+        - GROUP_NOT_FOUND
+        - CLUB_NOT_FOUND
+        - ANSWER_NOT_FOUND
+        - REGISTRATION_POINT_NOT_FOUND
+        - FLAG_NOT_FOUND
+        - STAGE_NOT_FOUND
+        - MISSING_QUERY_PARAM
+        - MISSING_PHASE
+        - INVALID_QUESTION_ID
+        - INVALID_ANSWER_FORMAT
+        - ANSWER_ALREADY_SUBMITTED
+        - SUBMISSION_CLOSED
+        - GAME_NOT_ACTIVE
+        - ALREADY_SCANNED
+        - DAILY_LIMIT_REACHED
+      example: INTERNAL_ERROR
     AuthErrorResponse:
       type: object
       required:
@@ -468,6 +537,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -490,7 +560,7 @@ paths:
                 id:
                   type: string
                   minLength: 1
-                  example: show-group
+                  example: reveal-vessel
                 name:
                   $ref: "#/components/schemas/MultiLang"
                 enabled:
@@ -516,6 +586,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -524,6 +595,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -532,6 +604,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "409":
           description: Feature flag already exists
@@ -540,6 +613,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: CONFLICT
                 message: Conflict
         "500":
           description: Unexpected server error
@@ -548,6 +622,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -566,8 +641,8 @@ paths:
               additionalProperties:
                 type: boolean
               example:
-                show-group: true
-                popkaew-active: false
+                reveal-vessel: true
+                game-popkaew: false
       responses:
         "200":
           description: Flags updated
@@ -588,6 +663,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -596,6 +672,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -604,6 +681,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Flag not found
@@ -612,6 +690,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -620,6 +699,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/flags/{id}:
     parameters:
@@ -628,7 +708,7 @@ paths:
         required: true
         schema:
           type: string
-        example: show-group
+        example: reveal-vessel
     get:
       tags:
         - Flags
@@ -654,6 +734,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -662,6 +743,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     put:
       tags:
@@ -702,6 +784,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -710,6 +793,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -718,6 +802,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -726,6 +811,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FLAG_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -734,6 +820,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/leaderboard:
     get:
@@ -762,13 +849,14 @@ paths:
                     required:
                       - top3
                       - rank
+                      - score
                     properties:
                       top3:
                         type: array
                         items:
                           type: object
+                          description: "`vesselName` present only when the `reveal-vessel` feature flag is enabled"
                           required:
-                            - vesselName
                             - score
                             - rank
                           properties:
@@ -785,6 +873,15 @@ paths:
                         nullable: true
                         description: Rank of the authenticated user's group (null if group not found)
                         example: 5
+                      score:
+                        type: number
+                        nullable: true
+                        description: Score of the authenticated user's group (null if group not found)
+                        example: 310
+                      vesselName:
+                        allOf:
+                          - $ref: "#/components/schemas/MultiLang"
+                        description: Vessel name of the authenticated user's group; present only when the `reveal-vessel` feature flag is enabled
         "401":
           description: Not authenticated
           content:
@@ -792,6 +889,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "500":
           description: Unexpected server error
@@ -800,6 +898,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/leaderboard/update:
     put:
@@ -830,6 +929,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -838,6 +938,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -846,6 +947,75 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+  /api/groups/commitScanBonus:
+    put:
+      tags:
+        - Leaderboard
+      operationId: commitScanBonus
+      summary: Apply ranked scan-score bonuses to all groups
+      description: Admin only. Ranks groups by scan score and commits the rank-based bonus to each group.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Bonuses committed; per-group results returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - group
+                        - scanScore
+                        - scanRank
+                        - scanRankBonus
+                      properties:
+                        group:
+                          type: string
+                          example: A1
+                        scanScore:
+                          type: number
+                          example: 350
+                        scanRank:
+                          type: integer
+                          example: 2
+                        scanRankBonus:
+                          type: number
+                          example: 1800
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: FORBIDDEN
+                message: Forbidden
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/scan:
     post:
@@ -884,20 +1054,17 @@ paths:
                     type: object
                     required:
                       - createdAt
-                      - club
+                      - code
                       - score
                     properties:
                       createdAt:
                         type: string
                         format: date-time
                         example: "2026-07-04T09:00:00.000Z"
-                      club:
-                        type: object
-                        required:
-                          - name
-                        properties:
-                          name:
-                            $ref: "#/components/schemas/MultiLang"
+                      code:
+                        type: string
+                        description: Stable club code (from the club's `code` field)
+                        example: intania-badminton-club
                       score:
                         type: number
                         example: 10
@@ -908,6 +1075,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -916,6 +1084,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Club scanning game is not active (closed)
@@ -924,7 +1093,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                message: Club scanning game is not active
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
         "404":
           description: Club, user, or group not found
           content:
@@ -932,6 +1102,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: CLUB_NOT_FOUND
                 message: Club not found
         "409":
           description: Already scanned this club
@@ -940,6 +1111,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ALREADY_SCANNED
                 message: You have already scanned this club
         "500":
           description: Unexpected server error
@@ -948,6 +1120,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage:
     get:
@@ -977,6 +1150,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -1044,6 +1218,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1052,6 +1227,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1060,6 +1236,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1068,6 +1245,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage/live:
     put:
@@ -1113,6 +1291,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1121,6 +1300,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1129,6 +1309,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Stage not found
@@ -1137,6 +1318,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1145,6 +1327,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/stage/{id}:
     parameters:
@@ -1179,6 +1362,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1187,6 +1371,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -1245,6 +1430,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1253,6 +1439,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1261,6 +1448,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -1269,6 +1457,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1277,6 +1466,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     delete:
       tags:
@@ -1306,6 +1496,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1314,6 +1505,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Resource not found
@@ -1322,6 +1514,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: STAGE_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1330,6 +1523,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/users/me:
     get:
@@ -1358,6 +1552,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "500":
           description: Unexpected server error
@@ -1366,6 +1561,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     patch:
       tags:
@@ -1373,8 +1569,8 @@ paths:
       operationId: updateMe
       summary: Update the authenticated user's profile
       description: |
-        Updates mutable fields on the current user's profile.
-        Currently only prefLanguage is updatable. The request body must
+        Updates mutable fields on the current user's profile
+        (prefLanguage, yarnAccepted). The request body must
         contain at least one field.
       security:
         - sessionCookie: []
@@ -1392,6 +1588,11 @@ paths:
                     - en
                     - th
                   example: en
+                yarnAccepted:
+                  type: boolean
+                  enum: [true]
+                  description: One-way accept — only `true` is valid; cannot be reset via the API
+                  example: true
       responses:
         "200":
           description: Updated user profile
@@ -1411,6 +1612,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_BODY
                 message: Invalid body
         "401":
           description: Not authenticated
@@ -1419,6 +1621,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "404":
           description: User profile not found
@@ -1427,6 +1630,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: USER_NOT_FOUND
                 message: Not found
         "500":
           description: Unexpected server error
@@ -1435,6 +1639,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/registration-point:
     get:
@@ -1473,6 +1678,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: MISSING_QUERY_PARAM
                 message: "Missing required query parameter: studentId"
         "404":
           description: User or group registration point not found
@@ -1483,9 +1689,11 @@ paths:
               examples:
                 userNotFound:
                   value:
+                    code: USER_NOT_FOUND
                     message: User not found
                 regNotFound:
                   value:
+                    code: REGISTRATION_POINT_NOT_FOUND
                     message: Registration point not found for user's group
         "500":
           description: Unexpected server error
@@ -1494,6 +1702,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/phase:
     get:
@@ -1542,6 +1751,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Failed to fetch phases
     patch:
       tags:
@@ -1602,9 +1812,11 @@ paths:
               examples:
                 noPhase:
                   value:
+                    code: MISSING_PHASE
                     message: No phase provided
                 invalidBody:
                   value:
+                    code: INVALID_BODY
                     message: Invalid body
         "401":
           description: Not authenticated
@@ -1613,6 +1825,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1621,6 +1834,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Failed to update phase
@@ -1629,6 +1843,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Failed to update phase
   /api/admin/stats/groups:
     get:
@@ -1690,6 +1905,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1698,6 +1914,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1706,6 +1923,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/admin/stats/game-mission:
     get:
@@ -1763,6 +1981,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_QUESTION_ID
                 message: Invalid question ID
         "401":
           description: Not authenticated
@@ -1771,6 +1990,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1779,6 +1999,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1787,6 +2008,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
   /api/users/me/missions:
     get:
@@ -1808,14 +2030,9 @@ paths:
                   - data
                 properties:
                   data:
-                    type: object
-                    required:
-                      - answers
-                    properties:
-                      answers:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/UserAnswerHistoryItem"
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserAnswerHistoryItem"
         "401":
           description: Not authenticated
           content:
@@ -1823,6 +2040,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1831,6 +2049,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "500":
           description: Unexpected server error
@@ -1839,6 +2058,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
     post:
       tags:
@@ -1896,12 +2116,15 @@ paths:
               examples:
                 invalidBody:
                   value:
+                    code: INVALID_BODY
                     message: Invalid body
                 invalidQuestion:
                   value:
+                    code: INVALID_QUESTION_ID
                     message: Invalid question ID
                 typeMismatch:
                   value:
+                    code: INVALID_ANSWER_FORMAT
                     message: Answer must be an array of strings for multi-choice questions
         "401":
           description: Not authenticated
@@ -1910,6 +2133,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Submission window is closed or insufficient role
@@ -1917,8 +2141,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-              example:
-                message: The submission window for this question is currently closed
+              examples:
+                submissionClosed:
+                  value:
+                    code: SUBMISSION_CLOSED
+                    message: The submission window for this question is currently closed
+                forbidden:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
         "404":
           description: User profile not found
           content:
@@ -1926,6 +2157,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: USER_NOT_FOUND
                 message: User profile not found
         "409":
           description: Answer already submitted
@@ -1934,6 +2166,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ANSWER_ALREADY_SUBMITTED
                 message: You have already submitted an answer for this question
         "500":
           description: Unexpected server error
@@ -1941,8 +2174,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-              example:
-                message: Internal server error
+              examples:
+                internal:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal server error
+                missingPhase:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Mission phase configuration not found in DB
   /api/users/me/missions/{id}:
     parameters:
       - name: id
@@ -1978,6 +2218,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INVALID_QUESTION_ID
                 message: Invalid question ID
         "401":
           description: Not authenticated
@@ -1986,6 +2227,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -1994,6 +2236,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Answer not found
@@ -2002,6 +2245,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: ANSWER_NOT_FOUND
                 message: Answer not found for this question
         "500":
           description: Unexpected server error
@@ -2010,19 +2254,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewClick:
+  /api/popkaew/click:
     post:
       tags:
         - Popkaew
       operationId: submitPopkaewClick
       summary: Submit click event for PopKaew game
-      description: Participant only. Increments score of user and user's vessel by 1. Recomputes top 3 vessel leaderboard.
+      description: Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off). Increments score of user and user's vessel by 1.
       security:
         - sessionCookie: []
       responses:
         "200":
-          description: Click processed and updated score & leaderboard returned
+          description: Click processed, updated player score returned
           content:
             application/json:
               schema:
@@ -2033,37 +2278,11 @@ paths:
                   data:
                     type: object
                     required:
-                      - success
                       - score
-                      - leaderboard
                     properties:
-                      success:
-                        type: boolean
-                        example: true
                       score:
                         type: number
                         example: 101
-                      leaderboard:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - vesselName
-                            - popkaewscore
-                            - group
-                            - rank
-                          properties:
-                            vesselName:
-                              $ref: "#/components/schemas/MultiLang"
-                            popkaewscore:
-                              type: number
-                              example: 450
-                            group:
-                              type: string
-                              example: A1
-                            rank:
-                              type: integer
-                              example: 1
         "401":
           description: Not authenticated
           content:
@@ -2071,15 +2290,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
-          description: Insufficient role permissions
+          description: Insufficient role permissions or game not active
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                message: Forbidden
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
         "404":
           description: Player profile not found
           content:
@@ -2087,6 +2308,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: PLAYER_NOT_FOUND
                 message: Player not found
         "500":
           description: Unexpected server error
@@ -2095,14 +2317,232 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewLeaderboard:
+  /api/wastesort/me:
+    get:
+      tags:
+        - WasteSort
+      operationId: getWasteSortMe
+      summary: Get current user's wasteSort player profile
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        404 until the player has submitted their first round — the player doc is auto-created on
+        first round submission, so treat 404 as the zero-state, not an error.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Player profile retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: "#/components/schemas/WasteSortPlayer"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "404":
+          description: Player has not played any round yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: PLAYER_NOT_FOUND
+                message: Player not found
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+  /api/wastesort/me/round:
+    get:
+      tags:
+        - WasteSort
+      operationId: getWasteSortRoundQuota
+      summary: Check remaining wasteSort plays today
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        Never 404s — a player who has never played gets the full quota. Quota resets at midnight
+        Asia/Bangkok (calendar day), independent of feature-flag windows.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Today's play quota
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - playsToday
+                      - maxPlaysPerDay
+                      - playsRemaining
+                      - canPlay
+                    properties:
+                      playsToday:
+                        type: integer
+                        example: 1
+                      maxPlaysPerDay:
+                        type: integer
+                        example: 3
+                      playsRemaining:
+                        type: integer
+                        example: 2
+                      canPlay:
+                        type: boolean
+                        example: true
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+    post:
+      tags:
+        - WasteSort
+      operationId: submitWasteSortRound
+      summary: Submit a finished wasteSort round
+      description: >-
+        Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
+        Call once per finished round (each of the up-to-3 daily plays). Atomically: auto-creates
+        the player doc on the first-ever round, enforces the daily play limit, adds the (floored
+        at 0) score to the player's lifetime `sustainScore`, and rolls the same amount into the
+        group's `scoreSources.sustainScore`. Score accumulates — it is never overwritten.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - score
+              properties:
+                score:
+                  type: number
+                  description: Final score of the round (negative values are floored to 0)
+                  example: 120
+      responses:
+        "200":
+          description: Round recorded, updated player returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - player
+                    properties:
+                      player:
+                        $ref: "#/components/schemas/WasteSortPlayer"
+        "400":
+          description: Score missing or not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INVALID_BODY
+                message: score must be a number
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Not logged in
+        "403":
+          description: Insufficient role permissions or game not active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
+        "429":
+          description: Daily play limit reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: DAILY_LIMIT_REACHED
+                message: Already played 3 times today
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: Internal server error
+  /api/popkaew/leaderboard:
     get:
       tags:
         - Popkaew
       operationId: getPopkaewLeaderboard
       summary: Get PopKaew leaderboard
-      description: Participant only. Returns vessel rank leaderboard.
+      description: Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off). Returns all vessels sorted by score desc with standard competition ranking (ties share rank).
       security:
         - sessionCookie: []
       responses:
@@ -2116,30 +2556,33 @@ paths:
                   - data
                 properties:
                   data:
-                    type: array
-                    items:
-                      type: object
-                      required:
-                        - rank
-                        - id
-                        - vesselName
-                        - popkaewscore
-                        - group
-                      properties:
-                        rank:
-                          type: integer
-                          example: 1
-                        id:
-                          type: string
-                          example: Vessel A
-                        vesselName:
-                          $ref: "#/components/schemas/MultiLang"
-                        popkaewscore:
-                          type: number
-                          example: 450
-                        group:
-                          type: string
-                          example: A1
+                    type: object
+                    required:
+                      - vessels
+                      - vesselIndex
+                    properties:
+                      vessels:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - rank
+                            - vesselName
+                            - popkaewscore
+                          properties:
+                            rank:
+                              type: integer
+                              example: 1
+                            vesselName:
+                              $ref: "#/components/schemas/MultiLang"
+                            popkaewscore:
+                              type: number
+                              example: 450
+                      vesselIndex:
+                        type: integer
+                        nullable: true
+                        description: Index of the authenticated user's vessel in `vessels`, for row highlighting (null if not found)
+                        example: 4
         "401":
           description: Not authenticated
           content:
@@ -2147,15 +2590,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
-          description: Insufficient role permissions
+          description: Insufficient role permissions or game not active
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                message: Forbidden
+                code: GAME_NOT_ACTIVE
+                message: Game is not active
         "500":
           description: Unexpected server error
           content:
@@ -2163,21 +2608,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
-  /api/popkaewPlayer/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        example: "6900001121"
+  /api/popkaew/me:
     get:
       tags:
         - Popkaew
-      operationId: getPopkaewPlayer
-      summary: Get PopKaew player score details by ID
-      description: Participant only. Retrieves scoring info for a specific participant.
+      operationId: getPopkaewMe
+      summary: Get current user's PopKaew stats
+      description: >-
+        Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off).
+        Retrieves scoring info for the authenticated participant.
       security:
         - sessionCookie: []
       responses:
@@ -2193,21 +2634,12 @@ paths:
                   data:
                     type: object
                     required:
-                      - id
-                      - name
                       - vesselName
                       - popkaewscore
                       - lastClickAt
                     properties:
-                      id:
-                        type: string
-                        example: "6900001121"
-                      name:
-                        type: string
-                        example: John Doe
                       vesselName:
-                        type: string
-                        example: Vessel A
+                        $ref: "#/components/schemas/MultiLang"
                       popkaewscore:
                         type: integer
                         example: 101
@@ -2223,6 +2655,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: UNAUTHORIZED
                 message: Not logged in
         "403":
           description: Insufficient role permissions
@@ -2231,6 +2664,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: FORBIDDEN
                 message: Forbidden
         "404":
           description: Player not found
@@ -2239,6 +2673,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: PLAYER_NOT_FOUND
                 message: Player not found
         "500":
           description: Unexpected server error
@@ -2247,4 +2682,5 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
+                code: INTERNAL_ERROR
                 message: Internal server error
