@@ -12,6 +12,7 @@ import ClubBottomSheet from "@/features/clubs/components/bottomsheet"
 import type { Club } from "@/features/clubs/types/club"
 import { useRouter } from "next/navigation"
 import Sponsor from "@/components/SponsorFooter"
+import NavigationFooter from "@/components/NavigationFooter"
 
 const BOOTH_OPTIONS: { id: BoothFilter; label: string }[] = [
   { id: "all", label: "ทั้งหมด" },
@@ -241,6 +242,7 @@ export default function Page() {
       </div>
       <Sponsor />
       <ClubBottomSheet club={selectedClub} onClose={() => setSelectedClub(null)} />
+      <NavigationFooter />
     </div>
   )
 }

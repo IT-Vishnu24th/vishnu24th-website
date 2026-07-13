@@ -24,7 +24,7 @@ export default function FooterNavigation() {
       name: "Explore",
       icon: Compass,
       path: "/explore",
-      subpaths: ["/explore/schedule"],
+      subpaths: ["/explore/schedule", "/explore/club", "/explore/map", "/explore/slide"],
       requiresAuth: false,
     },
     { name: "Ranking", icon: Ship, path: "/ranking", requiresAuth: true },

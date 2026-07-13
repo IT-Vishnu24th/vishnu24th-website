@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import Sponsor from "@/components/SponsorFooter"
 import BuildingInfo from "@/features/map/components/BuildingInfo"
+import NavigationFooter from "@/components/NavigationFooter"
 
 export default function MapPage() {
   const router = useRouter()
@@ -54,6 +55,7 @@ export default function MapPage() {
       <BuildingInfo buildingName="ลานเกียร์" />
 
       <Sponsor />
+      <NavigationFooter />
     </div>
   )
 }

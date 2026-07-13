@@ -28,7 +28,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
     : null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-60 flex items-end bg-black/40" onClick={onClose}>
       <div
         className="relative flex h-[75vh] w-full flex-col rounded-t-2xl bg-cream-tanned"
         onClick={(e) => e.stopPropagation()}
@@ -58,7 +58,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
         {/* content */}
         <div className="flex-1 overflow-y-auto px-5 pb-5">
           <div className="flex items-start gap-3 pt-2">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-white p-1 ring-1 ring-brownie/20">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden bg-white p-1 ring-1 ring-brownie/20">
               {club.imageUrl && (
                 <Image
                   src={`/club/clublogo/${club.imageUrl}`}
@@ -94,9 +94,14 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
             <div className="mt-5">
               <h3 className="text-center font-fc-quantum text-xl text-brownie">พิกัดบูธ</h3>
 
-              <div className="relative mt-3 h-[260px] w-full overflow-hidden bg-white">
+              <div className="relative mt-3 h-[260px] w-full overflow-hidden">
                 {club.mapimageUrl ? (
-                  <Image src={club.mapimageUrl} alt="map" fill className="object-contain" />
+                  <Image
+                    src={`/club/mapimg/${club.mapimageUrl}`}
+                    alt="map"
+                    fill
+                    className="object-contain border-4 border-brownie rounded-xl"
+                  />
                 ) : (
                   <div className="flex h-full items-center justify-center text-sm text-brownie/60">
                     Placeholder Map
