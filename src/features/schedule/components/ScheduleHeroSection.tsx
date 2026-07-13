@@ -1,9 +1,9 @@
-import { Header } from "@/components/Headers"
+import { Header2 } from "@/components/Headers"
 
 export const ScheduleHeroSection = () => {
   return (
     <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
-      <Header />
+      <Header2 url="/explore" title="สำรวจ" />
       <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-8 text-center">
         <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
           ตารางกิจกรรม
