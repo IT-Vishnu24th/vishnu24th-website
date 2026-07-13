@@ -1,74 +1,104 @@
-import Image from "next/image"
+import { Calendar, Check, Clock, Lock } from "lucide-react"
+import { ReactNode } from "react"
 
-type MissionStatus = "active" | "locked" | "completed"
+export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
 interface MissionCardProps {
   title: string
-  reward: string
+  reward: number
   status: MissionStatus
+  deadline: string
+  openTime?: string
+  banner?: ReactNode
+  img?: string
 }
 
-const statusStyle: Record<MissionStatus, { label: string; className: string }> = {
-  active: {
-    label: "ทำภารกิจ",
-    className: "bg-[#2c2c2c] text-[#f5f5f5]",
-  },
-  locked: {
-    label: "ทำภารกิจ",
-    className: "bg-[#d9d9d9] text-[#b3b3b3]",
-  },
-  completed: {
-    label: "ภารกิจสำเร็จ",
-    className: "bg-transparent text-[#303030]",
-  },
+const formatRemainingTimeTH = (deadline: string | Date) => {
+  const diff = new Date(deadline).getTime() - Date.now()
+
+  if (diff <= 0) return "หมดเวลา"
+
+  const totalMinutes = Math.floor(diff / (1000 * 60))
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  return `${hours.toLocaleString("th-TH")} ชั่วโมง ${minutes.toLocaleString("th-TH")} นาที`
 }
 
-export default function MissionCard({ title, reward, status }: MissionCardProps) {
-  const currentStatus = statusStyle[status]
-
+const StatusPill = ({ status, deadline }: { status: string; deadline: string }) => {
+  if (status === "active")
+    return (
+      <div className="bg-brownie-light w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
+        <Clock className="size-4" strokeWidth={3} />
+        <div className="mb-0.5">{formatRemainingTimeTH(deadline)}</div>
+      </div>
+    )
+  if (status === "locked")
+    return (
+      <div className="bg-brownie w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
+        <Lock className="size-4" strokeWidth={3} />
+        <div className="mb-0.5">เล่นไม่ได้ในช่วงนี้</div>
+      </div>
+    )
+  if (status === "completed")
+    return (
+      <div className="bg-brownie-light w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
+        <Check className="size-4" strokeWidth={3} />
+        <div className="mb-0.5">ทำภารกิจสำเร็จ</div>
+      </div>
+    )
   return (
-    <article className="flex w-full flex-col items-center gap-4 overflow-hidden bg-[#d7d7d7] px-4 pb-6 pt-4 text-center text-black">
-      <p className="w-full text-[64px] uppercase leading-[1.2] tracking-[-5.12px]">Wanted</p>
+    <div className="bg-brownie w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
+      <Calendar className="size-4" strokeWidth={3} />
+      <div className="mb-0.5">เร็วๆนี้</div>
+    </div>
+  )
+}
 
-      <div className="flex w-full flex-col items-center">
-        <div className="relative h-60 w-70 overflow-hidden">
-          <Image
-            src="/game/character-bg.png"
-            alt=""
-            fill
-            sizes="280px"
-            className="object-cover"
-            priority
-          />
-          <Image
-            src="/game/parrot.png"
-            alt=""
-            width={243}
-            height={228}
-            sizes="243px"
-            className="absolute left-4.5 top-1.5 h-57 w-60.75 object-cover object-[50%_22%]"
-            priority
-          />
+export default function MissionCard({
+  title,
+  reward,
+  status,
+  deadline,
+  banner,
+  img,
+}: MissionCardProps) {
+  return (
+    <div className="relative w-93.5 h-125 cursor-pointer">
+      <img
+        src={status === "locked" ? "/game/locked_sheet.png" : "/game/normal_sheet.png"}
+        className="w-93.5 absolute"
+      />
+      <div className="absolute top-6 flex w-full max-w-120 flex-col items-center overflow-hidden bg-none px-4 pt-4 pb-6 text-center text-brownie">
+        <div className="font-arthemis text-[48px]">
+          {status === "upcoming" ? "?????????" : "WANTED"}
         </div>
 
-        <h2 className="w-full text-[42px] leading-none tracking-[-0.84px] min-[390px]:text-[48px]">
-          {title}
-        </h2>
+        <div className="relative w-68.75 aspect-square">
+          {banner ? (
+            banner
+          ) : (
+            <img
+              src={status === "upcoming" ? "/game/question_banner.png" : img}
+              className="absolute inset-0 h-full w-full object-cover"
+              alt=""
+            />
+          )}
+          <div className="bottom-2 left-1/2 -translate-x-1/2 absolute">
+            <StatusPill status={status} deadline={deadline} />
+          </div>
+        </div>
+
+        <div className="mb-2 font-sov-yeehor text-[48px] leading-7.5">
+          {status === "upcoming" ? "???????" : title}
+        </div>
+
+        <div className="font-fc-quantum text-[20px]">
+          {status === "upcoming"
+            ? "????????????????????"
+            : `รางวัล: ${reward.toLocaleString()} เหรียญอวกาศ`}
+        </div>
       </div>
-
-      <p className="w-full text-[20px] leading-[1.2] tracking-[0.4px]">
-        รางวัล: {reward} เหรียญอวกาศ
-      </p>
-
-      <button
-        type="button"
-        disabled={status !== "active"}
-        className={`flex w-70 items-center justify-center rounded-full px-3 py-3 text-[16px] leading-[1.4] transition ${currentStatus.className} ${
-          status === "active" ? "hover:bg-[#1f1f1f]" : "cursor-default"
-        }`}
-      >
-        {currentStatus.label}
-      </button>
-    </article>
+    </div>
   )
 }

@@ -1,38 +1,50 @@
 import NavigationFooter from "@/components/NavigationFooter"
-import LeaderboardSection from "@/features/game/components/LeaderboardSection"
-import MissionCard from "@/features/game/components/MissionCard"
+import SponsorFooter from "@/components/SponsorFooter"
+import MissionCard, { MissionStatus } from "@/features/game/components/MissionCard"
 import MissionHeroSection from "@/features/game/components/MissionHeroSection"
-import { Header } from "@/components/Headers"
 
 const missions = [
-  { title: "Daily Bounty", reward: "50,000", status: "active" as const },
-  { title: "Pop Kaew", reward: "50,000", status: "locked" as const },
-  { title: "Space Cleanup", reward: "50,000", status: "completed" as const },
-]
-
-const leaderboard = [
-  { rank: 1, name: "ยานอานาคอนดี้", score: "676,767,676" },
-  { rank: 2, name: "ยานอาริอานา", score: "76,767,676" },
-  { rank: 3, name: "ยานอาตี๋มานี่มา", score: "6,767,676" },
+  {
+    title: "เสี่ยงโชคปล้นจักรวาล",
+    reward: 50000,
+    img: "/game/treasure_banner.png",
+    status: "locked" as MissionStatus,
+  },
+  {
+    title: "ปริศนาฟ้าลิขิต",
+    reward: 50000,
+    banner: "",
+    status: "locked" as MissionStatus,
+  },
+  {
+    title: "Pop Kaew",
+    reward: 50000,
+    img: "/game/popkaew_banner.png",
+    status: "locked" as MissionStatus,
+  },
+  {
+    title: "ความจริงน่ะมีเพียง",
+    reward: 50000,
+    img: "/game/trash_banner.png",
+    status: "locked" as MissionStatus,
+  },
 ]
 
 export default function GamePage() {
   return (
-    <main className="min-h-screen bg-[#f9f9f9] text-black">
-      <div className="mx-auto flex w-full max-w-98.25 flex-col items-center overflow-hidden bg-[#f9f9f9]">
-        <Header />
+    <>
+      <div className="w-full overflow-x-hidden">
         <MissionHeroSection />
-
-        <section className="flex w-full max-w-87.5 flex-col gap-6 pb-6 pt-6">
-          {missions.map((mission) => (
-            <MissionCard key={mission.title} {...mission} />
-          ))}
+        <section className="w-full bg-[linear-gradient(0deg,#2D3542_5.3%,#F0865C_96.95%)] pb-6 pt-20">
+          <div className="w-full flex flex-col items-center pb-15">
+            {missions.map((mission) => (
+              <MissionCard key={mission.title} {...mission} deadline="br" />
+            ))}
+          </div>
         </section>
-
-        <LeaderboardSection items={leaderboard} />
+        <SponsorFooter />
       </div>
-
       <NavigationFooter />
-    </main>
+    </>
   )
 }
