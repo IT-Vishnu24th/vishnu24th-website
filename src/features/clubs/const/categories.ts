@@ -15,8 +15,8 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "Innovation", label: "วิทย์", icon: Activity },
-  { id: "academic", label: "วิชาการ", icon: Book },
+  { id: "Innovation", label: "Innovation", icon: Activity },
+  { id: "academic", label: "ค่ายและวิชาการ", icon: Book },
   { id: "sport", label: "กีฬา", icon: Trophy },
   // { id: "art", label: "ศิลปะ", icon: Palette },
   // { id: "volenteer", label: "อาสา", icon: Heart },
