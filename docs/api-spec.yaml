@@ -1569,8 +1569,8 @@ paths:
       operationId: updateMe
       summary: Update the authenticated user's profile
       description: |
-        Updates mutable fields on the current user's profile.
-        Currently only prefLanguage is updatable. The request body must
+        Updates mutable fields on the current user's profile
+        (prefLanguage, yarnAccepted). The request body must
         contain at least one field.
       security:
         - sessionCookie: []
@@ -1588,6 +1588,11 @@ paths:
                     - en
                     - th
                   example: en
+                yarnAccepted:
+                  type: boolean
+                  enum: [true]
+                  description: One-way accept — only `true` is valid; cannot be reset via the API
+                  example: true
       responses:
         "200":
           description: Updated user profile
