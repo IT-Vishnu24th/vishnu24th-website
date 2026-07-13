@@ -196,7 +196,7 @@ export default function Page() {
                       className="flex items-center gap-4 border-b border-gray-100 px-3 py-3 last:border-b-0"
                     >
                       <span className="w-4 shrink-0 font-sov-yeehor text-4xl text-brownie -translate-2 pl-2">
-                        {club.displayNumber}
+                        {club.id}
                       </span>
 
                       <div className="h-14 w-14 shrink-0 overflow-hidden bg-white p-1.5 ring-1 ring-gray-100">
