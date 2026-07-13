@@ -23,7 +23,7 @@ const missions = [
     status: "locked" as MissionStatus,
   },
   {
-    title: "ความจริงน่ะมีเพียง",
+    title: "ความจริงน่ะมีเพียง\nหนึ่งเดียวเท่านั้น",
     reward: 50000,
     img: "/game/trash_banner.png",
     status: "locked" as MissionStatus,

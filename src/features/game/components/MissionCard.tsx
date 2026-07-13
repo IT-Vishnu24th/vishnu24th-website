@@ -69,8 +69,8 @@ export default function MissionCard({
         src={status === "locked" ? "/game/locked_sheet.png" : "/game/normal_sheet.png"}
         className="w-93.5 absolute"
       />
-      <div className="absolute top-6 flex w-full max-w-120 flex-col items-center overflow-hidden bg-none px-4 pt-4 pb-6 text-center text-brownie">
-        <div className="font-arthemis text-[48px]">
+      <div className="absolute top-7 flex w-full max-w-120 flex-col items-center overflow-hidden bg-none px-4 pt-5 pb-6 text-center text-brownie">
+        <div className="font-arthemis text-[48px] mb-2 h-10">
           {status === "upcoming" ? "?????????" : "WANTED"}
         </div>
 
@@ -89,7 +89,7 @@ export default function MissionCard({
           </div>
         </div>
 
-        <div className="mb-2 font-sov-yeehor text-[48px] leading-7.5">
+        <div className="font-sov-yeehor text-[48px] mb-1.5 leading-8.5 whitespace-pre">
           {status === "upcoming" ? "???????" : title}
         </div>
 
