@@ -1,16 +1,18 @@
+import { cn } from "@/utils/cn"
 import { Calendar, Check, Clock, Lock } from "lucide-react"
+import Link from "next/link"
 import { ReactNode } from "react"
 
 export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
-interface MissionCardProps {
+export interface MissionCardProps {
   title: string
   reward: number
   status: MissionStatus
   deadline: string
-  openTime?: string
   banner?: ReactNode
   img?: string
+  href: string
 }
 
 const formatRemainingTimeTH = (deadline: string | Date) => {
@@ -25,36 +27,48 @@ const formatRemainingTimeTH = (deadline: string | Date) => {
   return `${hours.toLocaleString("th-TH")} ชั่วโมง ${minutes.toLocaleString("th-TH")} นาที`
 }
 
-const StatusPill = ({ status, deadline }: { status: string; deadline: string }) => {
-  if (status === "active")
-    return (
-      <div className="bg-brownie-light w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
-        <Clock className="size-4" strokeWidth={3} />
-        <div className="mb-0.5">{formatRemainingTimeTH(deadline)}</div>
-      </div>
-    )
-  if (status === "locked")
-    return (
-      <div className="bg-brownie w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
-        <Lock className="size-4" strokeWidth={3} />
-        <div className="mb-0.5">เล่นไม่ได้ในช่วงนี้</div>
-      </div>
-    )
-  if (status === "completed")
-    return (
-      <div className="bg-brownie-light w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
-        <Check className="size-4" strokeWidth={3} />
-        <div className="mb-0.5">ทำภารกิจสำเร็จ</div>
-      </div>
-    )
+const statusConfig = {
+  active: {
+    Icon: Clock,
+    text: (deadline: string) => formatRemainingTimeTH(deadline),
+    className: "bg-brownie-light",
+  },
+  locked: {
+    Icon: Lock,
+    text: () => "เล่นไม่ได้ในช่วงนี้",
+    className: "bg-brownie",
+  },
+  completed: {
+    Icon: Check,
+    text: () => "ทำภารกิจสำเร็จ",
+    className: "bg-brownie-light",
+  },
+  upcoming: {
+    Icon: Calendar,
+    text: () => "เร็วๆนี้",
+    className: "bg-brownie",
+  },
+} satisfies Record<
+  MissionStatus,
+  {
+    Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+    text: (deadline: string) => string
+    className: string
+  }
+>
+
+const StatusPill = ({ status, deadline }: { status: MissionStatus; deadline: string }) => {
+  const { Icon, text, className } = statusConfig[status]
+
   return (
-    <div className="bg-brownie w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2">
-      <Calendar className="size-4" strokeWidth={3} />
-      <div className="mb-0.5">เร็วๆนี้</div>
+    <div
+      className={`${className} w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2`}
+    >
+      <Icon className="size-4" strokeWidth={3} />
+      <div className="mb-0.75">{text(deadline)}</div>
     </div>
   )
 }
-
 export default function MissionCard({
   title,
   reward,
@@ -62,11 +76,27 @@ export default function MissionCard({
   deadline,
   banner,
   img,
+  href,
 }: MissionCardProps) {
   return (
-    <div className="relative w-93.5 h-125 cursor-pointer">
+    <Link
+      className={cn(
+        "relative w-93.5 h-125 cursor-pointer",
+        status !== "active" && "cursor-not-allowed"
+      )}
+      href={href}
+      onClick={(e) => {
+        if (status !== "active") e.preventDefault()
+      }}
+    >
       <img
-        src={status === "locked" ? "/game/locked_sheet.png" : "/game/normal_sheet.png"}
+        src={
+          status === "locked"
+            ? "/game/locked_sheet.png"
+            : status === "upcoming"
+              ? "/game/upcoming_sheet.png"
+              : "/game/normal_sheet.png"
+        }
         className="w-93.5 absolute"
       />
       <div className="absolute top-7 flex w-full max-w-120 flex-col items-center overflow-hidden bg-none px-4 pt-5 pb-6 text-center text-brownie">
@@ -84,7 +114,7 @@ export default function MissionCard({
               alt=""
             />
           )}
-          <div className="bottom-2 left-1/2 -translate-x-1/2 absolute">
+          <div className="bottom-2 left-1/2 -translate-x-1/2 absolute w-full flex justify-center">
             <StatusPill status={status} deadline={deadline} />
           </div>
         </div>
@@ -99,6 +129,6 @@ export default function MissionCard({
             : `รางวัล: ${reward.toLocaleString()} เหรียญอวกาศ`}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
