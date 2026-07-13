@@ -1,117 +1,433 @@
-# wasteSort — backend reference
+# Waste Sort Player API Documentation
 
-Waste-sorting mini-game backend: player records, daily play limits, and score rollup into the
-existing `groups` collection. This doc covers everything on the backend side — data model,
-service, API, auth, and what's intentionally left out.
+Base URL
 
-## Data model
+```
+/api/wasteSortPlayer
+```
 
-### `wasteSortPlayer` collection (new)
+---
+
+# Data Model
+
+## WasteSortPlayer
 
 ```ts
-export type wasteSortPlayer = {
+interface WasteSortPlayer {
   name: string
-  playCount: number // lifetime total rounds played — never resets
-  vesselName: MultiLang // denormalized copy of the group's name at signup
-  group: string // id of a doc in the existing `groups` collection, e.g. "F"
-  sustainScore: number // lifetime total score
-  playsToday: number // rounds played on `lastPlayDate` — see daily reset below
-  lastPlayDate: string // YYYY-MM-DD, Asia/Bangkok — used to detect a new day
+  playCount: number
+  vesselName: MultiLang
+  group: Group
+  sustainScore: number
+  playsToday: number
+  lastPlayDate: string
 }
 ```
 
-Doc id = the player's Firebase Auth `uid`.
+Example
 
-### `groups` collection (already existed — not created by this feature)
+```json
+{
+  "name": "kanin",
+  "playCount": 2,
+  "vesselName": {
+    "en": "Yaan Ahan Tam Sang",
+    "th": "ยานอาหารตามสั่ง"
+  },
+  "group": "H",
+  "sustainScore": 150,
+  "playsToday": 2,
+  "lastPlayDate": "2026-07-11"
+}
+```
 
-This service only ever touches one nested field on this shared collection:
+---
+
+# Endpoints
+
+---
+
+# 1. Get All Players
+
+### GET
 
 ```
-groups/{groupId}.scoreSources.sustainScore
+/api/wasteSortPlayer
 ```
 
-Every other field on a `groups` doc (`vesselName`, `waterScore`, `igMissionScore`,
-`scanRankBonus`, etc.) belongs to other mini-games and is never read or written by this
-service — writes always use a dot-path update (`"scoreSources.sustainScore"`) so nothing else
-on the document is touched.
+Returns every Waste Sort player.
 
-## Daily play limit
+## Response
 
-- `MAX_PLAYS_PER_DAY = 3` (exported constant in `services/wasteSortPlayerService.ts`)
-- **Not** based on `playCount` (that's the lifetime total). Tracked separately via
-  `playsToday` + `lastPlayDate`.
-- **Reset is lazy, not scheduled.** Every read compares `lastPlayDate` to today's date
-  (Asia/Bangkok). If they don't match, the effective count is treated as `0` — but the stored
-  Firestore value only actually gets overwritten the next time that player submits a round.
-  Don't be surprised to see a stale non-zero `playsToday` in the Firestore console the morning
-  after — check `lastPlayDate` alongside it.
+Status: `200 OK`
 
-## Service (`services/wasteSortPlayerService.ts`)
+```json
+{
+  "players": [
+    {
+      "name": "kanin",
+      "playCount": 2,
+      "vesselName": {
+        "en": "Yaan Ahan Tam Sang",
+        "th": "ยานอาหารตามสั่ง"
+      },
+      "group": "H",
+      "sustainScore": 150,
+      "playsToday": 2,
+      "lastPlayDate": "2026-07-11"
+    }
+  ]
+}
+```
 
-| Method                                  | What it does                                                                                                          |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `getById(uid)`                          | Fetch one player                                                                                                      |
-| `create(uid, player)`                   | Raw create — you supply every field                                                                                   |
-| `createNewPlayer(uid, { name, group })` | Looks up the group's real `vesselName`, zeroes out counters, idempotent (returns existing player instead of erroring) |
-| `update(uid, partial)`                  | Raw partial update — **the API layer restricts which fields can reach this**                                          |
-| `delete(uid)`                           | Delete the player doc                                                                                                 |
-| `list()`                                | All players                                                                                                           |
-| `getGroup(uid)`                         | Fetch the player's `groups/{group}` doc                                                                               |
-| `getPlaysToday(uid)`                    | Read-only — today's effective play count                                                                              |
-| `canPlayToday(uid)`                     | `getPlaysToday(uid) < MAX_PLAYS_PER_DAY`                                                                              |
-| `recordRound(uid, score)`               | The one that matters — see below                                                                                      |
+---
 
-`recordRound` runs everything in a single Firestore transaction:
+# 2. Create Player
 
-1. Reads the player, computes today's effective `playsToday`
-2. Throws `"DAILY_LIMIT_REACHED"` if already at the max
-3. Increments `playCount` (+1), `sustainScore` (+score), sets `playsToday`/`lastPlayDate`
-4. Increments `groups/{group}.scoreSources.sustainScore` by the same score
+### POST
 
-Score is floored at 0 before being applied (never subtracts).
+```
+/api/wasteSortPlayer/[uid]
+```
 
-## API (`app/api/wastesort/...`)
+Creates a Waste Sort player using an existing User document.
 
-Full endpoint list, request/response shapes, and status codes: see `API.md` if you kept it, or
-ask me to regenerate it — the short version:
+No request body is required.
 
-- `GET /api/wastesort/me` — own player profile (404 until first round is played)
-- `GET /api/wastesort/me/round` — check remaining plays today (full quota if never played)
-- `POST /api/wastesort/me/round` — submit a round (`{ score }`); auto-creates the player doc
-  on first-ever round, inside the same transaction — there is no separate create endpoint
+## URL Parameters
 
-Identity comes from the session cookie (`protectRaw("participant")`) — there are no
-uid-parameterized routes, so players can only act on their own record. No update/delete
-endpoints — manual fix-ups go through the Firebase console.
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| uid       | string | User ID     |
 
-All routes require the `game-sustain` feature flag — they return `403 GAME_NOT_ACTIVE` when
-the flag is off or missing (`requireFlag("game-sustain")`).
+Example
 
-All routes run on `export const runtime = "nodejs"` (required — `firebase-admin` doesn't work
-on the Edge runtime).
+```
+POST /api/wasteSortPlayer/65000001
+```
 
-## Frontend integration
+## Success Response
 
-Use `lib/wasteSortApiClient.ts` (`wasteSortApi`) rather than calling these routes with raw
-`fetch` — it attaches the auth header and gives typed responses/errors automatically.
+Status: `200 OK`
 
-## What's intentionally NOT here
+```json
+{
+  "Message": "Add wasteSortPlayer Successfully"
+}
+```
 
-- **Bin/item/scoring-per-drop game logic** — that's 100% a frontend concern (falling items,
-  bins, drag targets, per-drop scoring). The backend only ever sees the round's final total
-  via `{ score }`.
-- **Server-side score validation** — nothing currently stops an authenticated player from
-  submitting an inflated `score` for their _own_ round (auth stops spoofing _other_ players,
-  not self-inflation). Cheap fix if this ever matters: clamp `score` in `recordRound` to a
-  `MAX_SCORE_PER_ROUND` constant based on the max achievable in 30 seconds.
-- **Leaderboard/list reads** — there is no list-all endpoint; add one (with an auth decision)
-  if a wasteSort leaderboard view is ever needed.
+## Error Responses
 
-## Deployment checklist
+### User does not exist
 
-- [ ] `@/firebase/admin` has real service-account credentials in the deploy environment (not
-      just local `.env.local`) — separate from the client-side Firebase config
-- [ ] `@/firebase/admin` exports `adminAuth` alongside `adminDb` (this feature assumes both exist)
-- [ ] Confirm `npm run build` passes with these files added
-- [ ] Frontend Firebase client app is initialized before any `wasteSortApi` call (it calls
-      `getAuth()` with no explicit app argument, assuming the default app is already set up)
+Status: `404`
+
+```json
+{
+  "error": "Player not found in User DataBase"
+}
+```
+
+### Player already exists
+
+Status: `200`
+
+```json
+{
+  "Message": "Document already exists"
+}
+```
+
+---
+
+# 3. Get Player
+
+### GET
+
+```
+/api/wasteSortPlayer/[uid]
+```
+
+Returns a player's information.
+
+## URL Parameters
+
+| Parameter | Type   |
+| --------- | ------ |
+| uid       | string |
+
+Example
+
+```
+GET /api/wasteSortPlayer/65000001
+```
+
+## Success Response
+
+Status: `200 OK`
+
+```json
+{
+  "name": "kanin",
+  "playCount": 2,
+  "vesselName": {
+    "en": "Yaan Ahan Tam Sang",
+    "th": "ยานอาหารตามสั่ง"
+  },
+  "group": "H",
+  "sustainScore": 150,
+  "playsToday": 2,
+  "lastPlayDate": "2026-07-11"
+}
+```
+
+## Error
+
+Status: `404`
+
+```json
+{
+  "error": "Player not found"
+}
+```
+
+---
+
+# 4. Update Player
+
+### PATCH
+
+```
+/api/wasteSortPlayer/[uid]
+```
+
+Updates one or more player fields.
+
+## URL Parameters
+
+| Parameter | Type   |
+| --------- | ------ |
+| uid       | string |
+
+## Request Body
+
+Only include the fields you want to update.
+
+Example
+
+```json
+{
+  "sustainScore": 200
+}
+```
+
+or
+
+```json
+{
+  "playsToday": 2,
+  "playCount": 5
+}
+```
+
+## Success Response
+
+```json
+{
+  "player": {
+    ...
+  }
+}
+```
+
+## Error
+
+```json
+{
+  "error": "Player not found"
+}
+```
+
+---
+
+# 5. Delete Player
+
+### DELETE
+
+```
+/api/wasteSortPlayer/[uid]
+```
+
+Deletes a player document.
+
+## URL Parameters
+
+| Parameter | Type   |
+| --------- | ------ |
+| uid       | string |
+
+## Success Response
+
+```json
+{
+  "ok": true
+}
+```
+
+---
+
+# 6. Check Remaining Plays
+
+### GET
+
+```
+/api/wasteSortPlayer/[uid]/round
+```
+
+Returns how many rounds the player has left today.
+
+This endpoint **does not consume a play**.
+
+## URL Parameters
+
+| Parameter | Type   |
+| --------- | ------ |
+| uid       | string |
+
+## Success Response
+
+```json
+{
+  "playsToday": 1,
+  "maxPlaysPerDay": 3,
+  "playsRemaining": 2,
+  "canPlay": true
+}
+```
+
+### Fields
+
+| Field          | Description                       |
+| -------------- | --------------------------------- |
+| playsToday     | Number of rounds played today     |
+| maxPlaysPerDay | Daily play limit                  |
+| playsRemaining | Remaining plays today             |
+| canPlay        | Whether the player can still play |
+
+## Error
+
+```json
+{
+  "error": "Player not found"
+}
+```
+
+---
+
+# 7. Record a Game Round
+
+### POST
+
+```
+/api/wasteSortPlayer/[uid]/round
+```
+
+Records one completed game.
+
+This endpoint will
+
+- increase `playCount`
+- increase `playsToday`
+- add the submitted score to `sustainScore`
+- update `lastPlayDate`
+- reject the request if the player has already played the maximum number of rounds today
+
+## URL Parameters
+
+| Parameter | Type   |
+| --------- | ------ |
+| uid       | string |
+
+## Request Body
+
+```json
+{
+  "score": 85
+}
+```
+
+## Success Response
+
+```json
+{
+  "player": {
+    "name": "John",
+    "playCount": 2,
+    "playsToday": 2,
+    "sustainScore": 185,
+    "lastPlayDate": "2026-07-11"
+  }
+}
+```
+
+---
+
+## Daily Limit Reached
+
+Status: `429`
+
+```json
+{
+  "error": "DAILY_LIMIT_REACHED",
+  "message": "Already played 3 times today"
+}
+```
+
+---
+
+## Invalid Score
+
+Status: `400`
+
+```json
+{
+  "error": "score must be a number"
+}
+```
+
+---
+
+## Player Not Found
+
+Status: `404`
+
+```json
+{
+  "error": "Player not found"
+}
+```
+
+---
+
+# Daily Play Rules
+
+- Maximum plays per day: **3**
+- Every successful `POST /round`
+  - increments `playCount`
+  - increments `playsToday`
+  - adds the submitted score to `sustainScore`
+- When a new day starts, `playsToday` is automatically reset to `0` by the backend before recording the next round.
+
+---
+
+# Endpoint Summary
+
+| Method | Endpoint                          | Description                   |
+| ------ | --------------------------------- | ----------------------------- |
+| GET    | `/api/wasteSortPlayer`            | Get all players               |
+| POST   | `/api/wasteSortPlayer/:uid`       | Create player from User       |
+| GET    | `/api/wasteSortPlayer/:uid`       | Get player                    |
+| PATCH  | `/api/wasteSortPlayer/:uid`       | Update player                 |
+| DELETE | `/api/wasteSortPlayer/:uid`       | Delete player                 |
+| GET    | `/api/wasteSortPlayer/:uid/round` | Check remaining plays         |
+| POST   | `/api/wasteSortPlayer/:uid/round` | Submit a completed game round |

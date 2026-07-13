@@ -20,7 +20,7 @@ async function getAuthenticatedStudentId(): Promise<string | null> {
     }
 
     // FIXME: check revocation false for now
-    const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, false)
+    const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true)
     return decodedToken.email?.split("@")[0] || null
   } catch {
     return null

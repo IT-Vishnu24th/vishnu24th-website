@@ -8,4 +8,5 @@ export interface popkaewPlayer {
   vesselName: MultiLang
   popkaewscore: number
   lastClickAt?: Timestamp
+  token: number
 }
