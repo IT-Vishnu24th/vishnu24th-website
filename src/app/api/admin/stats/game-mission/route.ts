@@ -41,6 +41,8 @@ export async function GET(req: NextRequest) {
     })
 
     users.forEach((user) => {
+      if (user.role !== "participant") return
+
       const groupId = user.group
       if (!groupId) return
 
