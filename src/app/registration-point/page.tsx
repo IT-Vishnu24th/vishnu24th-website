@@ -16,8 +16,8 @@ import { getRegistrationLocationAssets } from "@/utils/registrationPoint"
 
 const getErrorMessage = (error: ApiFailure | null) => {
   if (!error) return "ไม่สามารถค้นหาข้อมูลได้ กรุณาลองใหม่อีกครั้ง"
-  if (error.code === "USER_NOT_FOUND") return "ไม่พบเลขนิสิตนี้ในระบบ"
-  if (error.code === "REGISTRATION_POINT_NOT_FOUND") return "ยังไม่พบจุดลงทะเบียนของเลขนิสิตนี้"
+  if (error.code === "USER_NOT_FOUND") return "ไม่พบรหัสนิสิตนี้ในระบบ"
+  if (error.code === "REGISTRATION_POINT_NOT_FOUND") return "ยังไม่พบจุดลงทะเบียนของรหัสนิสิตนี้"
   if (error.code === "MISSING_PHASE") return "ยังไม่ได้ตั้งค่า phase สำหรับจุดลงทะเบียน"
   return "ไม่สามารถค้นหาข้อมูลได้ กรุณาลองใหม่อีกครั้ง"
 }
@@ -69,7 +69,7 @@ export default function RegistrationPointPage() {
 
     if (!normalizedStudentId) {
       setManualResult(null)
-      setManualError("กรุณากรอกเลขนิสิต")
+      setManualError("กรุณากรอกรหัสนิสิต")
       return
     }
 
@@ -108,7 +108,7 @@ export default function RegistrationPointPage() {
           ตำแหน่งการลงทะเบียนของน้องแต่ละคนอาจไม่เหมือนกัน
         </p>
 
-        <p className="mt-9 font-sov-yeehor text-3xl text-cream">หรือ ค้นหาด้วยเลขนิสิต</p>
+        <p className="mt-9 font-sov-yeehor text-3xl text-cream">หรือ ค้นหาด้วยรหัสนิสิต</p>
 
         <form onSubmit={handleSearch} className="mt-4 flex w-full max-w-[300px] items-center gap-2">
           <div className="relative h-11 min-w-0 flex-1">
@@ -126,7 +126,7 @@ export default function RegistrationPointPage() {
               autoComplete="off"
               placeholder="69XXXXXXXX"
               className="relative z-10 h-full w-full bg-transparent px-4 text-center font-fc-quantum text-lg text-brownie outline-none placeholder:text-clay-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
-              aria-label="เลขนิสิต"
+              aria-label="รหัสนิสิต"
             />
           </div>
           <button
