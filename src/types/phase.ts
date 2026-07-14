@@ -1,9 +1,9 @@
 export const REGISTRATION_PHASES = [
   "firstdate",
-  "vishnu-1",
-  "vishnu-2",
-  "vishnu-3",
-  "vishnu-4",
+  "vishnu-d1",
+  "vishnu-d2",
+  "vishnu-d3",
+  "vishnu-d4",
 ] as const
 export type RegistrationPhase = (typeof REGISTRATION_PHASES)[number]
 
