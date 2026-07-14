@@ -153,8 +153,16 @@ export const QuestionaireSeciton = ({
             </div>
 
             <div className="relative">
-              <img src={currentScenario.img} className="size-70" />
-
+              {!currentScenario.card && <img src={currentScenario.img} className="size-70" />}
+              {currentScenario.card && (
+                <>
+                  <img
+                    src={currentScenario.img}
+                    className="size-70 left-1/2 -translate-x-1/2 top-10 absolute"
+                  />
+                  <img src="/yaan/card.png" className="w-70 inset-0" />
+                </>
+              )}
               <AnimatePresence>
                 {showChoice && (
                   <motion.div
@@ -181,10 +189,9 @@ export const QuestionaireSeciton = ({
                         <img
                           src={`/yaan/${currentScenario.choicesRow[index]}_row_choice.png`}
                           alt=""
-                          className="absolute inset-0 w-full h-full object-fill"
+                          className="absolute inset-0 w-full h-full z-10"
                         />
-
-                        <div className="absolute inset-0 z-10 flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream">
+                        <div className="absolute inset-0 z-20 flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream">
                           {choice}
                         </div>
                       </div>
@@ -220,7 +227,11 @@ export const QuestionaireSeciton = ({
             </div>
 
             <div className="relative">
-              <img src={currentScenario.img} className="size-70" />
+              <img
+                src="/yaan/yaan_4.png"
+                className="size-70 left-1/2 -translate-x-1/2 top-10 absolute"
+              />
+              <img src="/yaan/card.png" className="w-70 inset-0" />
             </div>
 
             <div className="relative w-91 mt-12 h-40">
@@ -244,7 +255,7 @@ export const QuestionaireSeciton = ({
                 )
               }}
               text={isPending ? "รอสักครู่..." : "ยานของเราคือ..."}
-              className="mt-15 animate-bounce"
+              className="mt-4 animate-bounce"
             />
           </motion.section>
         )}
