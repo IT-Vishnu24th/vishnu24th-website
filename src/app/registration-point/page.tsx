@@ -88,7 +88,7 @@ export default function RegistrationPointPage() {
   }
 
   if (result) {
-    return <ResultView result={result} loading={loading} />
+    return <ResultView result={result} loading={loading} isLoggedIn={isLoggedIn} />
   }
 
   return (
@@ -171,15 +171,28 @@ function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   )
 }
 
-function ResultView({ result, loading }: { result: RegistrationPointResponse; loading: boolean }) {
+function ResultView({
+  result,
+  loading,
+  isLoggedIn,
+}: {
+  result: RegistrationPointResponse
+  loading: boolean
+  isLoggedIn: boolean
+}) {
   const isFirstDate = result.phase === "firstdate"
   const locationAssets = getRegistrationLocationAssets(result)
   const label =
     result.displayLabel ||
     (isFirstDate
       ? `กลุ่มที่ ${result.package}`
-      : `ยาน ${getThaiText(result.vesselName) || result.groupLabel}`)
-  const heading = isFirstDate ? "จุดลงทะเบียน" : `จุดลงทะเบียนที่ ${result.package}`
+      : `${getThaiText(result.vesselName) || result.groupLabel}`)
+  const heading = "จุดลงทะเบียน"
+  const roomSubtitle =
+    result.registrationLocation.source === "room" &&
+    locationAssets.fullName.startsWith(locationAssets.title)
+      ? locationAssets.fullName.slice(locationAssets.title.length).trim()
+      : ""
 
   const googleMapsUrl = useMemo(() => {
     const query = locationAssets.googleMapsQuery
@@ -187,41 +200,55 @@ function ResultView({ result, loading }: { result: RegistrationPointResponse; lo
   }, [locationAssets.googleMapsQuery])
 
   return (
-    <div className="min-h-screen bg-cream-tanned pb-20 text-brownie-dark">
-      <div className="bg-gradient-to-b from-midnight to-brownie pb-4 text-center text-cream">
-        <TopBar isLoggedIn />
+    <div className="min-h-screen bg-cream-tanned text-brownie-dark">
+      <div className="relative aspect-[393/190] min-h-[190px] overflow-hidden text-center text-cream">
+        <Image
+          src="/regis/top-section.png"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 820px) 100vw, 820px"
+          className="object-fill"
+        />
+        <div className="relative z-10">
+          <TopBar isLoggedIn={isLoggedIn} />
 
-        <h1 className="mt-4 font-sov-yeehor text-5xl leading-tight md:text-6xl">
-          {heading}
-          <br />
-          <span className="font-fc-quantum text-2xl text-clay-light">{label}</span>
-        </h1>
-
-        <div className="relative mt-4 h-6 w-full overflow-hidden">
-          <Image src="/map/orange-line.png" alt="" fill className="object-fill" />
+          <h1 className="-mt-2 flex flex-col items-center font-sov-yeehor text-6xl leading-none md:text-6xl">
+            <span>{heading}</span>
+            <span className="mt-3 font-fc-quantum text-2xl leading-none text-clay-light">
+              {label}
+            </span>
+          </h1>
         </div>
       </div>
 
-      <section className="-mt-1 px-6 py-8 text-center">
+      <section className="-mt-3 px-6 py-8 text-center">
         <div className="flex items-center justify-center gap-4">
           <Image
-            src="/regis/line_leftright.png"
+            src="/regis/line-leftright.svg"
             alt=""
             width={70}
             height={35}
-            className="h-auto w-16"
+            className="h-auto w-16 translate-y-1"
           />
-          <p className="font-sov-yeehor text-5xl text-brownie">{locationAssets.title}</p>
+          <div className="flex flex-col items-center leading-none">
+            <p className="font-sov-yeehor text-6xl text-brownie">{locationAssets.title}</p>
+            {roomSubtitle && (
+              <p className="mt-1 font-fc-quantum text-xl leading-none text-brownie">
+                {roomSubtitle}
+              </p>
+            )}
+          </div>
           <Image
-            src="/regis/line_leftright.png"
+            src="/regis/line-leftright.svg"
             alt=""
             width={70}
             height={35}
-            className="h-auto w-16 scale-x-[-1]"
+            className="h-auto w-16 translate-y-1 scale-x-[-1]"
           />
         </div>
 
-        <div className="mt-5 overflow-hidden border-4 border-brownie bg-cream">
+        <div className="mt-5 overflow-hidden">
           <Image
             src={locationAssets.mapSrc}
             alt="แผนที่จุดลงทะเบียน"
@@ -232,14 +259,23 @@ function ResultView({ result, loading }: { result: RegistrationPointResponse; lo
           />
         </div>
 
-        {result.registrationLocation.source === "registrationPoint" && locationAssets.realSrc && (
-          <div className="mt-5 overflow-hidden border-4 border-brownie bg-cream">
+        {locationAssets.realSrc && (
+          <div className="relative mt-5 aspect-[678/462] w-full overflow-hidden bg-cream">
+            <div className="absolute inset-[5px]">
+              <Image
+                src={locationAssets.realSrc}
+                alt="สถานที่ลงทะเบียน"
+                fill
+                sizes="(max-width: 820px) 100vw, 820px"
+                className="object-cover"
+              />
+            </div>
             <Image
-              src={locationAssets.realSrc}
-              alt="สถานที่ลงทะเบียน"
-              width={1108}
-              height={1477}
-              className="aspect-[4/3] w-full object-cover"
+              src="/regis/real_stroke.png"
+              alt=""
+              fill
+              sizes="(max-width: 820px) 100vw, 820px"
+              className="pointer-events-none object-fill"
             />
           </div>
         )}
@@ -251,7 +287,7 @@ function ResultView({ result, loading }: { result: RegistrationPointResponse; lo
           className="mx-auto mt-5 flex w-fit items-center gap-2 rounded-full bg-midnight px-4 py-2 font-fc-quantum text-turqoise transition hover:bg-midnight-light"
         >
           <Image
-            src="/regis/logo_Googlemaps.png"
+            src="/regis/logo_Googlemaps.svg"
             alt=""
             width={20}
             height={24}
@@ -264,7 +300,11 @@ function ResultView({ result, loading }: { result: RegistrationPointResponse; lo
           <p>
             สามารถลงทะเบียนได้ที่ {locationAssets.fullName} เวลา {result.registrationTime} น.
           </p>
-          <p>ตำแหน่งการลงทะเบียนของน้องแต่ละคนอาจไม่เหมือนกัน</p>
+          <p className="text-sm leading-5 md:text-base md:leading-5">
+            ตำแหน่งการลงทะเบียนของน้อง
+            <br />
+            แต่ละคนอาจไม่เหมือนกัน
+          </p>
           {loading && <p className="text-brownie">กำลังอัปเดตข้อมูล...</p>}
         </div>
       </section>

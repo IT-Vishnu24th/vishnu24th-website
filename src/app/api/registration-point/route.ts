@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
     const displayLabel =
       phase === "firstdate"
         ? `กลุ่มที่ ${group.registrationPoint.package}`
-        : `ยาน ${group.vesselName.th || group.vesselName.en || group.label}`
+        : group.vesselName.th || group.vesselName.en || group.label
 
     return success<RegistrationPointResponse>({
       ...group.registrationPoint,

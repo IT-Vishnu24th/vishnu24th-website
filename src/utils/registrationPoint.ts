@@ -44,7 +44,7 @@ const locationAssets: Record<LocationId, RegistrationLocationAssets> = {
     title: "ตึก 100 ปี",
     fullName: "ตึก 100 โถงชั้น 1",
     mapSrc: `${REGIS_MAP_DIR}/eng100.png`,
-    realSrc: `${REGIS_REAL_DIR}/real_eng3.jpg`,
+    realSrc: `${REGIS_REAL_DIR}/real_eng100.jpg`,
     googleMapsQuery: "อาคารวิศวะ 100 ปี คณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย",
   },
   eng3: {
@@ -65,7 +65,7 @@ const locationAssets: Record<LocationId, RegistrationLocationAssets> = {
     fullName: "ลานส้ม",
     mapSrc: `${REGIS_MAP_DIR}/larnsom.png`,
     realSrc: `${REGIS_REAL_DIR}/real_larnsom.jpg`,
-    googleMapsQuery: "ลานส้ม คณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย",
+    googleMapsQuery: "iCanteen โรงอาหารคณะวิศวฯ",
   },
   larngear: {
     title: "ลานเกียร์",
@@ -79,7 +79,7 @@ const locationAssets: Record<LocationId, RegistrationLocationAssets> = {
     fullName: "ที่ราบสูง",
     mapSrc: `${REGIS_MAP_DIR}/plateau.png`,
     realSrc: `${REGIS_REAL_DIR}/real_plateau.jpg`,
-    googleMapsQuery: "ที่ราบสูง คณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย",
+    googleMapsQuery: "ลานเกียร์ คณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย",
   },
 }
 
@@ -212,6 +212,21 @@ const roomAssetsByGroup: Record<string, RegistrationLocationAssets> = {
   },
 }
 
+function withAllowedRoomRealImage(
+  assets: RegistrationLocationAssets,
+  locationId: LocationId
+): RegistrationLocationAssets {
+  const nextAssets = { ...assets }
+  nextAssets.googleMapsQuery = locationAssets[locationId].googleMapsQuery
+  delete nextAssets.realSrc
+
+  if (locationId === "eng3") {
+    nextAssets.realSrc = `${REGIS_REAL_DIR}/real_eng3.jpg`
+  }
+
+  return nextAssets
+}
+
 export function getLocationDisplayName(
   locationId: LocationId | null,
   lang: "en" | "th" = "th"
@@ -242,13 +257,18 @@ export function getRegistrationLocationAssets(
   if (result.registrationLocation.source === "room") {
     const groupKey = result.groupLabel.toUpperCase()
     const roomAssets = roomAssetsByGroup[groupKey]
-    if (roomAssets) return roomAssets
-
-    return {
-      ...locationAssets[result.registrationLocation.locationId],
-      fullName:
-        `${getLocationDisplayName(result.registrationLocation.locationId, "th")} ${getRoomDisplayName(result.registrationLocation.roomName, "th")}`.trim(),
+    if (roomAssets) {
+      return withAllowedRoomRealImage(roomAssets, result.registrationLocation.locationId)
     }
+
+    return withAllowedRoomRealImage(
+      {
+        ...locationAssets[result.registrationLocation.locationId],
+        fullName:
+          `${getLocationDisplayName(result.registrationLocation.locationId, "th")} ${getRoomDisplayName(result.registrationLocation.roomName, "th")}`.trim(),
+      },
+      result.registrationLocation.locationId
+    )
   }
 
   return locationAssets[result.registrationLocationId]
@@ -259,11 +279,14 @@ export function getRegistrationLocationAssetsFromRoom(
   room: GroupRoom
 ): RegistrationLocationAssets {
   const groupKey = groupLabel.toUpperCase()
-  return (
-    roomAssetsByGroup[groupKey] ?? {
-      ...locationAssets[room.locationId],
-      fullName:
-        `${getLocationDisplayName(room.locationId, "th")} ${getRoomDisplayName(room.name, "th")}`.trim(),
-    }
-  )
+  return roomAssetsByGroup[groupKey]
+    ? withAllowedRoomRealImage(roomAssetsByGroup[groupKey], room.locationId)
+    : withAllowedRoomRealImage(
+        {
+          ...locationAssets[room.locationId],
+          fullName:
+            `${getLocationDisplayName(room.locationId, "th")} ${getRoomDisplayName(room.name, "th")}`.trim(),
+        },
+        room.locationId
+      )
 }
