@@ -1,8 +1,9 @@
 "use client"
 
-import { useFeatureFlags } from "@/hooks/useApi"
+import { useFeatureFlags, usePhase } from "@/hooks/useApi"
 import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
+import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 
 const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[] = [
   {
@@ -17,10 +18,12 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   },
   {
     title: "ปริศนาฟ้าลิขิต",
+    id: "game-mission",
     reward: 50000,
     banner: "",
     status: "locked" as MissionStatus,
-    deadline: "",
+    openTime: "2026-07-21T16:08:00+07:00",
+    deadline: "2026-07-24T16:12:00+07:00",
     href: "/",
   },
   {
@@ -45,14 +48,67 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   },
 ]
 
+const QuestionBanner = ({
+  phase,
+}: {
+  phase?: {
+    regis: { current: RegistrationPhase }
+    vishnuMission: { current: VishnuMissionPhase }
+  }
+}) => {
+  const value = Number(phase?.vishnuMission.current.at(-1) ?? "0")
+  const count = Number.isNaN(value) ? 0 : value
+  return (
+    <div className="p-5">
+      <div className="flex">
+        {[1, 3, 5, 7].map((num) => (
+          <div key={num}>
+            <div className="flex items-center flex-col w-[60.75px]">
+              <img src="/game/sun.png" />
+              <img
+                src={
+                  count === num
+                    ? "/game/unanswered_card.png"
+                    : count < num
+                      ? "/game/future_card.png"
+                      : "/game/done_card.png"
+                }
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex">
+        {[2, 4, 6, 8].map((num) => (
+          <div key={num}>
+            <div className="flex items-center flex-col w-[60.75px]">
+              <img src="/game/sun.png" />
+              <img
+                src={
+                  count === num
+                    ? "/game/unanswered_card.png"
+                    : count < num
+                      ? "/game/future_card.png"
+                      : "/game/done_card.png"
+                }
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export const MissionCardContainer = () => {
-  const { data: featureFlags } = useFeatureFlags()
+  const { data: featureFlagsData } = useFeatureFlags()
+  const { data: phaseData } = usePhase()
 
   const missions = useMemo(() => {
     const now = new Date()
 
     return defaultMissions.map((mission) => {
-      const flag = featureFlags?.data.find((f) => f.id === mission.id)
+      const flag = featureFlagsData?.data.find((f) => f.id === mission.id)
 
       const openTime = mission.openTime ? new Date(mission.openTime) : null
       const deadline = mission.deadline ? new Date(mission.deadline) : null
@@ -65,6 +121,8 @@ export const MissionCardContainer = () => {
         status = "upcoming"
       } else if (deadline && now > deadline) {
         status = "completed"
+      } else if (mission.id === "game-mission") {
+        status = "active"
       }
 
       return {
@@ -72,12 +130,18 @@ export const MissionCardContainer = () => {
         status,
       }
     })
-  }, [featureFlags])
+  }, [featureFlagsData?.data])
   return (
     <section className="w-full bg-[linear-gradient(0deg,#2D3542_5.3%,#F0865C_96.95%)] pb-6 pt-20">
       <div className="w-full grid grid-cols-1 place-items-center pb-15 [@media(min-width:748px)]:grid-cols-2">
         {missions.map((mission) => (
-          <MissionCard key={mission.title} {...mission} />
+          <MissionCard
+            key={mission.title}
+            {...mission}
+            banner={
+              mission.id === "game-mission" ? <QuestionBanner phase={phaseData?.data} /> : undefined
+            }
+          />
         ))}
       </div>
     </section>

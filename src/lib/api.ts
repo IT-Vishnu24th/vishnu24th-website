@@ -45,8 +45,8 @@ export const phaseApi = {
   getPhase: async () => {
     return api.get<{
       data: {
-        regis: RegistrationPhase
-        vishnuMission: VishnuMissionPhase
+        regis: { current: RegistrationPhase }
+        vishnuMission: { current: VishnuMissionPhase }
       }
     }>("/phase")
   },
@@ -60,8 +60,8 @@ export const phaseApi = {
     return api.patch<{
       data: {
         message: string
-        regis: RegistrationPhase
-        vishnuMission: VishnuMissionPhase
+        regis: { current: RegistrationPhase }
+        vishnuMission: { current: VishnuMissionPhase }
       }
     }>("/phase", body)
   },

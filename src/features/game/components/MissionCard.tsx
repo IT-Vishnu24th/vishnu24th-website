@@ -105,7 +105,7 @@ export default function MissionCard({
         </div>
 
         <div className="relative w-68.75 aspect-square">
-          {banner ? (
+          {banner !== undefined && status !== "upcoming" ? (
             banner
           ) : (
             <img
