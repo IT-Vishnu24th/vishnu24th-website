@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
-    console.log("test")
+
     const [flagErr] = await requireFlag("game-popkaew")
     if (flagErr) return flagErr
 
