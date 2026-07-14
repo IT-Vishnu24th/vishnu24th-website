@@ -19,8 +19,6 @@ export const AnnouncementSection = () => {
     return showVessel[0].enabled ?? false
   }, [featureFlagsData?.data])
 
-  console.log(showYarn)
-
   useEffect(() => {
     if (isLoading) return
     if (user === null || !showYarn) {

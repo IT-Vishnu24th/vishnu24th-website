@@ -5,6 +5,7 @@ import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
 import { MapPin, Ship } from "lucide-react"
 import FAQFooter from "@/features/landing-page/components/QuestionFooter"
+import { YarnAnnouncementButton } from "@/features/announcement/components/YarnAnnouncementButton"
 
 export default function HomePage() {
   return (
@@ -77,10 +78,7 @@ export default function HomePage() {
               <MapPin size={18} strokeWidth={3} />
               ดูจุดลงทะเบียน
             </Link>
-            <button className="flex min-h-11 items-center gap-1.5 rounded-full bg-[#2D3542] border border-[#2D3542] border-2 px-3 py-2.5 text-[#74DDCF] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
-              <Ship size={18} strokeWidth={3} />
-              ยานอาควาเรียม
-            </button>
+            <YarnAnnouncementButton />
           </div>
         </div>
 
