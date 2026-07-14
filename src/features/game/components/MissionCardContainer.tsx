@@ -22,7 +22,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
     reward: 50000,
     banner: "",
     status: "locked" as MissionStatus,
-    openTime: "2026-07-10T16:08:00+07:00",
+    openTime: "2026-07-21T16:08:00+07:00",
     deadline: "2026-07-24T16:12:00+07:00",
     href: "/",
   },
