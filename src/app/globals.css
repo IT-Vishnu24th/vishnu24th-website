@@ -89,6 +89,36 @@
   --font-arthemis: var(--font-arthemis);
 }
 
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.accordion-content {
+  overflow: hidden;
+}
+
+.accordion-content[data-state="open"] {
+  animation: accordion-down 300ms ease-out;
+}
+
+.accordion-content[data-state="closed"] {
+  animation: accordion-up 300ms ease-out;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

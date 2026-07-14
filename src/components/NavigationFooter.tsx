@@ -20,10 +20,26 @@ export default function FooterNavigation() {
 
   const menus = [
     { name: "Home", icon: Home, path: "/", requiresAuth: false },
-    { name: "Explore", icon: Compass, path: "/explore", requiresAuth: false },
+    {
+      name: "Explore",
+      icon: Compass,
+      path: "/explore",
+      subpaths: ["/explore/schedule", "/explore/club", "/explore/map", "/explore/slide"],
+      requiresAuth: false,
+    },
     { name: "Ranking", icon: Ship, path: "/ranking", requiresAuth: true },
     { name: "Game", icon: Gamepad2, path: "/game", requiresAuth: true },
-    ...(isAdmin ? [{ name: "Admin", icon: UserRoundKey, path: "/admin", requiresAuth: true }] : []),
+    ...(isAdmin
+      ? [
+          {
+            name: "Admin",
+            icon: UserRoundKey,
+            path: "/admin",
+            requiresAuth: true,
+            subpaths: ["/admin/website_settings", "/admin/stage_status"],
+          },
+        ]
+      : []),
   ]
 
   // กดค้างเริ่มแสดง text
@@ -82,7 +98,7 @@ export default function FooterNavigation() {
       <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 pb-4 pt-1.5 bg-[#2D3542]">
         {menus.map((item) => {
           const Icon = item.icon
-          const selected = pathname === item.path
+          const selected = pathname === item.path || item?.subpaths?.includes(pathname)
           const showHold = holdItem === item.name
           const disabled = item.requiresAuth && !isLoggedIn
 

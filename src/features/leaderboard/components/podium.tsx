@@ -45,7 +45,7 @@ export default function Podium({ top3 }: Props) {
               >
                 ยาน
                 <br />
-                {item.vesselName.th}
+                {item.vesselName?.th}
               </p>
 
               {/* Score */}

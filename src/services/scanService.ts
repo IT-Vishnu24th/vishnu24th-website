@@ -1,8 +1,7 @@
 import { adminDb } from "@/firebase/admin"
-import type { Club } from "@/types/club"
 import type { Scan } from "@/types/scan"
 import clubService from "@/services/clubService"
-import featureFlagsService from "@/services/featureFlagService"
+import { AppErrorCode } from "@/types/appErrorCode"
 import { Timestamp, FieldValue } from "firebase-admin/firestore"
 
 const scanCollection = adminDb.collection("scans").withConverter({
@@ -22,28 +21,20 @@ const scanService = {
     userGroup: string,
     clubId: string
   ): Promise<
-    | ({ success: true; club: Club } & Omit<Scan, "createdAt"> & { createdAt: string })
-    | { success: false; error: string }
+    | ({ success: true; code: string } & Omit<Scan, "createdAt"> & { createdAt: string })
+    | { success: false; error: AppErrorCode }
   > {
     const docRef = scanCollection.doc(`${userId}_${clubId}`)
     const groupDocRef = adminDb.collection("groups").doc(userGroup)
 
-    const [groupDoc, club, flag] = await Promise.all([
-      groupDocRef.get(),
-      clubService.getClub(clubId),
-      featureFlagsService.getFlag("game-clubscan"),
-    ])
-
-    if (!flag || !flag.enabled) {
-      return { success: false, error: "game-not-active" }
-    }
+    const [groupDoc, club] = await Promise.all([groupDocRef.get(), clubService.getClub(clubId)])
 
     if (!groupDoc.exists) {
-      return { success: false, error: "group-not-found" }
+      return { success: false, error: AppErrorCode.GROUP_NOT_FOUND }
     }
 
     if (!club) {
-      return { success: false, error: "club-not-found" }
+      return { success: false, error: AppErrorCode.CLUB_NOT_FOUND }
     }
 
     const score = rollScore()
@@ -66,7 +57,7 @@ const scanService = {
       await batch.commit()
     } catch (error: unknown) {
       if (error instanceof Error && "code" in error && (error as { code: number }).code === 6) {
-        return { success: false, error: "already-scanned" }
+        return { success: false, error: AppErrorCode.ALREADY_SCANNED }
       }
       throw error
     }
@@ -76,7 +67,7 @@ const scanService = {
       ...scan,
       // result in UTC timezone
       createdAt: now.toDate().toISOString(),
-      club,
+      code: club.code,
     }
   },
 }

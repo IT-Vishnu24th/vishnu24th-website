@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import userService from "@/services/userService"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
 import type { UserAnswers, UserAnswerHistoryItem } from "@/types/user"
@@ -12,14 +13,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const q = QUESTIONS[id]
     if (!q) {
-      return failure(400, "Invalid question ID")
+      return failure(400, AppErrorCode.INVALID_QUESTION_ID, "Invalid question ID")
     }
 
     const userAnswers = await userService.getUserAnswers(user.id)
     const userAnswer = userAnswers[id as keyof UserAnswers]
 
     if (userAnswer === null) {
-      return failure(404, "Answer not found for this question")
+      return failure(404, AppErrorCode.ANSWER_NOT_FOUND, "Answer not found for this question")
     }
 
     const currentTime =
@@ -38,6 +39,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
   } catch (error) {
     console.error(`Error in GET /api/users/me/missions/${id}:`, error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

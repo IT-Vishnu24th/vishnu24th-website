@@ -12,6 +12,7 @@ export interface RawUser {
   group: string
   department: MultiLang
   prefLanguage: "en" | "th"
+  yarnAccepted?: boolean
   answers?: UserAnswers
 }
 
@@ -26,11 +27,16 @@ const populateGroup = async (user: RawUser): Promise<User> => {
     // broken ref: should respond 500
     throw new Error(`Broken ref in users/${user.id}: group '${user.group}' not found`)
   }
-  const flag = await featureFlagsService.getFlag("show-group")
-  const showFullGroup = flag?.enabled ?? false
+  const revealVessel = await featureFlagsService.isEnabled("reveal-vessel")
+  // explicit allowlist: RawUser fields like `answers` must not leak into the public User
   return {
-    ...user,
-    group: groupService.mapToPublic(group, showFullGroup),
+    id: user.id,
+    role: user.role,
+    name: user.name,
+    department: user.department,
+    prefLanguage: user.prefLanguage,
+    yarnAccepted: user.yarnAccepted ?? false,
+    group: groupService.mapToPublic(group, revealVessel),
   }
 }
 

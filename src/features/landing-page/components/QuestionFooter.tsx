@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { ChevronDown } from "lucide-react"
-import { faqData } from "@/features/landing-page/const/FAQmock"
+import { faqData } from "@/features/landing-page/const/FAQdata"
 
 export default function FAQFooter() {
   // key: "categoryIndex-itemIndex" ของ item ที่เปิดอยู่ (เปิดได้ทีละ 1 อัน)
@@ -21,7 +21,7 @@ export default function FAQFooter() {
       </div>
 
       <div className="relative z-10 max-w-md mx-auto mt-10">
-        <h2 className="text-center text-3xl md:text-4xl font-sov-yeehor font-bold text-brownie-light mb-4">
+        <h2 className="text-center text-5xl font-sov-yeehor font-bold text-brownie-light mb-6">
           คำถามที่พบบ่อย
         </h2>
 
@@ -44,7 +44,7 @@ export default function FAQFooter() {
                         isOpen ? "rounded-t-xl" : "rounded-xl"
                       }`}
                     >
-                      <span>{item.question}</span>
+                      <span className="font-fc-quantum">{item.question}</span>
                       <ChevronDown
                         size={18}
                         strokeWidth={2.5}
@@ -55,7 +55,7 @@ export default function FAQFooter() {
                     </button>
 
                     {isOpen && (
-                      <div className="rounded-b-2xl bg-[#F0DCC4] px-4 py-3 text-sm md:text-base text-brick-orange">
+                      <div className="rounded-b-2xl bg-[#F0DCC4] px-4 py-3 text-sm md:text-base font-fc-quantum text-brick-orange">
                         {item.answer}
                       </div>
                     )}

@@ -1,4 +1,4 @@
-import type { Group, Vessel } from "@/types/group"
+import type { Vessel } from "@/types/group"
 import type { MultiLang } from "@/types/util"
 
 export interface Name {
@@ -26,13 +26,14 @@ export interface User {
   id: string // student id
   role: UserRole
   name: MultiLang<Name>
-  group: Group | Vessel
+  group: Vessel
   department: MultiLang
   prefLanguage: keyof MultiLang
-  answers?: UserAnswers
+  /** missing on old docs = false */
+  yarnAccepted: boolean
 }
 
-export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage">
+export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage" | "yarnAccepted">
 
 export interface UserAnswerHistoryItem {
   id: string

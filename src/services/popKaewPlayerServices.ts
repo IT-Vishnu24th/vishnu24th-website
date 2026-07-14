@@ -1,7 +1,6 @@
 import { adminDb } from "@/firebase/admin"
 
 import type { popkaewPlayer } from "@/types/popkaewPlayer"
-import popkaewVesselService from "./popkaewVesselService"
 
 export type * from "@/types/popkaewPlayer"
 
@@ -49,18 +48,6 @@ const popkaewPlayerService = {
     const snapshot = await popkaewPlayerCollection.get()
 
     return snapshot.docs.map((doc) => doc.data())
-  },
-
-  /**
-   * Get the player's group document
-   */
-  async getVessel(uid: string) {
-    const player = await this.getById(uid)
-
-    if (!player) return null
-
-    // player.group contains "H", "A", "B", etc.
-    return await popkaewVesselService.getById(player.group)
   },
 }
 
