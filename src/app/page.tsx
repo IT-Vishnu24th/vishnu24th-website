@@ -1,6 +1,5 @@
-import AuthResult from "@/features/auth/components/AuthResult"
-import { LoginButton } from "@/features/auth/components/LoginButton"
 import Image from "next/image"
+import Link from "next/link"
 import SponsorFooter from "@/features/landing-page/components/SponsorFooterForHome"
 import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
@@ -16,17 +15,17 @@ export default function HomePage() {
           src="/landingpage/art-background.png"
           alt=""
           fill
-          className="object-contain object-[center_6%]"
+          className="pointer-events-none object-contain object-[center_6%]"
         />
       </div>
 
       {/* ตึกซ้าย-ขวา + เฟืองมุมบน วางทับด้านหน้า */}
-      <div className="absolute inset-0 z-10 ">
+      <div className="pointer-events-none absolute inset-0 z-10">
         <Image
           src="/landingpage/art-foreground.png"
           alt=""
           fill
-          className="object-contain object-top object-[center_22%]"
+          className="pointer-events-none object-contain object-top object-[center_22%]"
         />
       </div>
 
@@ -63,19 +62,22 @@ export default function HomePage() {
           </div>
 
           <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
-            ค่ายวิศณุกรรมบุตรครั้งที่ 24
+            ค่ายวิษณุกรรมบุตรครั้งที่ 24
           </h2>
           <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             21–24 กรกฎาคม 2569
           </h3>
 
           {/* ปุ่มด้านล่าง */}
-          <div className="flex items-center justify-center gap-3 mt-15 mb-30">
-            <button className="flex items-center gap-1 rounded-full bg-[#74DDCF] border border-[#2D4B5F] border-2 px-2 py-2.5 text-[#2D4B5F] text-sm md:text-base hover:bg-[#74ddcfa0] transition-colors">
+          <div className="relative z-20 flex items-center justify-center gap-3 mt-15 mb-30">
+            <Link
+              href="/registration-point"
+              className="flex min-h-11 items-center gap-1.5 rounded-full bg-[#74DDCF] border border-[#2D4B5F] border-2 px-3 py-2.5 text-[#2D4B5F] text-sm md:text-base hover:bg-[#74ddcfa0] transition-colors"
+            >
               <MapPin size={18} strokeWidth={3} />
               ดูจุดลงทะเบียน
-            </button>
-            <button className="flex items-center gap-1 rounded-full bg-[#2D3542] border border-[#2D3542] border-2 px-2 py-2.5 text-[#74DDCF] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
+            </Link>
+            <button className="flex min-h-11 items-center gap-1.5 rounded-full bg-[#2D3542] border border-[#2D3542] border-2 px-3 py-2.5 text-[#74DDCF] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
               <Ship size={18} strokeWidth={3} />
               ยานอาควาเรียม
             </button>

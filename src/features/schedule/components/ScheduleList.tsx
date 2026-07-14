@@ -5,6 +5,7 @@ import { ScheduleCard } from "./ScheduleCard"
 import { ScheduleTime } from "./ScheduleTime"
 import Link from "next/link"
 import { motion } from "motion/react"
+import { scheduleSlotImages } from "../const/schedule"
 
 export const ScheduleList = () => {
   const { data } = useStages()
@@ -36,7 +37,7 @@ export const ScheduleList = () => {
                 ease: "easeOut",
               }}
             >
-              <ScheduleCard stage={e} />
+              <ScheduleCard stage={e} images={scheduleSlotImages[index] ?? []} />
             </motion.div>
           </Link>
         ))}

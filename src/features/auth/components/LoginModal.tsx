@@ -5,9 +5,12 @@ import { X } from "lucide-react"
 import { GoogleIcon } from "@/components/icon/GoogleIcon"
 import useAuth from "@/hooks/useAuth"
 import { modalStore } from "@/stores/modalStore"
-import { useRouter } from "next/navigation"
 
-export const LoginModal = () => {
+type LoginModalProps = {
+  callbackUrl?: string
+}
+
+export const LoginModal = ({ callbackUrl = "/announcement" }: LoginModalProps) => {
   const { signInWithGoogle, loading, error } = useAuth()
 
   const errorMessage =

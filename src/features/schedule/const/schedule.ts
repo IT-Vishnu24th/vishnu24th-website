@@ -40,3 +40,16 @@ export const scheduleStatusStyles = {
     status: "Delayed",
   },
 } as const
+
+export const scheduleSlotImages = [
+  ["/explore/schedule/slot1_1.png", "/explore/schedule/slot1_2.PNG"],
+  ["/explore/schedule/slot2.jpg"],
+  ["/explore/schedule/slot3_1.png", "/explore/schedule/slot3_2.png"],
+  ["/explore/schedule/slot4.png"],
+  [
+    "/explore/schedule/slot5_1.PNG",
+    "/explore/schedule/slot5_2.png",
+    "/explore/schedule/slot5_3.png",
+  ],
+  ["/explore/schedule/slot_6.png"],
+] as const

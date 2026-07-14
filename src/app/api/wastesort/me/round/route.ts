@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
   const [flagErr] = await requireFlag("game-sustain")
   if (flagErr) return flagErr
 
+  const MAX_SCORE = 30
   const body = await req.json()
   const score = Number(body?.score)
 
@@ -42,6 +43,10 @@ export async function POST(req: NextRequest) {
 
     if (!player) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
+    }
+
+    if (score < 0 || score > MAX_SCORE) {
+      return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
     }
 
     return success({ player: wasteSortPlayerService.mapToPublic(player) })
