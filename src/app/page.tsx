@@ -62,7 +62,7 @@ export default function HomePage() {
           </div>
 
           <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
-            ค่ายวิศณุกรรมบุตรครั้งที่ 24
+            ค่ายวิษณุกรรมบุตรครั้งที่ 24
           </h2>
           <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             21–24 กรกฎาคม 2569
