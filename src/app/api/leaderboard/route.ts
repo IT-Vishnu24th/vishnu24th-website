@@ -1,35 +1,52 @@
-import { success, failure, protectRaw } from "@/utils/apiHelpers"
+import { success, failure } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 import groupService from "@/services/groupService"
+import leaderboardService from "@/services/leaderboardService"
 import featureFlagsService from "@/services/featureFlagService"
-import type { LeaderboardResponse } from "@/types/leaderboard"
+import { getAuthenticatedRawUser } from "@/lib/auth"
+import type { LeaderboardEntry, LeaderboardResponse } from "@/types/leaderboard"
 
 export async function GET() {
+  const unknownVessel = { en: "Unknown Vessel", th: "Unknown Vessel" }
   try {
-    const [error, user] = await protectRaw()
-    if (error) return error
+    const [user, groups, clubScanFlag, revealVessel] = await Promise.all([
+      getAuthenticatedRawUser(),
+      groupService.rawList(),
+      featureFlagsService.getFlag("game-clubscan"),
+      featureFlagsService.isEnabled("reveal-vessel"),
+    ])
 
-    const groups = await groupService.rawList()
+    // if club scan game is active, show live leaderboard from `scanScore`s
+    const entries: LeaderboardEntry[] = clubScanFlag
+      ? groups.map(({ label, scanScore }) => ({ group: label, score: scanScore }))
+      : await leaderboardService.rawList()
 
     // Sort by score desc, then by label asc to keep order deterministic
-    const sorted = [...groups].sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
-
-    const flag = await featureFlagsService.getFlag("show-group")
-    const showFullGroup = flag?.enabled ?? false
+    const sorted = [...entries].sort((a, b) => b.score - a.score || a.group.localeCompare(b.group))
 
     // Normal ranking (eg. 1224)
     const getRank = (score: number) => sorted.filter((g) => g.score > score).length + 1
 
-    const top3 = sorted.slice(0, 3).map((g) => ({
-      ...groupService.mapToPublic(g, showFullGroup),
-      rank: getRank(g.score),
+    const top3 = sorted.slice(0, 3).map((e) => ({
+      ...(revealVessel && {
+        vesselName: groups.find(({ label }) => label === e.group)?.vesselName ?? unknownVessel,
+      }),
+      score: e.score,
+      rank: getRank(e.score),
     }))
 
-    const group = sorted.find((g) => g.label === user.group)
+    const group = user && sorted.find((e) => e.group === user.group)
     const rank = group ? getRank(group.score) : null
+    const userVesselName = user && groups.find(({ label }) => label === user.group)?.vesselName
 
-    return success<LeaderboardResponse>({ top3, rank })
+    return success<LeaderboardResponse>({
+      top3,
+      rank,
+      score: group ? group.score : null,
+      ...(revealVessel && userVesselName && { vesselName: userVesselName }),
+    })
   } catch (error) {
     console.error("Failed to fetch ranking:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

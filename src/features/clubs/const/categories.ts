@@ -1,12 +1,4 @@
-import {
-  Activity,
-  Book,
-  Trophy,
-  Palette,
-  Heart,
-  MoreHorizontal,
-  type LucideIcon,
-} from "lucide-react"
+import { MoreHorizontal, Gamepad, SportShoe, BookOpenText, type LucideIcon } from "lucide-react"
 
 export interface Category {
   id: string
@@ -15,10 +7,10 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "science", label: "วิทย์", icon: Activity },
-  { id: "academic", label: "วิชาการ", icon: Book },
-  { id: "sports", label: "กีฬา", icon: Trophy },
-  { id: "art", label: "ศิลปะ", icon: Palette },
-  { id: "volenteer", label: "อาสา", icon: Heart },
-  { id: "others", label: "อื่นๆ", icon: MoreHorizontal },
+  { id: "Innovation", label: "Innovation", icon: Gamepad },
+  { id: "academic", label: "ค่ายและวิชาการ", icon: BookOpenText },
+  { id: "sport", label: "กีฬา", icon: SportShoe },
+  // { id: "art", label: "ศิลปะ", icon: Palette },
+  // { id: "volenteer", label: "อาสา", icon: Heart },
+  { id: "other", label: "อื่นๆ", icon: MoreHorizontal },
 ]

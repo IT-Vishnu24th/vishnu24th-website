@@ -41,7 +41,7 @@ const serializeStage = (id: string, stage: RawStagePerformance): StagePerformanc
   id,
   ...stage,
   start: stage.start.toISOString(),
-  end: stage.start.toISOString(),
+  end: stage.end.toISOString(),
 })
 
 const stageService = {
@@ -76,8 +76,8 @@ const stageService = {
     await stageCollection.doc(id).delete()
   },
 
-  async setSoleLive(targetId: string) {
-    adminDb.runTransaction(async (tx) => {
+  async setSoleLive(targetId: string): Promise<void> {
+    await adminDb.runTransaction(async (tx) => {
       const currentLive = await tx.get(
         stageCollection.where("status", "==", "live" satisfies StagePerformanceStatus)
       )

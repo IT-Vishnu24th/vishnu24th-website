@@ -1,11 +1,16 @@
-import Image from "next/image"
-import SponsorFooter from "@/components/SponsorFooter"
 import NavigationFooter from "@/components/NavigationFooter"
+import SponsorFooter from "@/components/SponsorFooter"
+import { MissionCardContainer } from "@/features/game/components/MissionCardContainer"
+import MissionHeroSection from "@/features/game/components/MissionHeroSection"
 
-export default function game() {
+export default function GamePage() {
   return (
     <>
-      <SponsorFooter />
+      <div className="w-full overflow-x-hidden">
+        <MissionHeroSection />
+        <MissionCardContainer />
+        <SponsorFooter />
+      </div>
       <NavigationFooter />
     </>
   )

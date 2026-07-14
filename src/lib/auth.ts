@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 import { adminAuth } from "@/firebase/admin"
 import userService, { User, RawUser } from "@/services/userService"
+import type { AuthUser } from "@/types/user"
 
 /**
  * Extracts and verifies the student ID directly from the session cookie.
@@ -12,6 +13,10 @@ async function getAuthenticatedStudentId(): Promise<string | null> {
 
     if (!sessionCookie) {
       return null
+    }
+
+    if (process.env.NODE_ENV === "development" && sessionCookie.startsWith("mock-session:")) {
+      return sessionCookie.replace("mock-session:", "")
     }
 
     // FIXME: check revocation false for now
@@ -40,4 +45,20 @@ export async function getAuthenticatedRawUser(): Promise<RawUser | null> {
   const studentId = await getAuthenticatedStudentId()
   if (!studentId) return null
   return userService.getRawById(studentId)
+}
+
+/**
+ * Retrieves the minimal user identity (id, role, group, prefLanguage) for the
+ * client-side AuthProvider.  Avoids sending unnecessary data to the browser.
+ */
+export async function getAuthUser(): Promise<AuthUser | null> {
+  const raw = await getAuthenticatedRawUser()
+  if (!raw) return null
+  return {
+    id: raw.id,
+    name: raw.name,
+    role: raw.role,
+    prefLanguage: raw.prefLanguage,
+    yarnAccepted: raw.yarnAccepted ?? false,
+  }
 }

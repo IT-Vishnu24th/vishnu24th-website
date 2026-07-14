@@ -1,7 +1,7 @@
 import { adminDb } from "@/firebase/admin"
 import groupService from "@/services/groupService"
 import featureFlagsService from "@/services/featureFlagService"
-import type { Name, User, UserRole } from "@/types/user"
+import type { Name, User, UserRole, UserAnswers } from "@/types/user"
 import type { MultiLang } from "@/types/util"
 export type * from "@/types/user"
 
@@ -12,6 +12,8 @@ export interface RawUser {
   group: string
   department: MultiLang
   prefLanguage: "en" | "th"
+  yarnAccepted?: boolean
+  answers?: UserAnswers
 }
 
 const userCollection = adminDb.collection("users").withConverter({
@@ -25,11 +27,16 @@ const populateGroup = async (user: RawUser): Promise<User> => {
     // broken ref: should respond 500
     throw new Error(`Broken ref in users/${user.id}: group '${user.group}' not found`)
   }
-  const flag = await featureFlagsService.getFlag("show-group")
-  const showFullGroup = flag?.enabled ?? false
+  const revealVessel = await featureFlagsService.isEnabled("reveal-vessel")
+  // explicit allowlist: RawUser fields like `answers` must not leak into the public User
   return {
-    ...user,
-    group: groupService.mapToPublic(group, showFullGroup),
+    id: user.id,
+    role: user.role,
+    name: user.name,
+    department: user.department,
+    prefLanguage: user.prefLanguage,
+    yarnAccepted: user.yarnAccepted ?? false,
+    group: groupService.mapToPublic(group, revealVessel),
   }
 }
 
@@ -69,6 +76,28 @@ const userService = {
     const data = result.data()
     if (!data) throw new Error("Document should exist") // should never happen
     return populateGroup(data)
+  },
+
+  async getUserAnswers(id: string): Promise<UserAnswers> {
+    const doc = await userCollection.doc(id).get()
+    const data = doc.data()
+    const ans = data?.answers
+    return {
+      q1: ans?.q1 ?? null,
+      q2: ans?.q2 ?? null,
+      q3: ans?.q3 ?? null,
+      q4: ans?.q4 ?? null,
+      q5: ans?.q5 ?? null,
+      q6: ans?.q6 ?? null,
+      q7: ans?.q7 ?? null,
+    }
+  },
+
+  async submitAnswer(id: string, questionId: string, answer: string | string[]): Promise<void> {
+    const ref = userCollection.doc(id)
+    await ref.update({
+      [`answers.${questionId}`]: answer,
+    })
   },
 }
 

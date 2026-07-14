@@ -1,42 +1,52 @@
-import clubService from "@/services/clubService"
-import { ScanPostResponse } from "@/types/scan"
-import { protectRaw, success, failure } from "@/utils/apiHelpers"
+import { NextRequest } from "next/server"
+import z from "zod"
+import scanService from "@/services/scanService"
+import { ScanResponse } from "@/types/scan"
+import { protectRaw, success, failure, parseBody, requireFlag } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
 
-export async function POST(request: Request) {
+const scanPayloadSchema = z.object({
+  clubId: z.string(),
+})
+
+export async function POST(req: NextRequest) {
   try {
     const [error, user] = await protectRaw("participant")
     if (error) return error
 
-    const { clubId } = await request.json()
-    if (!clubId) {
-      return failure(400, "Missing club ID")
-    }
+    const [flagErr] = await requireFlag("game-clubscan")
+    if (flagErr) return flagErr
+
+    const [parseErr, payload] = await parseBody(req, scanPayloadSchema)
+    if (parseErr) return parseErr
+
+    const { clubId } = payload
 
     if (!user.group) {
-      return failure(404, "User group not found")
+      return failure(404, AppErrorCode.GROUP_NOT_FOUND, "User group not found")
     }
 
-    const result = await clubService.scan(user.id, user.group, clubId)
+    const result = await scanService.scan(user.id, user.group, clubId)
     if (!result.success) {
-      if (result.error === "club-not-found") {
-        return failure(404, "Club not found")
+      if (result.error === AppErrorCode.CLUB_NOT_FOUND) {
+        return failure(404, AppErrorCode.CLUB_NOT_FOUND, "Club not found")
       }
-      if (result.error === "group-not-found") {
-        return failure(404, "User group not found")
+      if (result.error === AppErrorCode.GROUP_NOT_FOUND) {
+        return failure(404, AppErrorCode.GROUP_NOT_FOUND, "User group not found")
       }
-      if (result.error === "already-scanned") {
-        return failure(409, "You have already scanned this club")
+      if (result.error === AppErrorCode.ALREADY_SCANNED) {
+        return failure(409, AppErrorCode.ALREADY_SCANNED, "You have already scanned this club")
       }
-      return failure(500, "Internal server error")
+      return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
     }
 
-    return success<ScanPostResponse>({
+    return success<ScanResponse>({
       createdAt: result.createdAt,
-      club: result.club,
+      code: result.code,
       score: result.score,
     })
   } catch (error) {
     console.error("Club scan error:", error)
-    return failure(500, "Internal server error")
+    return failure(500, AppErrorCode.INTERNAL_ERROR, "Internal server error")
   }
 }

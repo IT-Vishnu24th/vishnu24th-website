@@ -1,3 +1,5 @@
+import type { AppErrorCode } from "./appErrorCode"
+
 export type ApiResponse<T> = ApiSuccess<T> | ApiFailure
 
 export type ApiPaginatedResponse<T> = ApiPaginatedSuccess<T> | ApiFailure
@@ -20,5 +22,6 @@ export interface ApiPaginatedSuccess<T> {
 }
 
 export interface ApiFailure {
+  code: AppErrorCode
   message: string
 }
