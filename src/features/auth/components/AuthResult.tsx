@@ -30,6 +30,7 @@ export const AuthResult = () => {
         />
       </div>
       <div className="relative z-10 flex flex-col items-center min-h-screen font-fc-quantum justify-center">
+        <img className="w-50 mb-2" src={isSuccess ? "/auth/moon_up.png" : "/auth/moon_down.png"} />
         {isSuccess ? (
           <>
             <div className="text-[18px]">ยืนยันตัวตน</div>
