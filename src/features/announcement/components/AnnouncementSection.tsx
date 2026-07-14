@@ -8,22 +8,25 @@ import { useFeatureFlags } from "@/hooks/useApi"
 import { useRouter } from "next/navigation"
 
 export const AnnouncementSection = () => {
-  const { data: featureFlagsData } = useFeatureFlags()
+  const { data: featureFlagsData, isLoading } = useFeatureFlags()
   const router = useRouter()
   const { user } = useAuth()
   const [yarnAccepted, setYarnAccepted] = useState(user?.yarnAccepted || false)
 
   const showYarn = useMemo(() => {
-    const flagMap = new Map((featureFlagsData?.data ?? []).map((flag) => [flag.id, flag.enabled]))
-
-    return flagMap.get("reveal-vessel") ?? false
+    const showVessel = featureFlagsData?.data.filter((e) => e.id === "reveal-vessel")
+    if (!showVessel || showVessel?.length === 0) return false
+    return showVessel[0].enabled ?? false
   }, [featureFlagsData?.data])
 
+  console.log(showYarn)
+
   useEffect(() => {
+    if (isLoading) return
     if (user === null || !showYarn) {
       router.push("/")
     }
-  }, [user, showYarn])
+  }, [user, showYarn, isLoading])
 
   if (user === null || !showYarn) return null
   return (
