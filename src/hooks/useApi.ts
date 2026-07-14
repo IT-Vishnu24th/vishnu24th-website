@@ -1,4 +1,4 @@
-import { featureFlagApi, stageApi, userApi } from "@/lib/api"
+import { featureFlagApi, phaseApi, stageApi, userApi } from "@/lib/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // User API hooks
@@ -49,6 +49,27 @@ export function useUpdateFeatureFlags() {
     mutationFn: featureFlagApi.updateFeatureFlags,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feature-flags"] })
+    },
+  })
+}
+
+// Phase API hooks
+export function usePhase() {
+  return useQuery({
+    queryKey: ["phase"],
+    queryFn: () => phaseApi.getPhase(),
+  })
+}
+
+export function useUpdatePhase() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: phaseApi.updatePhase,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["phase"],
+      })
     },
   })
 }

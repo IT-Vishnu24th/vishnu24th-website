@@ -3,6 +3,7 @@ import { api } from "./api-client"
 import { User } from "@/types/user"
 import { FeatureFlag } from "@/types/featureFlag"
 import { MultiLang } from "@/types/util"
+import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 
 // User API
 export const userApi = {
@@ -36,5 +37,32 @@ export const featureFlagApi = {
 
   updateFeatureFlags: async (flags: Record<string, boolean>) => {
     return api.patch<{ data: boolean }>("/flags", flags)
+  },
+}
+
+// Phase API
+export const phaseApi = {
+  getPhase: async () => {
+    return api.get<{
+      data: {
+        regis: RegistrationPhase
+        vishnuMission: VishnuMissionPhase
+      }
+    }>("/phase")
+  },
+
+  updatePhase: async (
+    body: Partial<{
+      regis: RegistrationPhase
+      vishnuMission: VishnuMissionPhase
+    }>
+  ) => {
+    return api.patch<{
+      data: {
+        message: string
+        regis: RegistrationPhase
+        vishnuMission: VishnuMissionPhase
+      }
+    }>("/phase", body)
   },
 }
