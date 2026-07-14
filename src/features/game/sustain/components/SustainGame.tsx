@@ -18,7 +18,9 @@ import {
 } from "../data/sustainGame"
 import { consumeSustainPlay, defaultPlaysState, fetchSustainPlays } from "../utils/plays"
 import type { SustainFallingTrash, SustainGamePhase, SustainPlaysResponse } from "../types/sustain"
+const RANDOM_SCORES = [5, 10, 15, 20, 25]
 
+const randomScore = () => RANDOM_SCORES[Math.floor(Math.random() * RANDOM_SCORES.length)]
 type DragState = {
   id: string
   offsetX: number
@@ -35,6 +37,7 @@ const getRandomTrash = (): SustainFallingTrash => {
 
   return {
     ...template,
+    score: randomScore(),
     instanceId: `${template.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     x,
     y: -size,
@@ -284,7 +287,7 @@ export function SustainGame() {
       const targetBin = droppedTrash ? getBinUnderTrash(droppedTrash) : undefined
 
       if (droppedTrash && targetBin?.type === droppedTrash.type) {
-        setScore((current) => current + SUSTAIN_SCORE_PER_TRASH)
+        setScore((current) => current + droppedTrash.score)
       }
 
       setTrash((current) => current.filter((item) => item.instanceId !== drag.id))
