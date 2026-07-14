@@ -1,19 +1,37 @@
 "use client"
 
-import AuthResult from "@/features/auth/components/AuthResult"
 import useAuth from "@/hooks/useAuth"
-import { useState } from "react"
+import { QuestionaireSeciton } from "./QuestionaireSection"
+import { YarnSection } from "./YarnSection"
+import { useEffect, useMemo, useState } from "react"
+import { useFeatureFlags } from "@/hooks/useApi"
+import { useRouter } from "next/navigation"
 
 export const AnnouncementSection = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const { data: featureFlagsData, isLoading } = useFeatureFlags()
+  const router = useRouter()
   const { user } = useAuth()
+  const [yarnAccepted, setYarnAccepted] = useState(user?.yarnAccepted || false)
+
+  const showYarn = useMemo(() => {
+    const showVessel = featureFlagsData?.data.filter((e) => e.id === "reveal-vessel")
+    if (!showVessel || showVessel?.length === 0) return false
+    return showVessel[0].enabled ?? false
+  }, [featureFlagsData?.data])
+
+  console.log(showYarn)
+
+  useEffect(() => {
+    if (isLoading) return
+    if (user === null || !showYarn) {
+      router.push("/")
+    }
+  }, [user, showYarn, isLoading])
+
+  if (user === null || !showYarn) return null
   return (
     <>
-      {!isOpen ? (
-        <AuthResult isSuccess={user !== null} />
-      ) : (
-        <section className="flex w-full flex-col items-center"></section>
-      )}
+      {yarnAccepted ? <YarnSection /> : <QuestionaireSeciton setYarnAccepted={setYarnAccepted} />}
     </>
   )
 }
