@@ -2,22 +2,31 @@ import { ArrowRight } from "lucide-react"
 import { cn } from "@/utils/cn"
 import { scheduleStatusStyles } from "../const/schedule"
 import { StagePerformance } from "@/types/stagePerformance"
+import Image from "next/image"
 
 interface ScheduleCardProps {
   stage: StagePerformance
+  images: readonly string[]
 }
 
-export const ScheduleCard = ({ stage }: ScheduleCardProps) => {
+export const ScheduleCard = ({ stage, images }: ScheduleCardProps) => {
   const statusStyle = scheduleStatusStyles[stage.status]
 
   return (
     <div className={cn("w-full rounded-xl border-3 px-5 py-3", statusStyle.card)}>
       <div className="mb-3 flex items-center justify-between">
-        <img
-          className={cn("size-11 rounded-full object-cover border-2", statusStyle.img)}
-          src={stage.name.en}
-          alt={`${stage.name} img`}
-        />
+        <div className="flex min-w-0 items-center gap-1.5">
+          {images.map((image, index) => (
+            <Image
+              key={image}
+              className={cn("size-11 shrink-0 rounded-full object-cover border-2", statusStyle.img)}
+              src={image}
+              width={44}
+              height={44}
+              alt={`${stage.name.th} image ${index + 1}`}
+            />
+          ))}
+        </div>
         <div
           className={cn(
             "h-fit rounded-[20px] border-2 px-2.5 py-1 text-[14px] leading-[19.6px] items-center font-fc-quantum pb-1.5 flex gap-2",
