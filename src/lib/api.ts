@@ -1,13 +1,17 @@
 import { StagePerformance } from "@/types/stagePerformance"
 import { api } from "./api-client"
-import { User } from "@/types/user"
+import { User, UserAnswerHistoryItem } from "@/types/user"
 import { FeatureFlag } from "@/types/featureFlag"
 import { MultiLang } from "@/types/util"
+import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 
-// User API
 export const userApi = {
   getMe: async () => {
     return api.get<{ data: User }>("/users/me")
+  },
+
+  getMissions: async () => {
+    return api.get<{ data: UserAnswerHistoryItem[] }>("/users/me/missions")
   },
 }
 
@@ -36,5 +40,32 @@ export const featureFlagApi = {
 
   updateFeatureFlags: async (flags: Record<string, boolean>) => {
     return api.patch<{ data: boolean }>("/flags", flags)
+  },
+}
+
+// Phase API
+export const phaseApi = {
+  getPhase: async () => {
+    return api.get<{
+      data: {
+        regis: { current: RegistrationPhase }
+        vishnuMission: { current: VishnuMissionPhase }
+      }
+    }>("/phase")
+  },
+
+  updatePhase: async (
+    body: Partial<{
+      regis: RegistrationPhase
+      vishnuMission: VishnuMissionPhase
+    }>
+  ) => {
+    return api.patch<{
+      data: {
+        message: string
+        regis: { current: RegistrationPhase }
+        vishnuMission: { current: VishnuMissionPhase }
+      }
+    }>("/phase", body)
   },
 }
