@@ -5,9 +5,12 @@ import { X } from "lucide-react"
 import { GoogleIcon } from "@/components/icon/GoogleIcon"
 import useAuth from "@/hooks/useAuth"
 import { modalStore } from "@/stores/modalStore"
-import { useRouter } from "next/navigation"
 
-export const LoginModal = () => {
+type LoginModalProps = {
+  callbackUrl?: string
+}
+
+export const LoginModal = ({ callbackUrl = "/announcement" }: LoginModalProps) => {
   const { signInWithGoogle, loading, error } = useAuth()
 
   const errorMessage =
@@ -42,7 +45,7 @@ export const LoginModal = () => {
         className="mt-3.5 flex h-10 w-full cursor-pointer items-center rounded-full border border-[#4b4b4b] bg-white px-3 text-base font-normal transition-colors hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-wait disabled:opacity-60"
         disabled={loading}
         onClick={async () => {
-          await signInWithGoogle("/announcement")
+          await signInWithGoogle(callbackUrl)
           modalStore.close()
         }}
       >
