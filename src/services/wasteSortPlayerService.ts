@@ -2,8 +2,6 @@ import { FieldValue } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
 
 import type { wasteSortPlayer } from "@/types/wasteSort"
-import type { wasteSortGroup } from "@/types/wasteSort"
-import { Group } from "./groupService"
 
 export type * from "@/types/wasteSort"
 
@@ -25,13 +23,6 @@ const wasteSortPlayerCollection = adminDb.collection("wasteSortPlayer").withConv
 })
 
 const groupsCollectionRaw = adminDb.collection("groups")
-const groupsCollection = groupsCollectionRaw.withConverter({
-  fromFirestore: (snapshot) => {
-    return snapshot.data() as wasteSortGroup
-  },
-
-  toFirestore: (data: wasteSortGroup) => data,
-})
 
 const wasteSortPlayerService = {
   async getById(uid: string): Promise<wasteSortPlayer | null> {
@@ -43,32 +34,16 @@ const wasteSortPlayerService = {
     return data
   },
 
-  async create(uid: string, player: wasteSortPlayer): Promise<wasteSortPlayer | null> {
-    const ref = wasteSortPlayerCollection.doc(uid)
-
-    await ref.create(player)
-
-    const result = await ref.get()
-    return result.data() ?? null
-  },
-
-  async update(uid: string, player: Partial<wasteSortPlayer>): Promise<wasteSortPlayer | null> {
-    const ref = wasteSortPlayerCollection.doc(uid)
-
-    await ref.update(player)
-
-    const result = await ref.get()
-    return result.data() ?? null
-  },
-
-  async delete(uid: string): Promise<void> {
-    await wasteSortPlayerCollection.doc(uid).delete()
-  },
-
-  async list(): Promise<wasteSortPlayer[]> {
-    const snapshot = await wasteSortPlayerCollection.get()
-
-    return snapshot.docs.map((doc) => doc.data())
+  /** strips `group` (group label) — never expose it in API responses */
+  mapToPublic(player: wasteSortPlayer): Omit<wasteSortPlayer, "group"> {
+    return {
+      name: player.name,
+      playCount: player.playCount,
+      vesselName: player.vesselName,
+      sustainScore: player.sustainScore,
+      playsToday: player.playsToday,
+      lastPlayDate: player.lastPlayDate,
+    }
   },
 
   /**
@@ -89,19 +64,8 @@ const wasteSortPlayerService = {
   },
 
   /**
-   * Get the player's group document (from the shared `groups` collection).
-   */
-  async getGroup(uid: string): Promise<wasteSortGroup | null> {
-    const player = await this.getById(uid)
-    const groupPlayer = player?.group as Group
-    if (!groupPlayer) return null
-
-    const doc = await groupsCollection.doc(groupPlayer.label).get()
-    return doc.data() ?? null
-  },
-
-  /**
    * Call this once a round ends. Atomically:
+   *  - creates the player doc on first-ever round (no separate create endpoint)
    *  - checks the player hasn't already used today's MAX_PLAYS_PER_DAY rounds
    *    (throws "DAILY_LIMIT_REACHED" if they have)
    *  - bumps the player's lifetime playCount by 1, and their playsToday
@@ -121,18 +85,37 @@ const wasteSortPlayerService = {
     await adminDb.runTransaction(async (tx) => {
       const playerSnap = await tx.get(playerRef)
       const player = playerSnap.data()
-      const userDoc = await adminDb.collection("users").doc(uid).get()
+      const userDoc = await tx.get(adminDb.collection("users").doc(uid))
       const playerGroup = userDoc.get("group")
+      const groupRef = groupsCollectionRaw.doc(playerGroup)
+
       if (!player) {
-        throw new Error(`Player "${uid}" does not exist`)
+        // first round ever: init player doc inline, seeded with this round
+        const groupDoc = await tx.get(groupRef)
+        if (!groupDoc.exists) {
+          throw new Error(`Group "${playerGroup}" does not exist`)
+        }
+
+        tx.set(playerRef, {
+          name: userDoc.get("name")?.en?.firstName ?? "",
+          group: playerGroup,
+          vesselName: groupDoc.get("vesselName"),
+          playCount: 1,
+          sustainScore: safeScore,
+          playsToday: 1,
+          lastPlayDate: today,
+        })
+
+        tx.update(groupRef, {
+          "scoreSources.sustainScore": FieldValue.increment(safeScore),
+        })
+        return
       }
 
       const playsToday = player.lastPlayDate === today ? player.playsToday : 0
       if (playsToday >= MAX_PLAYS_PER_DAY) {
         throw new Error("DAILY_LIMIT_REACHED")
       }
-
-      const groupRef = groupsCollectionRaw.doc(playerGroup)
 
       tx.update(playerRef, {
         playCount: FieldValue.increment(1),

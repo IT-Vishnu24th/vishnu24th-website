@@ -20,6 +20,8 @@ export async function GET() {
 const updateUserPayload = z
   .object({
     prefLanguage: z.enum(["en", "th"]),
+    // one-way: accepting cannot be undone via the API
+    yarnAccepted: z.literal(true),
   })
   .partial()
   .refine((schema) => Object.keys(schema).length > 0, "Payload may not be empty")
