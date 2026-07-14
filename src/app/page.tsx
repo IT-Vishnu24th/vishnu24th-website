@@ -77,7 +77,7 @@ export default function HomePage() {
             </button>
             <button className="flex items-center gap-1 rounded-full bg-[#2D3542] border border-[#2D3542] border-2 px-2 py-2.5 text-[#74DDCF] text-sm md:text-base hover:bg-[#0F2A3D] transition-colors">
               <Ship size={18} strokeWidth={3} />
-              ยานอาควาเรียม
+              เฉลยยาน
             </button>
           </div>
         </div>
