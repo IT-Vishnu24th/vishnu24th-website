@@ -1,7 +1,7 @@
 import { AnnouncementSection } from "@/features/announcement/components/AnnouncementSection"
 
-const AnnouncementPage = () => {
+const YaanPage = () => {
   return <AnnouncementSection />
 }
 
-export default AnnouncementPage
+export default YaanPage

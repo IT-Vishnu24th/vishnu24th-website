@@ -10,6 +10,10 @@ export const userApi = {
     return api.get<{ data: User }>("/users/me")
   },
 
+  updateMe: async (body: { prefLanguage?: "en" | "th"; yarnAccepted?: boolean }) => {
+    return api.patch<{ data: User }>("/users/me", body)
+  },
+
   getMissions: async () => {
     return api.get<{ data: UserAnswerHistoryItem[] }>("/users/me/missions")
   },

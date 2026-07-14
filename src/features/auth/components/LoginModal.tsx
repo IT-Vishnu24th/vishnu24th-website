@@ -44,7 +44,7 @@ export const LoginModal = () => {
         className="mt-3.5 flex h-10 my-2 w-full cursor-pointer items-center rounded-full border bg-cream text-brownie px-3 text-base font-normal transition-colors hover:bg-cream-tanned disabled:cursor-wait disabled:opacity-60"
         disabled={loading}
         onClick={async () => {
-          await signInWithGoogle("/announcement")
+          await signInWithGoogle("/login")
           modalStore.close()
         }}
       >

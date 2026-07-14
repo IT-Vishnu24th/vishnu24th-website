@@ -1,19 +1,16 @@
 "use client"
 
-import AuthResult from "@/features/auth/components/AuthResult"
 import useAuth from "@/hooks/useAuth"
-import { useState } from "react"
+import { QuestionaireSeciton } from "./QuestionaireSection"
+import { YarnSection } from "./YarnSection"
+import { useMemo, useState } from "react"
 
 export const AnnouncementSection = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const { user } = useAuth()
+  const [yarnAccepted, setYarnAccepted] = useState(user?.yarnAccepted || false)
   return (
     <>
-      {!isOpen ? (
-        <AuthResult isSuccess={user !== null} />
-      ) : (
-        <section className="flex w-full flex-col items-center"></section>
-      )}
+      {yarnAccepted ? <YarnSection /> : <QuestionaireSeciton setYarnAccepted={setYarnAccepted} />}
     </>
   )
 }
