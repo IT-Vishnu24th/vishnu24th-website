@@ -1,6 +1,6 @@
 "use client"
 
-import { useFeatureFlags, usePhase } from "@/hooks/useApi"
+import { useFeatureFlags, useMyMissions, usePhase } from "@/hooks/useApi"
 import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
 import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
@@ -22,7 +22,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
     reward: 50000,
     banner: "",
     status: "locked" as MissionStatus,
-    openTime: "2026-07-21T16:08:00+07:00",
+    openTime: "2026-07-10T16:08:00+07:00",
     deadline: "2026-07-24T16:12:00+07:00",
     href: "/",
   },
@@ -48,16 +48,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   },
 ]
 
-const QuestionBanner = ({
-  phase,
-}: {
-  phase?: {
-    regis: { current: RegistrationPhase }
-    vishnuMission: { current: VishnuMissionPhase }
-  }
-}) => {
-  const value = Number(phase?.vishnuMission.current.at(-1) ?? "0")
-  const count = Number.isNaN(value) ? 0 : value
+const QuestionBanner = ({ day }: { day: number }) => {
   return (
     <div className="p-5">
       <div className="flex">
@@ -67,9 +58,9 @@ const QuestionBanner = ({
               <img src="/game/sun.png" />
               <img
                 src={
-                  count === num
+                  day === num
                     ? "/game/unanswered_card.png"
-                    : count < num
+                    : day < num
                       ? "/game/future_card.png"
                       : "/game/done_card.png"
                 }
@@ -85,9 +76,9 @@ const QuestionBanner = ({
               <img src="/game/sun.png" />
               <img
                 src={
-                  count === num
+                  day === num
                     ? "/game/unanswered_card.png"
-                    : count < num
+                    : day < num
                       ? "/game/future_card.png"
                       : "/game/done_card.png"
                 }
@@ -103,6 +94,24 @@ const QuestionBanner = ({
 export const MissionCardContainer = () => {
   const { data: featureFlagsData } = useFeatureFlags()
   const { data: phaseData } = usePhase()
+  const { data: missionData } = useMyMissions()
+
+  const value = Number(phaseData?.data?.vishnuMission.current.at(-1) ?? "0")
+  const day = Number.isNaN(value) ? 0 : value
+
+  const latestAnswer = useMemo(() => {
+    const answers = missionData?.data
+    if (!answers?.length) return undefined
+
+    return answers.reduce((latest, current) => {
+      const latestId = parseInt(latest.id.replace("q", ""), 10)
+      const currentId = parseInt(current.id.replace("q", ""), 10)
+
+      return currentId > latestId ? current : latest
+    })
+  }, [missionData?.data])
+
+  const latestAnswerId = latestAnswer?.id[1] ?? undefined
 
   const missions = useMemo(() => {
     const now = new Date()
@@ -122,7 +131,9 @@ export const MissionCardContainer = () => {
       } else if (deadline && now > deadline) {
         status = "completed"
       } else if (mission.id === "game-mission") {
-        status = "active"
+        if (latestAnswerId === day.toString()) {
+          status = "completed"
+        } else status = "active"
       }
 
       return {
@@ -130,7 +141,7 @@ export const MissionCardContainer = () => {
         status,
       }
     })
-  }, [featureFlagsData?.data])
+  }, [featureFlagsData?.data, missionData?.data])
   return (
     <section className="w-full bg-[linear-gradient(0deg,#2D3542_5.3%,#F0865C_96.95%)] pb-6 pt-20">
       <div className="w-full grid grid-cols-1 place-items-center pb-15 [@media(min-width:748px)]:grid-cols-2">
@@ -138,9 +149,7 @@ export const MissionCardContainer = () => {
           <MissionCard
             key={mission.title}
             {...mission}
-            banner={
-              mission.id === "game-mission" ? <QuestionBanner phase={phaseData?.data} /> : undefined
-            }
+            banner={mission.id === "game-mission" ? <QuestionBanner day={day} /> : undefined}
           />
         ))}
       </div>

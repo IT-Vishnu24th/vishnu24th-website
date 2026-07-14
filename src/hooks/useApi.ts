@@ -6,6 +6,13 @@ export function useMe() {
   return useQuery({ queryKey: ["me"], queryFn: () => userApi.getMe() })
 }
 
+export function useMyMissions() {
+  return useQuery({
+    queryKey: ["my-missions"],
+    queryFn: () => userApi.getMissions(),
+  })
+}
+
 // Stage API hooks
 export function useStages() {
   return useQuery({
