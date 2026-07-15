@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import { ChevronDown, ChevronUp, Search, Check } from "lucide-react"
-import { Header } from "@/components/Headers"
+import { Header2 } from "@/components/Headers"
 
 import { club_data } from "@/features/clubs/const/club-data"
 import { CATEGORIES } from "@/features/clubs/const/categories"
@@ -83,17 +83,9 @@ export default function Page() {
   return (
     <div className="mx-auto min-h-screen w-full overflow-x-hidden bg-brownie-light font-sans">
       <div className="text-center bg-gradient-to-b from-midnight to-brownie">
-        <Header />
+        <Header2 url="/explore" title="สำรวจ" />
 
         <div className="relative flex items-center justify-center px-4 pb-2 ">
-          <button
-            onClick={() => router.push("/explore")}
-            className="absolute left-6 top-10 text-2xl bg-transparent border-none cursor-pointer p-0"
-            aria-label="กลับ"
-          >
-            ←
-          </button>
-
           <h1 className="text-7xl font-sov-yeehor">ชมรม</h1>
         </div>
         <div className="relative w-full h-8 overflow-hidden mt-3">
