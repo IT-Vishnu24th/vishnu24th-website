@@ -11,6 +11,7 @@ export default function RewardPage() {
   const router = useRouter()
 
   const [opened, setOpened] = useState(false)
+  const [showResult, setShowResult] = useState(false)
   const [result, setResult] = useState<ScanResponse | null>(null)
   const hasRun = useRef(false)
 
@@ -44,6 +45,10 @@ export default function RewardPage() {
   function openBox() {
     if (opened) return
     setOpened(true)
+
+    setTimeout(() => {
+      setShowResult(true)
+    }, 1000)
   }
 
   if (!result) return null
@@ -116,7 +121,7 @@ export default function RewardPage() {
       </div>
 
       {/* Result Popup */}
-      {opened && (
+      {showResult && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="relative w-[340px] overflow-hidden rounded-3xl shadow-xl">
             <Image src="/scan/popup-paper.png" alt="" fill className="object-fill" />
