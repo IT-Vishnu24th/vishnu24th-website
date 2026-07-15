@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { QuestionaireTitleScreen } from "./QuestionaireTitleScreen"
 import { YaanAcceptButton } from "./YaanAcceptButton"
 import { useUpdateMe } from "@/hooks/useApi"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface ScenarioType {
   order: number
@@ -95,6 +96,7 @@ export const QuestionaireSeciton = ({
   setYarnAccepted: (e: boolean) => void
 }) => {
   const { mutate, isPending } = useUpdateMe()
+  const queryClient = useQueryClient()
 
   const [start, setStart] = useState(false)
   const [finish, setFinish] = useState(false)
@@ -191,7 +193,7 @@ export const QuestionaireSeciton = ({
                           alt=""
                           className="absolute inset-0 w-full h-full z-10"
                         />
-                        <div className="absolute inset-0 z-20 flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream">
+                        <div className="absolute inset-0 z-20 h-full flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream">
                           {choice}
                         </div>
                       </div>
@@ -226,15 +228,9 @@ export const QuestionaireSeciton = ({
               <div className="font-sov-yeehor mb-5 text-[48px]">???</div>
             </div>
 
-            <div className="relative">
-              <img
-                src="/yaan/yaan_4.png"
-                className="size-70 left-1/2 -translate-x-1/2 top-10 absolute"
-              />
-              <img src="/yaan/card.png" className="w-70 inset-0" />
-            </div>
+            <img src="/yaan/bro.png" className="w-90" />
 
-            <div className="relative w-91 mt-12 h-40">
+            <div className="relative w-91 h-40">
               <p className="absolute whitespace-break-spaces z-10 w-full h-full py-4 px-4 text-brownie-dark font-fc-quantum text-[18px]">
                 ...เป็นการตัดสินใจที่น่าสนใจ{"\n"}
                 ข้อมูลทั้งหมดถูกส่งให้กัปตันแล้ว{"\n"}
@@ -250,12 +246,13 @@ export const QuestionaireSeciton = ({
                   {
                     onSuccess: () => {
                       setYarnAccepted(true)
+                      queryClient.invalidateQueries({ queryKey: ["me"] })
                     },
                   }
                 )
               }}
               text={isPending ? "รอสักครู่..." : "ยานของเราคือ..."}
-              className="mt-4 animate-bounce"
+              className="mt-8 animate-bounce"
             />
           </motion.section>
         )}
