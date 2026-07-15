@@ -373,6 +373,7 @@ components:
         - GAME_NOT_ACTIVE
         - ALREADY_SCANNED
         - DAILY_LIMIT_REACHED
+        - RATE_LIMIT_EXCEEDED
       example: INTERNAL_ERROR
     AuthErrorResponse:
       type: object
@@ -831,9 +832,8 @@ paths:
       description: |
         Returns top-3 ranked groups and the authenticated user's group rank.
         Groups are sorted by score descending; ties broken alphabetically by label.
-        Requires authentication (any role).
-      security:
-        - sessionCookie: []
+        No authentication required — `rank`/`score`/`vesselName` for the caller's
+        own group are only populated when a valid session cookie is present.
       responses:
         "200":
           description: Leaderboard data
@@ -882,15 +882,6 @@ paths:
                         allOf:
                           - $ref: "#/components/schemas/MultiLang"
                         description: Vessel name of the authenticated user's group; present only when the `reveal-vessel` feature flag is enabled
-        "401":
-          description: Not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                code: UNAUTHORIZED
-                message: Not logged in
         "500":
           description: Unexpected server error
           content:
@@ -1650,12 +1641,14 @@ paths:
       description: |
         Returns the registration point details (package, first-day location,
         Vishnu day location) together with the user's group room.
-        No authentication required.
+        `studentId` is optional: if provided, looks up that student and no
+        authentication is required; if omitted, resolves the authenticated
+        user from the session cookie instead (401 if not logged in).
       parameters:
         - name: studentId
           in: query
-          required: true
-          description: Student ID of the participant
+          required: false
+          description: Student ID to look up. Omit to use the authenticated user instead.
           schema:
             type: string
           example: "6900001121"
@@ -1671,15 +1664,15 @@ paths:
                 properties:
                   data:
                     $ref: "#/components/schemas/RegistrationPointResponse"
-        "400":
-          description: Missing query parameter studentId
+        "401":
+          description: Not authenticated (only when studentId is omitted)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               example:
-                code: MISSING_QUERY_PARAM
-                message: "Missing required query parameter: studentId"
+                code: UNAUTHORIZED
+                message: Not logged in
         "404":
           description: User or group registration point not found
           content:
@@ -2265,6 +2258,18 @@ paths:
       description: Participant only. Requires the `game-popkaew` feature flag (403 GAME_NOT_ACTIVE when off). Increments score of user and user's vessel by 1.
       security:
         - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - click
+              properties:
+                click:
+                  type: integer
+                  example: 5
       responses:
         "200":
           description: Click processed, updated player score returned
@@ -2310,6 +2315,15 @@ paths:
               example:
                 code: PLAYER_NOT_FOUND
                 message: Player not found
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: RATE_LIMIT_EXCEEDED
+                message: Too many clicks
         "500":
           description: Unexpected server error
           content:
@@ -2319,6 +2333,93 @@ paths:
               example:
                 code: INTERNAL_ERROR
                 message: Internal server error
+  /api/game/sustain/plays:
+    get:
+      tags:
+        - WasteSort
+      operationId: getSustainPlays
+      summary: Get remaining daily plays for WasteSort
+      description: Reads the `sustain_game_plays` cookie to return how many times the user has played today. No authentication required.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - remainingPlays
+                      - playsUsed
+                      - maxPlays
+                      - resetAt
+                    properties:
+                      remainingPlays:
+                        type: integer
+                        example: 3
+                      playsUsed:
+                        type: integer
+                        example: 0
+                      maxPlays:
+                        type: integer
+                        example: 3
+                      resetAt:
+                        type: string
+                        format: date-time
+                        example: "2026-07-15T17:00:00.000Z"
+    post:
+      tags:
+        - WasteSort
+      operationId: consumeSustainPlay
+      summary: Consume a daily play for WasteSort
+      description: Increments the `sustain_game_plays` cookie. Fails with 429 if limit is reached. No authentication required.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - remainingPlays
+                      - playsUsed
+                      - maxPlays
+                      - resetAt
+                    properties:
+                      remainingPlays:
+                        type: integer
+                        example: 2
+                      playsUsed:
+                        type: integer
+                        example: 1
+                      maxPlays:
+                        type: integer
+                        example: 3
+                      resetAt:
+                        type: string
+                        format: date-time
+                        example: "2026-07-15T17:00:00.000Z"
+        "429":
+          description: Daily limit reached
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Daily play limit reached
   /api/wastesort/me:
     get:
       tags:
@@ -2455,9 +2556,10 @@ paths:
       summary: Submit a finished wasteSort round
       description: >-
         Participant only. Requires the `game-sustain` feature flag (403 GAME_NOT_ACTIVE when off).
-        Call once per finished round (each of the up-to-3 daily plays). Atomically: auto-creates
-        the player doc on the first-ever round, enforces the daily play limit, adds the (floored
-        at 0) score to the player's lifetime `sustainScore`, and rolls the same amount into the
+        Call once per finished round (each of the up-to-3 daily plays). Score must be between
+        0 and 30 inclusive (400 if not) and is validated before anything is written. Atomically:
+        auto-creates the player doc on the first-ever round, enforces the daily play limit, adds
+        the score to the player's lifetime `sustainScore`, and rolls the same amount into the
         group's `scoreSources.sustainScore`. Score accumulates — it is never overwritten.
       security:
         - sessionCookie: []
@@ -2472,8 +2574,10 @@ paths:
               properties:
                 score:
                   type: number
-                  description: Final score of the round (negative values are floored to 0)
-                  example: 120
+                  minimum: 0
+                  maximum: 30
+                  description: Final score of the round, must be between 0 and 30 inclusive
+                  example: 20
       responses:
         "200":
           description: Round recorded, updated player returned
@@ -2492,14 +2596,20 @@ paths:
                       player:
                         $ref: "#/components/schemas/WasteSortPlayer"
         "400":
-          description: Score missing or not a number
+          description: Score missing, not a number, or out of the 0-30 range
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-              example:
-                code: INVALID_BODY
-                message: score must be a number
+              examples:
+                notANumber:
+                  value:
+                    code: INVALID_BODY
+                    message: score must be a number
+                outOfRange:
+                  value:
+                    code: INVALID_BODY
+                    message: score must be between 0 and 30
         "401":
           description: Not authenticated
           content:
