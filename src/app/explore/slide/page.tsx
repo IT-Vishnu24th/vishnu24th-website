@@ -1,7 +1,7 @@
 "use client"
 
 import { Download, FileText } from "lucide-react"
-import { Header } from "@/components/Headers"
+import { Header2 } from "@/components/Headers"
 import { SLIDES } from "@/features/slide/const/mock"
 import { useRouter } from "next/navigation"
 import NavigationFooter from "@/components/NavigationFooter"
@@ -13,7 +13,7 @@ export default function DownloadPage() {
   return (
     <div className="mx-auto min-h-screen pb-8">
       <div className="bg-gradient-to-b from-midnight to-brownie">
-        <Header />
+        <Header2 url="/explore" title="สำรวจ" />
         {/* Top Bar */}
         <div className="relative flex items-center px-4 pb-2">
           <h1 className="w-full text-center text-8xl font-sov-yeehor">ดาวน์โหลด</h1>
