@@ -1,4 +1,5 @@
 import { featureFlagApi, phaseApi, stageApi, userApi } from "@/lib/api"
+import { StagePerformance } from "@/types/stagePerformance"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // User API hooks
@@ -31,6 +32,60 @@ export function useStages() {
   return useQuery({
     queryKey: ["stage"],
     queryFn: () => stageApi.getStages(),
+  })
+}
+
+export function useStage(id: string) {
+  return useQuery({
+    queryKey: ["stage", id],
+    queryFn: () => stageApi.getStage(id),
+    enabled: !!id,
+  })
+}
+
+export function useCreateStage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: stageApi.createStage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stage"] })
+    },
+  })
+}
+
+export function useUpdateStage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<StagePerformance, "id">> }) =>
+      stageApi.updateStage(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["stage"] })
+      queryClient.invalidateQueries({ queryKey: ["stage", variables.id] })
+    },
+  })
+}
+
+export function useDeleteStage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: stageApi.deleteStage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stage"] })
+    },
+  })
+}
+
+export function useSetLiveStage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: stageApi.setLiveStage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stage"] })
+    },
   })
 }
 
