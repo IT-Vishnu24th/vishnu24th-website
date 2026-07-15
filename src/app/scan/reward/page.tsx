@@ -1,21 +1,38 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
 import { Header } from "@/components/Headers"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import type { ScanResponse } from "@/types/scan"
 
 export default function RewardPage() {
   const router = useRouter()
 
   const [opened, setOpened] = useState(false)
+  const [result, setResult] = useState<ScanResponse | null>(null)
+  const hasRun = useRef(false)
 
-  const [score] = useState(67)
+  useEffect(() => {
+    if (hasRun.current) return
+    hasRun.current = true
+
+    const raw = sessionStorage.getItem("scanResult")
+    if (!raw) {
+      // ไม่มีข้อมูล (เช่น refresh หน้าตรงๆ) กลับไปหน้า scan
+      router.replace("/scan")
+      return
+    }
+    setResult(JSON.parse(raw))
+    sessionStorage.removeItem("scanResult") // ใช้ครั้งเดียวแล้วเคลียร์ทิ้ง
+  }, [router])
 
   function openBox() {
     if (opened) return
 
     setOpened(true)
   }
+
+  if (!result) return null
 
   return (
     <div className="min-h-screen bg-[#efefef]">
@@ -30,7 +47,7 @@ export default function RewardPage() {
         <div className="text-center">
           <h1 className="text-4xl font-serif font-bold">เช็คอินถาว..</h1>
 
-          <p className="mt-2 text-3xl">IMC</p>
+          <p className="mt-2 text-3xl">{result.code}</p>
         </div>
       </div>
 
@@ -93,7 +110,7 @@ export default function RewardPage() {
             <h2 className="text-2xl font-bold mb-4">คุณได้รับ</h2>
 
             <div className="py-6 text-7xl font-bold bg-[#BFBFBF] p-3 mb-2 mx-3 rounded-2xl">
-              {score}
+              {result.score}
             </div>
 
             <h2 className="text-2xl font-bold mb-8">คะแนน</h2>

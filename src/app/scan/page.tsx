@@ -1,14 +1,25 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Header } from "@/components/Headers"
 import { QrCode } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+import type { LeaderboardResponse } from "@/types/leaderboard"
+
 export default function ScorePage() {
   const router = useRouter()
+  const [data, setData] = useState<LeaderboardResponse | null>(null)
+
+  useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((res) => res.json())
+      .then((res) => setData(res.data))
+      .catch((err) => console.error("Failed to fetch leaderboard:", err))
+  }, [])
 
   return (
-    <div className="mx-auto min-h-screen bg-[#efefef]">
+    <div className="mx-auto min-h-screen ">
       <Header />
 
       {/* Top */}
@@ -18,9 +29,9 @@ export default function ScorePage() {
         </button>
 
         <div className="text-center">
-          <h1 className="text-3xl font-serif">YAAN ANACONDEE</h1>
+          <h1 className="text-3xl font-serif">YAAN AQUARIUM</h1>
 
-          <p className="mt-1 text-xl">ยานอนาคอนด้า</p>
+          <p className="mt-1 text-xl">ยาน{data?.vesselName?.th ?? "-"}</p>
         </div>
       </div>
 
@@ -36,14 +47,12 @@ export default function ScorePage() {
         <div
           className="
             flex
-            h-[180px]
-            w-[180px]
             items-center
             justify-center
-            rounded-full
             bg-[#d5d5d5]
             text-5xl
             font-bold
+            p-20
           "
         >
           LOGO
@@ -75,7 +84,7 @@ export default function ScorePage() {
           <div className="flex-1">
             <p className="text-lg">คะแนนรวมของยาน</p>
 
-            <h2 className="text-5xl font-bold">1,250</h2>
+            <h2 className="text-5xl font-bold">{(data?.score ?? 0).toLocaleString()}</h2>
 
             <p>คะแนน</p>
           </div>
