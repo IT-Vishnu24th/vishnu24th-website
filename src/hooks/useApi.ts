@@ -1,4 +1,4 @@
-import { featureFlagApi, phaseApi, stageApi, userApi } from "@/lib/api"
+import { featureFlagApi, leaderboardApi, phaseApi, stageApi, userApi } from "@/lib/api"
 import { StagePerformance } from "@/types/stagePerformance"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -125,6 +125,14 @@ export function useUpdateFeatureFlags() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feature-flags"] })
     },
+  })
+}
+
+// Leaderboard API hooks
+export function useLeaderboard() {
+  return useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: () => leaderboardApi.getLeaderboard(),
   })
 }
 

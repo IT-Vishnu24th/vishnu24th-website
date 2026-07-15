@@ -4,6 +4,7 @@ import { User, UserAnswerHistoryItem } from "@/types/user"
 import { FeatureFlag } from "@/types/featureFlag"
 import { MultiLang } from "@/types/util"
 import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
+import { LeaderboardResponse } from "@/types/leaderboard"
 
 export const userApi = {
   getMe: async () => {
@@ -64,6 +65,13 @@ export const featureFlagApi = {
 
   updateFeatureFlags: async (flags: Record<string, boolean>) => {
     return api.patch<{ data: boolean }>("/flags", flags)
+  },
+}
+
+// Leaderboard API
+export const leaderboardApi = {
+  getLeaderboard: async () => {
+    return api.get<{ data: LeaderboardResponse }>("/leaderboard")
   },
 }
 

@@ -28,7 +28,7 @@ export const YarnAnnouncementButton = () => {
         {!showYarn
           ? "....."
           : !yarnAccepted
-            ? "เข้าการคัดสรร"
+            ? "เข้าสู่การคัดสรร"
             : userData?.data.group.vesselName?.th}
       </div>
     </Link>
