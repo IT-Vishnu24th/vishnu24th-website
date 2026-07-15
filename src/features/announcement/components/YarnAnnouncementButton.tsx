@@ -8,7 +8,7 @@ import { useMemo } from "react"
 
 export const YarnAnnouncementButton = () => {
   const { user } = useAuth()
-  const { data: featureFlagsData, isLoading } = useFeatureFlags()
+  const { data: featureFlagsData } = useFeatureFlags()
   const { data: userData } = useMe()
 
   const showYarn = useMemo(() => {
