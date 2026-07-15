@@ -52,7 +52,7 @@ export default function ScorePage() {
       <div className="relative z-10 pb-15 bg-gradient-to-b from-brownie via-turqoise-light to-brownie -mt-5 pt-10">
         <Image src="/scan/slide-bg.png" alt="" fill className="pointer-events-none object-fill" />
 
-        {revealVessel ? (
+        {revealVessel && data?.vesselName?.en ? (
           <div className="flex h-[230px] items-center justify-center">
             <div className="relative h-[210px] w-[210px]">
               <Image

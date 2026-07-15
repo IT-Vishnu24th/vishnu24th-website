@@ -92,14 +92,14 @@ export default function ScanPage() {
       {/* Error Popup */}
       {errorMsg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-[320px] rounded-2xl bg-white px-8 py-8 text-center">
-            <h2 className="mb-4 text-2xl font-bold">สแกนไม่สำเร็จ</h2>
+          <div className="w-[320px] rounded-2xl bg-cream px-8 py-8 text-center border-2 border-brick-orange">
+            <h2 className="mb-4 text-2xl font-bold font-fc-quantum text-brownie">สแกนไม่สำเร็จ</h2>
 
-            <p className="mb-8 text-gray-600">{errorMsg}</p>
+            <p className="mb-8 text-brick-orange font-fc-quantum">{errorMsg}</p>
 
             <button
               onClick={() => router.push("/scan")}
-              className="w-full rounded-full bg-midnight py-3 font-fc-quantum text-white"
+              className="w-full rounded-full bg-midnight py-3 font-fc-quantum text-turqoise border-2 border-turqoise"
             >
               กลับหน้าหลัก
             </button>
