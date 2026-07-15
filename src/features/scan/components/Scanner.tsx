@@ -5,6 +5,7 @@ import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode"
 
 type Props = {
   onSuccess: (value: string) => void
+  onError?: (message: string) => void
 }
 
 async function safeStop(scanner: Html5Qrcode) {

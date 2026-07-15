@@ -24,8 +24,15 @@ export default function RewardPage() {
       return
     }
 
-    setResult(JSON.parse(raw))
-    sessionStorage.removeItem("scanResult")
+    try {
+      setResult(JSON.parse(raw))
+    } catch (err) {
+      console.error("Failed to parse scan result:", err)
+      router.replace("/scan")
+      return
+    } finally {
+      sessionStorage.removeItem("scanResult")
+    }
   }, [router])
 
   const club = useMemo(() => {
