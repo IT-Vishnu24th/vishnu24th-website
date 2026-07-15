@@ -2,7 +2,7 @@ import { Header } from "@/components/Headers"
 
 export default function MissionHeroSection() {
   return (
-    <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black">
+    <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black z-20 relative">
       <Header />
       <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-5 text-center">
         <h1 className="whitespace-nowrap text-[96px] font-sov-yeehor font-normal leading-none letter-spacing-[1.92px] text-turqoise-cream">
