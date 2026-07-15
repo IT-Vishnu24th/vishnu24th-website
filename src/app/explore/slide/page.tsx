@@ -1,89 +1,70 @@
 "use client"
 
 import { Download, FileText } from "lucide-react"
-import { Header } from "@/components/Headers"
+import { Header2 } from "@/components/Headers"
 import { SLIDES } from "@/features/slide/const/mock"
 import { useRouter } from "next/navigation"
+import NavigationFooter from "@/components/NavigationFooter"
+import SponsorFooter from "@/components/SponsorFooter"
+import Image from "next/image"
 
 export default function DownloadPage() {
   const router = useRouter()
   return (
-    <div className="mx-auto min-h-screen bg-[#fafafa] pb-8">
-      <Header />
+    <div className="mx-auto min-h-screen pb-8">
+      <div className="bg-gradient-to-b from-midnight to-brownie">
+        <Header2 url="/explore" title="สำรวจ" />
+        {/* Top Bar */}
+        <div className="relative flex items-center px-4 pb-2">
+          <h1 className="w-full text-center text-8xl font-sov-yeehor">ดาวน์โหลด</h1>
+        </div>
 
-      {/* Top Bar */}
-      <div className="relative flex items-center px-4 pt-4 pb-2">
-        <button
-          onClick={() => router.push("/")}
-          className="absolute left-6 ml-3 text-2xl font-bold"
-          aria-label="กลับ"
-        >
-          ←
-        </button>
-
-        <h1 className="w-full text-center text-5xl font-bold font-serif">สไลด์</h1>
-      </div>
-
-      {/* description */}
-      <div className="px-5 pt-2 pb-6">
-        <p className="text-center text-lg">สไลด์รวมข้อมูลที่ชาววิศวะจุฬาควรรู้ไว้ในสไลด์เดียว</p>
+        {/* description */}
+        <div className="px-5 pt-2">
+          <p className="text-center text-lg font-fc-quantum px-7">
+            สไลด์รวมข้อมูลที่ชาววิศวะจุฬาควรรู้ไว้ในที่เดียว
+          </p>
+        </div>
+        <div className="relative w-full h-10 overflow-hidden mt-3">
+          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102 z-20" />
+        </div>
       </div>
 
       {/* list */}
-      <div className="flex flex-col gap-4 px-4 mx-2">
+      <div className="relative -mt-5 flex flex-col gap-4 bg-cream px-4 pt-15 pb-10">
+        <Image src="/slide/slide-bg.png" alt="" fill className="pointer-events-none object-fill" />
+
         {SLIDES.map((slide) => (
           <div
             key={slide.id}
-            className="
-              flex
-              gap-4
-              rounded-2xl
-              bg-white
-              px-4
-              py-8
-              shadow-sm
-            "
+            className="relative z-10 rounded-2xl bg-cream-tanned px-5 py-5 shadow-sm font-fc-quantum"
           >
-            <div
-              className="
-                flex
-                h-12
-                w-12
-                items-center
-                justify-center
-                rounded-xl
-                bg-gray-100
-              "
-            >
-              <FileText size={36} />
+            {/* Top */}
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="min-w-0 flex-1 break-words text-xl font-semibold leading-tight text-brownie">
+                {slide.title}
+              </h2>
+
+              <a
+                href={`/slide/slidedownload/${slide.file}`}
+                download
+                target="_blank"
+                className="flex shrink-0 items-center justify-center gap-2 rounded-full border-2 border-midnight bg-turqoise px-5 py-3 font-fc-quantum transition hover:bg-turqoise-light"
+              >
+                <Download size={18} className="text-midnight" />
+                <span className="whitespace-nowrap text-md font-bold text-midnight">ดาวน์โหลด</span>
+              </a>
             </div>
 
-            <div className="min-w-0 flex-1">
-              <h2 className="break-words text-xl font-semibold">{slide.title}</h2>
-
-              <p className="mt-2 break-words text-md text-gray-500">{slide.description}</p>
-            </div>
-
-            <a
-              href={slide.file}
-              download
-              target="_blank"
-              className="
-                flex
-                h-12
-                w-12
-                items-center
-                justify-center
-                rounded-full
-                bg-black
-                text-white
-              "
-            >
-              <Download size={18} />
-            </a>
+            {/* Description */}
+            <p className="mt-4 break-words text-base leading-relaxed text-brick-orange">
+              {slide.description}
+            </p>
           </div>
         ))}
       </div>
+      <SponsorFooter />
+      <NavigationFooter />
     </div>
   )
 }

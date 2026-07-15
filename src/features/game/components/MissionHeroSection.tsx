@@ -1,23 +1,22 @@
-import { ArrowLeft } from "lucide-react"
+import { Header } from "@/components/Headers"
 
 export default function MissionHeroSection() {
   return (
-    <section className="relative flex w-full flex-col items-center gap-4 px-4 pb-2 pt-6 text-center text-black">
-      <button
-        type="button"
-        aria-label="ย้อนกลับ"
-        className="absolute left-4 top-7 flex size-10 items-center justify-center rounded-full text-black transition hover:bg-black/5"
-      >
-        <ArrowLeft size={18} strokeWidth={1.8} />
-      </button>
-
-      <h1 className="w-full text-[60px] leading-[1.08] tracking-[1.2px] sm:text-[72px] sm:leading-[1.2] sm:tracking-[1.44px]">
-        เกมล่าสมบัติ
-      </h1>
-
-      <p className="max-w-85 text-[20px] leading-[1.2]">
-        น้องจะพายานไปสู่จุดสูงสุดได้หรือไม่ บลาบลาบลา
-      </p>
+    <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black z-20 relative">
+      <Header />
+      <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-5 text-center">
+        <h1 className="whitespace-nowrap text-[96px] font-sov-yeehor font-normal leading-none letter-spacing-[1.92px] text-turqoise-cream">
+          เกมส์
+        </h1>
+        <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-turqoise">
+          ค้นพบชมรม กิจกรรม <br />
+          และข้อมูลต่างๆอีกมากมาย
+        </p>
+      </div>
+      <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+        <img src="/explore/dark_blue_curve.svg" alt="" className="w-full absolute z-10" />
+        <img src="/explore/blue_curve.svg" alt="" className="w-full absolute z-20" />
+      </div>
     </section>
   )
 }

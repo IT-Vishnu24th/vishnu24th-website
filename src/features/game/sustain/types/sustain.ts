@@ -5,6 +5,7 @@ export type SustainTrashTemplate = {
   label: string
   icon: string
   type: SustainTrashType
+  score: number
 }
 
 export type SustainFallingTrash = SustainTrashTemplate & {

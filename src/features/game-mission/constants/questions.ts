@@ -1,0 +1,131 @@
+import type { MissionQuestion } from "@/types/mission"
+
+/**
+ * Finalized question set — content confirmed against the Figma design.
+ * Correct answers are intentionally NOT stored here: they only ever come
+ * from the server (GET /api/users/me/missions) once a question is revealed.
+ */
+export const MISSION_QUESTIONS: MissionQuestion[] = [
+  {
+    id: "q1",
+    day: 1,
+    period: "morning",
+    type: "number",
+    title: "ปริศนาช่วงเช้า",
+    prompt: "ค่ายวิษณุกรรมบุตรปีนี้เป็นครั้งที่เท่าไหร่?",
+    hint: "(ตอบแค่ตัวเลข เช่น 67)",
+    maxLength: 3,
+    dateKey: "2026-07-21",
+    opensAt: "2026-07-21T08:00:00+07:00",
+    closesAt: "2026-07-21T12:00:00+07:00",
+    revealsAt: "2026-07-21T12:30:00+07:00",
+  },
+  {
+    id: "q2",
+    day: 1,
+    period: "evening",
+    type: "single",
+    title: "ปริศนาช่วงเย็น",
+    prompt: "สีประจำคณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย คือสีอะไร?",
+    options: [
+      { value: "red-bird", label: "สีแดงเลือดนก" },
+      { value: "red-bear", label: "สีแดงเลือดหมี" },
+      { value: "red-deer", label: "สีแดงเลือดกวาง" },
+      { value: "red-pig", label: "สีแดงเลือดหมู" },
+    ],
+    dateKey: "2026-07-21",
+    opensAt: "2026-07-21T14:00:00+07:00",
+    closesAt: "2026-07-21T18:00:00+07:00",
+    revealsAt: "2026-07-21T18:30:00+07:00",
+  },
+  {
+    id: "q3",
+    day: 2,
+    period: "morning",
+    type: "single",
+    title: "ปริศนาช่วงเช้า",
+    prompt: "ทำไมจุฬาเข้าแล้วออกไม่ได้?",
+    options: [
+      { value: "stairs", label: "จุฬาลงบรรได" },
+      { value: "lift", label: "จุฬาลงลิฟต์" },
+      { value: "lock", label: "จุฬาลงกลอน" },
+      { value: "class", label: "จุฬาลงวิชาเรียน" },
+    ],
+    dateKey: "2026-07-22",
+    opensAt: "2026-07-22T08:00:00+07:00",
+    closesAt: "2026-07-22T12:00:00+07:00",
+    revealsAt: "2026-07-22T12:30:00+07:00",
+  },
+  {
+    id: "q4",
+    day: 2,
+    period: "evening",
+    type: "multi",
+    title: "ปริศนาช่วงเย็น",
+    prompt: "ข้อใดไม่ใช่ภาควิชาของคณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย?",
+    options: [
+      { value: "magic", label: "ภาควิชาวิศวกรรมเวทมนต์และไสยศาสตร์" },
+      { value: "late", label: "ภาควิชาวิศวกรรมตามทัน" },
+      { value: "donut", label: "ภาควิชาวิศวกรรมโดนัทและขนมหวาน" },
+      { value: "treasure", label: "ภาควิชาวิศวกรรมสมบัติและทวีปมืด" },
+    ],
+    dateKey: "2026-07-22",
+    opensAt: "2026-07-22T14:00:00+07:00",
+    closesAt: "2026-07-22T18:00:00+07:00",
+    revealsAt: "2026-07-22T18:30:00+07:00",
+  },
+  {
+    id: "q5",
+    day: 3,
+    period: "morning",
+    type: "text",
+    title: "ปริศนาช่วงเช้า",
+    prompt: "ทายตัวละครจากแถบสี (ตอบเป็นภาษาไทย)",
+    imageSrc: "/game/ikyu.png",
+    maxLength: 30,
+    dateKey: "2026-07-23",
+    opensAt: "2026-07-23T08:00:00+07:00",
+    closesAt: "2026-07-23T12:00:00+07:00",
+    revealsAt: "2026-07-23T12:30:00+07:00",
+  },
+  {
+    id: "q6",
+    day: 3,
+    period: "evening",
+    type: "single",
+    title: "ปริศนาช่วงเย็น",
+    prompt: "ทายเนื้อเพลง “ยังมีปราสาทสีแดง ดังศิลาแลงงดงาม……….แหล่งเมืองชมพู”",
+    options: [
+      { value: "den-saeng", label: "เด่นแซง" },
+      { value: "din-daeng", label: "ดินเเดง" },
+      { value: "pleng-saeng", label: "เปล่งเเสง" },
+      { value: "prik-kaeng", label: "พริกแกง" },
+    ],
+    dateKey: "2026-07-23",
+    opensAt: "2026-07-23T14:00:00+07:00",
+    closesAt: "2026-07-23T18:00:00+07:00",
+    revealsAt: "2026-07-23T18:30:00+07:00",
+  },
+  {
+    id: "q7",
+    day: 4,
+    period: "morning",
+    type: "single",
+    title: "ปริศนาช่วงเช้า",
+    prompt: "ชื่อจริง ๆ ของลานเกียร์คืออะไร?",
+    options: [
+      { value: "inside-out", label: "ลาน inside out" },
+      { value: "intania", label: "ลาน intania" },
+      { value: "larn-gear", label: "ก็ลานเกียร์ไง" },
+      { value: "into-the-sun", label: "ลาน into the sun 💜" },
+    ],
+    dateKey: "2026-07-24",
+    opensAt: "2026-07-24T08:00:00+07:00",
+    closesAt: "2026-07-24T12:00:00+07:00",
+    revealsAt: "2026-07-24T12:30:00+07:00",
+  },
+]
+
+export function getMissionQuestionById(id: string): MissionQuestion | undefined {
+  return MISSION_QUESTIONS.find((q) => q.id === id)
+}
