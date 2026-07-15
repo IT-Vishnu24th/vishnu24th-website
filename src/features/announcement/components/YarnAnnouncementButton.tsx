@@ -26,7 +26,13 @@ export const YarnAnnouncementButton = () => {
       className="flex min-h-11 items-center font-fc-quantum gap-1.5 rounded-full bg-[#2D3542] border-[#2D3542] border-2 px-3 py-2.5 text-turqoise text-sm md:text-base hover:bg-[#0F2A3D] transition-colors"
     >
       <Ship size={18} strokeWidth={3} />
-      {!showYarn ? "....." : !yarnAccepted ? "เข้าการคัดสรร" : userData?.data.group.vesselName?.th}
+      <div className="mb-1">
+        {!showYarn
+          ? "....."
+          : !yarnAccepted
+            ? "เข้าการคัดสรร"
+            : userData?.data.group.vesselName?.th}
+      </div>
     </Link>
   )
 }

@@ -4,11 +4,11 @@ export const YarnHeroSection = ({ yarnName }: { yarnName?: string }) => {
   return (
     <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black">
       <Header2 url="/" title="หน้าหลัก" />
-      <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-5 text-center">
-        <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-turqoise">
+      <div className="px-4 pb-8 flex w-full flex-col items-center justify-center text-center">
+        <p className="max-w-75 text-[20px] h-0 font-normal font-fc-quantum leading-none text-turqoise">
           ยินดีด้วย คุณได้สังกัดใน
         </p>
-        <h1 className="whitespace-nowrap leading-4.5 text-[96px] font-sov-yeehor font-normal letter-spacing-[1.92px] text-turqoise-cream">
+        <h1 className="leading-18.5 text-[96px] font-sov-yeehor font-normal letter-spacing-[1.92px] text-turqoise-cream [@media">
           {yarnName}
         </h1>
       </div>

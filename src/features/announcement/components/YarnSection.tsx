@@ -7,7 +7,7 @@ import { useMe } from "@/hooks/useApi"
 export const YarnSection = () => {
   const { data } = useMe()
   return (
-    <div className="w-full bg-white min-h-screen">
+    <div className="w-full bg-white min-h-screen flex flex-col justify-between">
       <YarnHeroSection yarnName={data?.data.group.vesselName?.th} />
       <div className="w-full pt-20 flex flex-col items-center">
         <div className="text-turqoise font-[20px] font-fc-quantum">ขอให้โชคดีกับการล่าสมบัติ</div>
