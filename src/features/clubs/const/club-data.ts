@@ -338,4 +338,101 @@ export const club_data: Club[] = [
     location: "อาคารวิศวฯ 100 ปี",
     boothcount: 1,
   },
+  {
+    id: "24",
+    code: "intania-music-club",
+    name: { th: "Intania Music Club", en: "Intania Music Club" },
+    shortdescription: "ชมรมดนตรีที่เปิดให้น้องๆ ฝึกฝนและโชว์ความสามารถด้านดนตรีทุกประเภท",
+    description:
+      "ชมรม IMC เป็นชมรมดนตรีของคณะวิศวะฯ สำหรับน้องๆ 110 ที่มีความสนใจที่จะฝึกฝนหรือเล่นดนตรีทุกประเภท โดยในปีการศึกษานี้จะมีงานให้น้องๆได้โชว์ความสามารถแน่นอนครับ",
+    imageUrl: "Intania-Music-Club.jpg",
+    category: "other",
+    havebooth: false,
+  },
+  {
+    id: "25",
+    code: "awarehouse",
+    name: { th: "อะแวเฮาส์", en: "Awarehouse" },
+    shortdescription: "ชมรมที่ใช้ data และเทคโนโลยีขับเคลื่อนการพัฒนาเมืองให้น่าอยู่ขึ้น",
+    description:
+      "Awarehouse เป็นชมรมที่จะทำให้เมืองน่าอยู่ ด้วยการตัดสินใจที่ดีจาก data (เปลี่ยนเมืองด้วย data, dev, และ technology!)",
+    imageUrl: "Awarehouse.png",
+    category: "Innovation",
+    havebooth: false,
+  },
+  {
+    id: "26",
+    code: "intania-tennis-club",
+    name: { th: "ชมรมเทนนิสคณะวิศวกรรมศาสตร์", en: "Intania Tennis Club" },
+    shortdescription: "ชมรมเทนนิสที่เปิดให้ทุกคนเข้าถึงกีฬาเทนนิสได้ง่ายขึ้น",
+    description: "Intania tennis club ชมรมที่ทำให้กีฬาเทนนิสเข้าถึงได้สำหรับทุกคน",
+    imageUrl: "Intania-Tennis-Club.png",
+    category: "sport",
+    havebooth: false,
+  },
+  {
+    id: "27",
+    code: "curit",
+    name: {
+      th: "ทีมนวัตกรรมระบบราง จุฬาลงกรณ์มหาวิทยาลัย",
+      en: "Chulalongkorn University Railway Innovation Team (CURIT)",
+    },
+    shortdescription:
+      "ชมรมออกแบบและพัฒนารถไฟไฟฟ้าขนาดทาง 1 ฟุต เพื่อแข่งขัน Railway Challenge ระดับชาติ",
+    description:
+      "Chulalongkorn University Railway Innovation Team หรือ CURIT (อ่านว่า ซี-ยู-ฤทธิ์) เป็นชมรมที่มุ่งเน้นการออกแบบและพัฒนารถไฟไฟฟ้าขนาดทาง 1 ฟุต เพื่อเข้าร่วมการแข่งขัน Railway Challenge ระดับชาติ สมาชิกจะได้ลงมือทำจริง ตั้งแต่การออกแบบโครงสร้าง ระบบขับเคลื่อน ระบบไฟฟ้าและการควบคุม ไปจนถึงการพัฒนาต้นแบบและทดสอบ ไม่จำเป็นต้องมีพื้นฐานด้านรถไฟ เพียงมีใจรักการเรียนรู้ สนใจงานวิศวกรรม หรือเพียงชื่นชอบรถไฟ ก็สามารถร่วมเป็นส่วนหนึ่งของทีมได้",
+    imageUrl: "Chulalongkorn-University-Railway-Innovation-Team-(CURIT).png",
+    category: "Innovation",
+    havebooth: false,
+  },
+  {
+    id: "28",
+    code: "satellite-aerospace-club",
+    name: {
+      th: "ชมรมเทคโนโลยีดาวเทียมและอวกาศจุฬาฯ",
+      en: "Chulalongkorn University Satellite and Aerospace Technology Club",
+    },
+    shortdescription: "ชมรมสำหรับผู้สนใจเทคโนโลยีอวกาศ ออกแบบและพัฒนาดาวเทียมคิวบ์แซตจริง",
+    description:
+      "เป็นพื้นที่เปิดสำหรับผู้ที่สนใจในเทคโนโลยีอวกาศ เพื่อเรียนรู้และพัฒนาทักษะการปฏิบัติจริงในการออกแบบ พัฒนา และประยุกต์ใช้งานดาวเทียมคิวบ์แซต (CubeSat) กิจกรรมของชมรมครอบคลุมตั้งแต่การออกแบบระบบย่อย Subsystem, การพัฒนาซอฟต์แวร์และฮาร์ดแวร์, การประกอบและทดสอบดาวเทียมเพื่อนำส่งสู่อวกาศจริงๆ ซึ่งจะได้ปล่อยภายในปี 2028 นี้อีกด้วย",
+    imageUrl: "Chulalongkorn-University-Satellite-and-Aerospace-Technology-Club.png",
+    category: "Innovation",
+    havebooth: false,
+  },
+  {
+    id: "29",
+    code: "larngear-camp",
+    name: {
+      en: "Larngear Camp 26th 2026",
+      th: "ค่ายลานเกียร์ ครั้งที่ 26 ปีการศึกษา 2569",
+    },
+    shortdescription:
+      "ค่ายอาสาที่พาน้องมัธยมปลายมาค้นพบตัวเองในคณะวิศวะฯ พร้อมสร้างมิตรภาพและประสบการณ์ทำงาน",
+    description:
+      "ชมรมค่ายลานเกียร์คือชมรมของนิสิตวิศวฯ จุฬา ที่ร่วมกันจัดค่ายลานเกียร์​ขึ้นมา เพื่อให้นักเรียนมัธยมศึกษาชั้นปีที่ 4 - 5 ได้เข้ามาค้นพบตัวเองในคณะวิศวฯ จุฬาไปพร้อม ๆ กับการที่ให้นิสิตในคณะได้ฝึกการทำงานและได้แลกเปลี่ยนประสบการณ์ในคณะให้น้องมัธยมฯ ค่ายลานเกียร์ไม่ได้เป็นเพียงแค่กิจกรรมหนึ่งที่เราร่วมกันจัดขึ้น แต่เป็นพื้นที่ที่ทำให้เราได้รู้จักเพื่อนใหม่ ได้เรียนรู้การทำงานร่วมกับผู้อื่น และได้สร้างความสัมพันธ์กับผู้คนมากมายที่อาจไม่เคยได้พบกันมาก่อน จากจุดเริ่มต้นเล็ก ๆ ในการมาทำค่าย สู่มิตรภาพ ประสบการณ์ และความทรงจำที่จะอยู่กับเราไปตลอด เหมือนคำพูดที่ใช้กับค่ายนี้ตลอดมาว่า “ทำค่ายลานเกียร์ แล้วลานเกียร์จะแคบลง”",
+    imageUrl: "Larngear-Camp-26th-2026.jpg",
+    category: "academic",
+    havebooth: false,
+  },
+  {
+    id: "30",
+    code: "intania-futsal-club",
+    name: { th: "ฟุตซอล", en: "intania futsal" },
+    shortdescription: "ชมรมฟุตซอลสำหรับคนรักกีฬา ฝึกฝนและสร้างระเบียบวินัยนักกีฬา",
+    description:
+      "เป็นชมรมเปิดโอกาสให้คนรักในกีฬาได้มาสัมผัสประสบการณ์ เรียนรู้ ฝึกระเบียบวินัยของนักกีฬา",
+    imageUrl: "intania-futsal.JPG",
+    category: "sport",
+    havebooth: false,
+  },
+  {
+    id: "31",
+    code: "sangseesuan",
+    name: { th: "แสงสีสวนจาม", en: "SangSeeSuan" },
+    shortdescription: "แสงสีชมพูฟ้า",
+    description: "แสงสีชมพูฟ้า",
+    imageUrl: "SangSeeSuan.JPG",
+    category: "other",
+    havebooth: false,
+  },
 ]
