@@ -38,15 +38,15 @@ export async function POST(req: NextRequest) {
     return failure(400, AppErrorCode.INVALID_BODY, "score must be a number")
   }
 
+  if (score < 0 || score > MAX_SCORE) {
+    return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
+  }
+
   try {
     const player = await wasteSortPlayerService.recordRound(user.id, score)
 
     if (!player) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
-    }
-
-    if (score < 0 || score > MAX_SCORE) {
-      return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
     }
 
     return success({ player: wasteSortPlayerService.mapToPublic(player) })
