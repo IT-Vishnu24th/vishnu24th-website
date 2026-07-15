@@ -195,7 +195,6 @@ export default function Page() {
                         {hasImage && (
                           <Image
                             src={`/club/clublogo/${club.imageUrl}`}
-                            // src ="/club/clublogo/Game-Research-and-Development-Club.png"
                             alt={club.name.th}
                             width={56}
                             height={56}
