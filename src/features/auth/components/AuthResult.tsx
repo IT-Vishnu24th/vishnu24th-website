@@ -29,6 +29,9 @@ export const AuthResult = () => {
           className="object-cover object-center"
         />
       </div>
+      <div className="absolute inset-0 z-10 top-10/12 h-120 pointer-events-none">
+        <Image src="/landingpage/sponsor-art.png" fill className="object-fill" alt="" />
+      </div>
       <div className="relative z-10 flex flex-col items-center min-h-screen font-fc-quantum justify-center">
         <img className="w-50 mb-2" src={isSuccess ? "/auth/moon_up.png" : "/auth/moon_down.png"} />
         {isSuccess ? (
