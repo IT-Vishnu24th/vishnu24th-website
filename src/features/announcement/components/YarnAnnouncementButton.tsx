@@ -1,13 +1,11 @@
 "use client"
 
 import { useFeatureFlags, useMe } from "@/hooks/useApi"
-import useAuth from "@/hooks/useAuth"
-import { Lock, Ship } from "lucide-react"
+import { Ship } from "lucide-react"
 import Link from "next/link"
 import { useMemo } from "react"
 
 export const YarnAnnouncementButton = () => {
-  const { user } = useAuth()
   const { data: featureFlagsData } = useFeatureFlags()
   const { data: userData } = useMe()
 
@@ -17,7 +15,7 @@ export const YarnAnnouncementButton = () => {
     return showVessel[0].enabled ?? false
   }, [featureFlagsData?.data])
 
-  const yarnAccepted = user?.yarnAccepted ?? false
+  const yarnAccepted = userData?.data?.yarnAccepted ?? false
 
   if (!showYarn) return null
   return (

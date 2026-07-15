@@ -1,17 +1,18 @@
 "use client"
 
-import useAuth from "@/hooks/useAuth"
 import { QuestionaireSeciton } from "./QuestionaireSection"
 import { YarnSection } from "./YarnSection"
 import { useEffect, useMemo, useState } from "react"
-import { useFeatureFlags } from "@/hooks/useApi"
+import { useFeatureFlags, useMe } from "@/hooks/useApi"
 import { useRouter } from "next/navigation"
 
 export const AnnouncementSection = () => {
   const { data: featureFlagsData, isLoading } = useFeatureFlags()
+  const { data, isLoading: userLoading } = useMe()
+
+  const user = data?.data
   const router = useRouter()
-  const { user } = useAuth()
-  const [yarnAccepted, setYarnAccepted] = useState(user?.yarnAccepted || false)
+  const [yarnAccepted, setYarnAccepted] = useState(false)
 
   const showYarn = useMemo(() => {
     const showVessel = featureFlagsData?.data.filter((e) => e.id === "reveal-vessel")
@@ -20,13 +21,17 @@ export const AnnouncementSection = () => {
   }, [featureFlagsData?.data])
 
   useEffect(() => {
+    setYarnAccepted(user?.yarnAccepted || false)
+  }, [userLoading])
+
+  useEffect(() => {
     if (isLoading) return
     if (user === null || !showYarn) {
       router.push("/")
     }
   }, [user, showYarn, isLoading])
 
-  if (user === null || !showYarn) return null
+  if (user === null || !showYarn || userLoading) return null
   return (
     <>
       {yarnAccepted ? <YarnSection /> : <QuestionaireSeciton setYarnAccepted={setYarnAccepted} />}
