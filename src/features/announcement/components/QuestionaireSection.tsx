@@ -172,38 +172,38 @@ export const QuestionaireSeciton = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                    className="absolute inset-0 flex flex-col items-center justify-center"
                   >
-                    {currentScenario.choices.map((choice, index) => (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          if (scenarioIdx < scenario.length - 1) {
-                            setScenarioIdx((prev) => prev + 1)
-                          } else {
-                            setFinish(true)
-                          }
-                        }}
-                        className={`relative w-92.5 cursor-pointer transition-transform hover:scale-105 ${
-                          currentScenario.choicesRow[index] === 1 ? "h-18" : "h-28"
-                        }`}
-                      >
-                        <img
-                          src={`/yaan/${currentScenario.choicesRow[index]}_row_choice.png`}
-                          alt=""
-                          className="absolute inset-0 w-full h-full z-10"
-                        />
-                        <div className="absolute inset-0 z-20 h-full flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream">
-                          {choice}
+                    {currentScenario.choices.map((choice, index) => {
+                      const isOneRow = currentScenario.choicesRow[index] === 1
+
+                      return (
+                        <div
+                          key={index}
+                          onClick={() => {
+                            if (scenarioIdx < scenario.length - 1) {
+                              setScenarioIdx((prev) => prev + 1)
+                            } else {
+                              setFinish(true)
+                            }
+                          }}
+                          className={`relative cursor-pointer transition-transform hover:scale-105 flex items-center justify-center text-center whitespace-pre-line leading-5 font-fc-quantum text-cream bg-no-repeat bg-contain bg-center ${
+                            isOneRow ? "w-[370px] h-[72px]" : "w-[370px] h-[112px]"
+                          }`}
+                          style={{
+                            backgroundImage: `url(/yaan/${isOneRow ? "1" : "2"}_row_choice.png)`,
+                          }}
+                        >
+                          <span className="">{choice}</span>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            <div className="relative w-91 mt-12">
+            <div className="relative w-91 h-80 mt-12">
               <p className="absolute whitespace-break-spaces z-10 w-full h-full py-4 px-4 text-brownie-dark font-fc-quantum text-[18px]">
                 {displayedText}
                 {displayedText.length < currentScenario.text.length && (
@@ -252,7 +252,7 @@ export const QuestionaireSeciton = ({
                 )
               }}
               text={isPending ? "รอสักครู่..." : "ยานของเราคือ..."}
-              className="mt-8 animate-bounce"
+              className="mt-8 mb-10 animate-bounce"
             />
           </motion.section>
         )}
