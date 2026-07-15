@@ -24,6 +24,26 @@ export const stageApi = {
   getStages: async () => {
     return api.get<{ data: StagePerformance[] }>("/stage")
   },
+
+  getStage: async (id: string) => {
+    return api.get<{ data: StagePerformance }>(`/stage/${id}`)
+  },
+
+  createStage: async (data: Omit<StagePerformance, "id">) => {
+    return api.post<{ data: string }>("/stage", data)
+  },
+
+  updateStage: async (id: string, data: Partial<Omit<StagePerformance, "id">>) => {
+    return api.patch<{ data: StagePerformance }>(`/stage/${id}`, data)
+  },
+
+  deleteStage: async (id: string) => {
+    return api.delete<{ data: boolean }>(`/stage/${id}`)
+  },
+
+  setLiveStage: async (id: string) => {
+    return api.put<{ data: boolean }>("/stage/live", { id })
+  },
 }
 
 // Feature flags API
