@@ -12,12 +12,18 @@ import type { LeaderboardResponse } from "@/types/leaderboard"
 export default function ScorePage() {
   const router = useRouter()
   const [data, setData] = useState<LeaderboardResponse | null>(null)
+  const [revealVessel, setRevealVessel] = useState(false)
 
   useEffect(() => {
     fetch("/api/leaderboard")
       .then((res) => res.json())
       .then((res) => setData(res.data))
       .catch((err) => console.error("Failed to fetch leaderboard:", err))
+
+    fetch("/api/flags/reveal-vessel")
+      .then((res) => res.json())
+      .then((res) => setRevealVessel(res.data.enabled))
+      .catch((err) => console.error("Failed to fetch reveal flag:", err))
   }, [])
 
   return (
@@ -28,9 +34,13 @@ export default function ScorePage() {
         {/* Top */}
         <div className="relative px-4">
           <div className="text-center">
-            <h1 className="text-6xl font-sov-yeehor">YAAN AQUARIUM</h1>
+            <h1 className="text-6xl font-sov-yeehor">
+              {revealVessel ? "YAAN AQUARIUM" : "Club Game"}
+            </h1>
 
-            <p className="mt-4 text-2xl font-fc-quantum">{data?.vesselName?.th ?? "-"}</p>
+            <p className="mt-4 text-2xl font-fc-quantum">
+              {revealVessel ? (data?.vesselName?.th ?? "Yaan Not Found") : "???"}
+            </p>
           </div>
         </div>
         <div className="relative w-full h-10 overflow-hidden mt-3">
@@ -42,28 +52,42 @@ export default function ScorePage() {
       <div className="relative z-10 pb-15 bg-gradient-to-b from-brownie via-turqoise-light to-brownie -mt-5 pt-10">
         <Image src="/scan/slide-bg.png" alt="" fill className="pointer-events-none object-fill" />
 
-        <div
-          className="
-          flex
-          h-[230px]
-          items-center
-          justify-center 
-        "
-        >
+        {revealVessel ? (
+          <div className="flex h-[230px] items-center justify-center">
+            <div className="relative h-[210px] w-[210px]">
+              <Image
+                src={`/yaan_banner/${data?.vesselName?.en?.replaceAll(" ", "_")}.jpg`}
+                alt={data?.vesselName?.th ?? "Vessel"}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+        ) : (
           <div
             className="
-            flex
-            items-center
-            justify-center
-            bg-[#d5d5d5]
-            text-5xl
-            font-bold
-            p-20
-          "
+      flex
+      h-[230px]
+      items-center
+      justify-center
+    "
           >
-            LOGO
+            <div
+              className="
+        flex
+        items-center
+        justify-center
+        bg-clay-light
+        p-20
+        text-5xl
+        font-bold
+      "
+            >
+              ???
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="px-4 pt-5">
           <div className="relative overflow-hidden rounded-2xl">
@@ -74,7 +98,7 @@ export default function ScorePage() {
                 <Rocket size={34} strokeWidth={2.5} className="text-cream-tanned" />
               </div>
               <div className="flex-1">
-                <p className="text-lg">คะแนนรวมของยาน</p>
+                <p className="text-lg">{revealVessel ? "คะแนนรวมของยาน" : "คะแนนรวม"}</p>
 
                 <h2 className="text-4xl font-bold ">{(data?.score ?? 0).toLocaleString()}</h2>
 
