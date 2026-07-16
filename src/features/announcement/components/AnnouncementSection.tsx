@@ -22,7 +22,7 @@ export const AnnouncementSection = () => {
   }, [featureFlagsData?.data])
 
   useEffect(() => {
-    if (isLoading) return
+    if (isLoading || userLoading) return
     if (!user || !showYarn) {
       router.push("/")
     }
