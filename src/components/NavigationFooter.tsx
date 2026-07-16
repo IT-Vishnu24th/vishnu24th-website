@@ -92,7 +92,7 @@ export default function FooterNavigation() {
         src="/navbar/navbar.svg"
         alt="navbar"
         fill
-        className="object-fill scale-103 translate-y-2"
+        className="object-fill scale-103 translate-y-2 select-none pointer-events-none"
       />
 
       <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 pb-4 pt-1.5 bg-[#2D3542]">
