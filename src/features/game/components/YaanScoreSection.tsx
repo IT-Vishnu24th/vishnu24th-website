@@ -6,7 +6,7 @@ import { useMemo } from "react"
 
 export const YaanScoreSection = () => {
   const { data: leaderboardData } = useLeaderboard()
-  const { data: userData } = useMe()
+  const { data: userData, isLoading: isUserDataLoading } = useMe()
   const { user } = useAuth()
   const { data: featureFlagsData } = useFeatureFlags()
 
@@ -15,6 +15,10 @@ export const YaanScoreSection = () => {
     if (!showVessel || showVessel?.length === 0) return false
     return showVessel[0].enabled ?? false
   }, [featureFlagsData?.data])
+
+  const yarnAccepted = useMemo(() => {
+    return userData?.data.yarnAccepted ?? false
+  }, [isUserDataLoading, userData?.data])
 
   const yarnName = userData?.data.group.vesselName?.th ?? "-"
   const score = leaderboardData?.data.score ?? "-"
@@ -33,10 +37,10 @@ export const YaanScoreSection = () => {
           </div>
           <div className="pb-5 max-w-70">
             <div className="text-black font-sov-yeehor w-full text-[48px] leading-10">
-              {showYarn ? yarnName : "กลุ่มที่..."}
+              {showYarn && yarnAccepted ? yarnName : "กลุ่มที่..."}
             </div>
             <div className="text-brick-orange font-sov-yeehor text-[48px] w-full leading-10">
-              {showYarn ? `${leaderboardData?.data.score ?? "-"} คะแนน` : "XXXX"}
+              {showYarn && yarnAccepted ? `${score} คะแนน` : "XXXX"}
             </div>
           </div>
         </div>
