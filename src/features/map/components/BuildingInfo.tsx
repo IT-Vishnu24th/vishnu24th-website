@@ -18,7 +18,15 @@ export default function BuildingInfo({ buildingName }: BuildingInfoProps) {
       </div>
 
       <div className="-mt-1 bg-brick-orange">
-        <h2 className="mb-10 pt-3 text-center font-sov-yeehor text-6xl">{buildingName}</h2>
+        <div className="flex flex-col items-center pt-3">
+          <h2 className="font-sov-yeehor text-6xl">{buildingName}</h2>
+
+          <h3 className="mt-2 mb-4 text-center font-fc-quantum text-sm text-clay-light">
+            ผังบูธชมรมและจุดพยาบาล
+            <br />
+            เฉพาะวัน Intania First Date
+          </h3>
+        </div>
 
         <div className="mx-4 my-3 overflow-hidden rounded-2xl border-2 border-brownie">
           <Image

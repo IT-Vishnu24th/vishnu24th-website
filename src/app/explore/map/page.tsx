@@ -20,9 +20,9 @@ export default function MapPage() {
           <h1 className="text-7xl font-sov-yeehor">แผนที่</h1>
         </div>
 
-        <h3 className="text-md text-clay-light font-fc-quantum pt-2">
-          ดูรายชื่อกิจกรรม และรอบเวลา <br />
-          ของเวทีลานเกียร์
+        <h3 className="text-sm text-clay-light font-fc-quantum pt-2">
+          ดูตำแหน่งสถานที่ต่าง ๆ ในคณะวิศวกรรมศาสตร์ <br />
+          จุดพยาบาล 24 ชั่วโมงที่ตึก 3 ชั้น 4 ห้อง 406
         </h3>
 
         <div className="relative w-full h-8 overflow-hidden mt-3">
