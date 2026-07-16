@@ -30,13 +30,26 @@ export const scheduleStatusStyles = {
     status: "Completed",
   },
   delayed: {
-    card: "bg-neutral-500 text-white",
-    badge: "border-white text-white",
-    timeline: "bg-black",
-    title: "",
-    time: "text-black",
+    card: "bg-midnight-light border-midnight-light text-turqoise",
+    badge: "border-turqoise text-turqoise",
+    timeline: "bg-turqoise",
+    title: "text-white",
+    time: "text-midnight",
     img: "border-turqoise",
-    footer: "",
+    footer: "text-turqoise-light",
     status: "Delayed",
   },
 } as const
+
+export const scheduleSlotImages = [
+  ["/explore/schedule/slot1_1.png", "/explore/schedule/slot1_2.PNG"],
+  ["/explore/schedule/slot2.jpg"],
+  ["/explore/schedule/slot3_1.png", "/explore/schedule/slot3_2.png"],
+  ["/explore/schedule/slot4.png"],
+  [
+    "/explore/schedule/slot5_1.PNG",
+    "/explore/schedule/slot5_2.png",
+    "/explore/schedule/slot5_3.png",
+  ],
+  ["/explore/schedule/slot_6.png"],
+] as const

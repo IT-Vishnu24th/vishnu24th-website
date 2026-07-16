@@ -1,6 +1,10 @@
 export interface Club {
   id: string
-  name: string
+  code: string
+  name: {
+    th: string
+    en: string
+  }
 
   shortdescription?: string
   description?: string
@@ -8,7 +12,7 @@ export interface Club {
   imageUrl?: string
   mapimageUrl?: string
 
-  categoryId: string
+  category: string
 
   havebooth?: boolean
   location?: string

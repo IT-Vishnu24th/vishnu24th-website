@@ -11,12 +11,18 @@ export const SLIDES: Slide[] = [
     title: "กดฉันสิ",
     description:
       "67676767676767676767676767667676767676766767676767676676767676767667676767676766767676767676676767676767667676767676766767676767676",
-    file: "/slide/I_love_vishnu.pdf",
+    file: "I_love_vishnu.pdf",
   },
   {
     id: "2",
+    title: "แนะนำหลักสูตร เจ็ดหก หกเจ็ด676767676676776",
+    description: "แนะนำหลักสูตรวิศวะ",
+    file: "nofile",
+  },
+  {
+    id: "3",
     title: "แนะนำหลักสูตร",
     description: "แนะนำหลักสูตรวิศวะ",
-    file: "/slides/nofile",
+    file: "nofile",
   },
 ]

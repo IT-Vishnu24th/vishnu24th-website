@@ -127,13 +127,7 @@ const groupService = {
   },
 
   totalScore(group: RawGroup): number {
-    let total = 0
-    for (const value in Object.values(group.scoreSources)) {
-      if (typeof value === "number") {
-        total += value
-      }
-    }
-    return total
+    return Object.values(group.scoreSources).reduce((sum, value) => sum + value, 0)
   },
 }
 
