@@ -15,7 +15,7 @@ const QuestionaireTitle = () => {
 
       <img
         src="/yaan/hand_reaching.png"
-        className="absolute -top-15 left-1/2 -translate-x-1/2 -z-10 w-125 max-w-none"
+        className="absolute -top-15 left-1/2 -translate-x-1/2 -z-10 w-125 max-w-none "
       />
     </div>
   )
@@ -46,7 +46,7 @@ export const QuestionaireTitleScreen = ({
           setStart(true)
         }, 350)
       }}
-      className="cursor-pointer relative"
+      className="cursor-pointer relative overflow-x-hidden"
     >
       <div className="flex w-full min-h-screen flex-col text-black items-center z-20">
         {" "}
