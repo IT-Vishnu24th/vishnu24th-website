@@ -83,10 +83,40 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-fc-quantum: var(--font-fc-quantum);
-  --font-sov-yeehor: var(--font-sov-yeehor);
-  --font-ppfragment-glare: var(--font-ppfragment-glare);
-  --font-arthemis: var(--font-arthemis);
+  --font-fc-quantum: var(--font-fc-quantum-family);
+  --font-sov-yeehor: var(--font-sov-yeehor-family);
+  --font-ppfragment-glare: var(--font-ppfragment-glare-family);
+  --font-arthemis: var(--font-arthemis-family);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.accordion-content {
+  overflow: hidden;
+}
+
+.accordion-content[data-state="open"] {
+  animation: accordion-down 300ms ease-out;
+}
+
+.accordion-content[data-state="closed"] {
+  animation: accordion-up 300ms ease-out;
 }
 
 body {

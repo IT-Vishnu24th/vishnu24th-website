@@ -36,14 +36,17 @@ export const SUSTAIN_BINS: SustainBin[] = [
   },
 ]
 
+const RANDOM_SCORES = [5, 10, 15, 20, 25]
+const randomScore = () => RANDOM_SCORES[Math.floor(Math.random() * RANDOM_SCORES.length)]
+
 export const SUSTAIN_TRASH_ITEMS: SustainTrashTemplate[] = [
-  { id: "snack-bag", label: "ซองขนม", icon: "▣", type: "general" },
-  { id: "straw", label: "หลอด", icon: "╱", type: "general" },
-  { id: "used-cup", label: "แก้วใช้แล้ว", icon: "◡", type: "general" },
-  { id: "plastic-bottle", label: "ขวดน้ำ", icon: "♲", type: "recycle" },
-  { id: "paper", label: "กระดาษ", icon: "□", type: "recycle" },
-  { id: "can", label: "กระป๋อง", icon: "◎", type: "recycle" },
-  { id: "banana-peel", label: "เปลือกผลไม้", icon: "◜", type: "food" },
-  { id: "leftover", label: "เศษอาหาร", icon: "●", type: "food" },
-  { id: "egg-shell", label: "เปลือกไข่", icon: "◌", type: "food" },
+  { id: "snack-bag", label: "ซองขนม", icon: "▣", type: "general", score: 1 },
+  { id: "straw", label: "หลอด", icon: "╱", type: "general", score: 1 },
+  { id: "used-cup", label: "แก้วใช้แล้ว", icon: "◡", type: "general", score: 1 },
+  { id: "plastic-bottle", label: "ขวดน้ำ", icon: "♲", type: "recycle", score: 1 },
+  { id: "paper", label: "กระดาษ", icon: "□", type: "recycle", score: 1 },
+  { id: "can", label: "กระป๋อง", icon: "◎", type: "recycle", score: 1 },
+  { id: "banana-peel", label: "เปลือกผลไม้", icon: "◜", type: "food", score: 1 },
+  { id: "leftover", label: "เศษอาหาร", icon: "●", type: "food", score: 1 },
+  { id: "egg-shell", label: "เปลือกไข่", icon: "◌", type: "food", score: 1 },
 ]

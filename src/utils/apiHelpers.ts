@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import z from "zod"
 import { getAuthenticatedUser, getAuthenticatedRawUser } from "@/lib/auth"
+import featureFlagsService from "@/services/featureFlagService"
 import type {
   ApiSuccess,
   ApiPaginatedSuccess,
@@ -44,6 +45,13 @@ export const protectRaw = async (role?: UserRole): Promise<ProtectRawResult> => 
     }
   }
   return [null, user]
+}
+
+/** 403 GAME_NOT_ACTIVE unless the feature flag is enabled (missing flag doc = off) */
+export const requireFlag = async (id: string): Promise<[error: NextResponse | null]> => {
+  const enabled = await featureFlagsService.isEnabled(id)
+  if (!enabled) return [failure(403, AppErrorCode.GAME_NOT_ACTIVE, "Game is not active")]
+  return [null]
 }
 
 export const parseBody = async <T>(

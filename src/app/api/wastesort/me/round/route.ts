@@ -1,0 +1,69 @@
+import { NextRequest } from "next/server"
+import { success, failure, protectRaw, requireFlag } from "@/utils/apiHelpers"
+import { AppErrorCode } from "@/types/appErrorCode"
+import wasteSortPlayerService, { MAX_PLAYS_PER_DAY } from "@/services/wasteSortPlayerService"
+
+// GET /api/wasteSortPlayer/me/round
+// Check how many rounds the player has left today, without playing one.
+export async function GET() {
+  const [error, user] = await protectRaw("participant")
+  if (error) return error
+
+  const [flagErr] = await requireFlag("game-sustain")
+  if (flagErr) return flagErr
+
+  // missing player doc = hasn't played yet = full quota (doc is created on first round)
+  const playsToday = await wasteSortPlayerService.getPlaysToday(user.id)
+
+  return success({
+    playsToday,
+    maxPlaysPerDay: MAX_PLAYS_PER_DAY,
+    playsRemaining: Math.max(0, MAX_PLAYS_PER_DAY - playsToday),
+    canPlay: playsToday < MAX_PLAYS_PER_DAY,
+  })
+}
+
+export async function POST(req: NextRequest) {
+  const [error, user] = await protectRaw("participant")
+  if (error) return error
+
+  const [flagErr] = await requireFlag("game-sustain")
+  if (flagErr) return flagErr
+
+  const MAX_SCORE = 30
+  const body = await req.json()
+  const score = Number(body?.score)
+
+  if (!Number.isFinite(score)) {
+    return failure(400, AppErrorCode.INVALID_BODY, "score must be a number")
+  }
+
+  if (score < 0 || score > MAX_SCORE) {
+    return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
+  }
+
+  try {
+    const player = await wasteSortPlayerService.recordRound(user.id, score)
+
+    if (!player) {
+      return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")
+    }
+
+    return success({ player: wasteSortPlayerService.mapToPublic(player) })
+  } catch (err) {
+    if (err instanceof Error && err.message === "DAILY_LIMIT_REACHED") {
+      return failure(
+        429,
+        AppErrorCode.DAILY_LIMIT_REACHED,
+        `Already played ${MAX_PLAYS_PER_DAY} times today`
+      )
+    }
+
+    console.error("Record round error:", err)
+    return failure(
+      500,
+      AppErrorCode.INTERNAL_ERROR,
+      err instanceof Error ? err.message : "Failed to record round"
+    )
+  }
+}

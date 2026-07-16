@@ -117,24 +117,17 @@ const groupService = {
     return result
   },
 
-  mapToPublic(group: RawGroup, showFullGroup: boolean | null): Group | Vessel {
-    const { label, vesselName, registrationPoint, room } = group
+  mapToPublic(group: RawGroup, revealVessel: boolean): Vessel {
+    const { vesselName, registrationPoint, room } = group
     return {
-      vesselName,
       registrationPoint,
       room,
-      ...(showFullGroup ? { label } : {}),
+      ...(revealVessel ? { vesselName } : {}),
     }
   },
 
   totalScore(group: RawGroup): number {
-    let total = 0
-    for (const value in Object.values(group.scoreSources)) {
-      if (typeof value === "number") {
-        total += value
-      }
-    }
-    return total
+    return Object.values(group.scoreSources).reduce((sum, value) => sum + value, 0)
   },
 }
 
