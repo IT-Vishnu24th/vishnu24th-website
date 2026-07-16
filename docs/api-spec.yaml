@@ -398,7 +398,7 @@ paths:
         Verifies a Firebase ID token, validates that the email belongs to a
         recognised Chula student account (class 68 or 69 ending in 21),
         checks that the user exists in Firestore, then sets an HTTP-only
-        session cookie valid for 5 days.
+        session cookie valid for 7 days.
 
         Email pattern: 6[89]\d{6}21@student.chula.ac.th
       requestBody:
