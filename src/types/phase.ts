@@ -18,6 +18,6 @@ export const VISHNU_MISSION_PHASES = [
 ] as const
 export type VishnuMissionPhase = (typeof VISHNU_MISSION_PHASES)[number]
 
-export interface PhaseDocument<T extends string> {
+export interface PhaseDocument<T extends string | null> {
   current: T
 }
