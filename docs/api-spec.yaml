@@ -1721,22 +1721,36 @@ paths:
                       - vishnuMission
                     properties:
                       regis:
-                        type: string
-                        enum: [firstdate, vishnu-1, vishnu-2, vishnu-3, vishnu-4]
-                        example: vishnu-1
+                        type: [object, "null"]
+                        description: "`null` when the phase document is missing"
+                        required:
+                          - current
+                        properties:
+                          current:
+                            type: string
+                            enum: [firstdate, vishnu-d1, vishnu-d2, vishnu-d3, vishnu-d4]
+                            example: vishnu-d1
                       vishnuMission:
-                        type: string
-                        enum:
-                          [
-                            mission-1,
-                            mission-2,
-                            mission-3,
-                            mission-4,
-                            mission-5,
-                            mission-6,
-                            mission-7,
-                          ]
-                        example: mission-1
+                        type: [object, "null"]
+                        description: "`null` when the phase document is missing"
+                        required:
+                          - current
+                        properties:
+                          current:
+                            type: [string, "null"]
+                            description: "`null` = missions disabled; all question submissions return 403 SUBMISSION_CLOSED"
+                            enum:
+                              [
+                                mission-1,
+                                mission-2,
+                                mission-3,
+                                mission-4,
+                                mission-5,
+                                mission-6,
+                                mission-7,
+                                null,
+                              ]
+                            example: mission-1
         "500":
           description: Failed to fetch phases
           content:
@@ -1763,12 +1777,22 @@ paths:
               properties:
                 regis:
                   type: string
-                  enum: [firstdate, vishnu-1, vishnu-2, vishnu-3, vishnu-4]
-                  example: vishnu-2
+                  enum: [firstdate, vishnu-d1, vishnu-d2, vishnu-d3, vishnu-d4]
+                  example: vishnu-d2
                 vishnuMission:
-                  type: string
+                  type: [string, "null"]
+                  description: "Set `null` to disable missions (closes all question submissions)"
                   enum:
-                    [mission-1, mission-2, mission-3, mission-4, mission-5, mission-6, mission-7]
+                    [
+                      mission-1,
+                      mission-2,
+                      mission-3,
+                      mission-4,
+                      mission-5,
+                      mission-6,
+                      mission-7,
+                      null,
+                    ]
                   example: mission-2
       responses:
         "200":
@@ -1791,11 +1815,17 @@ paths:
                         type: string
                         example: Phase updated successfully
                       regis:
-                        type: string
-                        example: vishnu-2
+                        type: [object, "null"]
+                        properties:
+                          current:
+                            type: string
+                            example: vishnu-d2
                       vishnuMission:
-                        type: string
-                        example: mission-2
+                        type: [object, "null"]
+                        properties:
+                          current:
+                            type: [string, "null"]
+                            example: mission-2
         "400":
           description: Invalid body or no phases provided
           content:

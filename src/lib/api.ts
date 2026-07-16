@@ -81,7 +81,7 @@ export const phaseApi = {
     return api.get<{
       data: {
         regis: { current: RegistrationPhase }
-        vishnuMission: { current: VishnuMissionPhase }
+        vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase")
   },
@@ -89,14 +89,14 @@ export const phaseApi = {
   updatePhase: async (
     body: Partial<{
       regis: RegistrationPhase
-      vishnuMission: VishnuMissionPhase
+      vishnuMission: VishnuMissionPhase | null
     }>
   ) => {
     return api.patch<{
       data: {
         message: string
         regis: { current: RegistrationPhase }
-        vishnuMission: { current: VishnuMissionPhase }
+        vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase", body)
   },

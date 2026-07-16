@@ -28,15 +28,16 @@ export async function createRegistrationPhase(): Promise<void> {
 
 /* ---------------- Vishnu Mission ---------------- */
 
-export async function getMissionPhase(): Promise<PhaseDocument<VishnuMissionPhase> | null> {
+/** `current: null` = missions disabled (no question open) */
+export async function getMissionPhase(): Promise<PhaseDocument<VishnuMissionPhase | null> | null> {
   const doc = await missionRef.get()
 
   if (!doc.exists) return null
 
-  return doc.data() as PhaseDocument<VishnuMissionPhase>
+  return doc.data() as PhaseDocument<VishnuMissionPhase | null>
 }
 
-export async function updateMissionPhase(current: VishnuMissionPhase): Promise<void> {
+export async function updateMissionPhase(current: VishnuMissionPhase | null): Promise<void> {
   await missionRef.update({ current })
 }
 

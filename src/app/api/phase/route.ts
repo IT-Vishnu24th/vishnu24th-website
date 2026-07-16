@@ -26,7 +26,8 @@ export async function GET() {
 
 const patchPhaseSchema = z.object({
   regis: z.enum(REGISTRATION_PHASES).optional(),
-  vishnuMission: z.enum(VISHNU_MISSION_PHASES).optional(),
+  // null = disable missions (closes all question submissions)
+  vishnuMission: z.enum(VISHNU_MISSION_PHASES).nullable().optional(),
 })
 
 export async function PATCH(req: NextRequest) {
@@ -45,7 +46,7 @@ export async function PATCH(req: NextRequest) {
       tasks.push(updateRegistrationPhase(regis))
     }
 
-    if (vishnuMission) {
+    if (vishnuMission !== undefined) {
       tasks.push(updateMissionPhase(vishnuMission))
     }
 
