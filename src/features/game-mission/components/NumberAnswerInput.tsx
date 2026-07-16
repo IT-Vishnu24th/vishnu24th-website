@@ -1,13 +1,12 @@
 "use client"
 
-import type { MissionPeriod, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
 import { RevealFooter } from "./RevealFooter"
 
 interface NumberAnswerInputProps {
   value: string
   onChange: (value: string) => void
-  maxLength: number
-  period: MissionPeriod
+  question: MissionQuestion
   historyItem: UserAnswerHistoryItem | null
   disabled: boolean
 }
@@ -15,14 +14,17 @@ interface NumberAnswerInputProps {
 export function NumberAnswerInput({
   value,
   onChange,
-  maxLength,
-  period,
+  question,
   historyItem,
   disabled,
 }: NumberAnswerInputProps) {
   const displayValue = historyItem ? (historyItem.userAnswer as string) : value
   const borderClass =
-    period === "morning" ? "border-brick-orange text-brownie-dark" : "border-turqoise text-midnight"
+    question.period === "morning"
+      ? "border-brick-orange text-brownie-dark"
+      : "border-turqoise text-midnight"
+
+  const maxLength = question.maxLength ?? 3
 
   return (
     <div className="flex flex-col items-center">
@@ -40,7 +42,7 @@ export function NumberAnswerInput({
         }}
         className={`w-40 rounded-2xl border-2 bg-transparent px-6 py-4 text-center text-3xl font-fc-quantum tracking-widest outline-none disabled:opacity-70 ${borderClass}`}
       />
-      <RevealFooter historyItem={historyItem} />
+      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

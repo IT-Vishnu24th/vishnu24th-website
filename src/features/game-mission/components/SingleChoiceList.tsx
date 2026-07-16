@@ -1,11 +1,11 @@
 "use client"
 
+import { RevealFooter } from "@/features/game-mission/components/RevealFooter"
 import { ChoiceOption, type ChoiceVisualState } from "./ChoiceOption"
-import type { MissionOption, MissionPeriod, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
 
 interface SingleChoiceListProps {
-  options: MissionOption[]
-  period: MissionPeriod
+  question: Extract<MissionQuestion, { type: "single" | "multi" }>
   /** Locally-picked value, before saving */
   selectedValue: string | null
   onSelect: (value: string) => void
@@ -16,8 +16,7 @@ interface SingleChoiceListProps {
 }
 
 export function SingleChoiceList({
-  options,
-  period,
+  question,
   selectedValue,
   onSelect,
   historyItem,
@@ -30,7 +29,7 @@ export function SingleChoiceList({
 
   return (
     <div className="flex flex-col gap-3 rounded-3xl border-2 p-3 border-current/10">
-      {options.map((option) => {
+      {question.options.map((option) => {
         let state: ChoiceVisualState = "default"
 
         if (isRevealed) {
@@ -50,12 +49,13 @@ export function SingleChoiceList({
             key={option.value}
             label={option.label}
             state={state}
-            period={period}
+            period={question.period}
             disabled={disabled}
             onClick={() => !disabled && onSelect(option.value)}
           />
         )
       })}
+      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

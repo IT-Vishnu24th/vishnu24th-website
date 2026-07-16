@@ -97,11 +97,10 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         <div className="relative mt-8 flex flex-col items-center gap-6 px-24">
           <BackgroundIllustration />
 
-          <div className="relative mx-auto z-10 flex flex-col items-center gap-6">
+          <div className="relative mx-auto z-10 flex flex-col items-center gap-2">
             {question.type === "single" && (
               <SingleChoiceList
-                options={question.options}
-                period={question.period}
+                question={question}
                 selectedValue={singleValue}
                 onSelect={setSingleValue}
                 historyItem={historyItem}
@@ -111,8 +110,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
 
             {question.type === "multi" && (
               <MultiChoiceList
-                options={question.options}
-                period={question.period}
+                question={question}
                 selectedValues={multiValues}
                 onToggle={(value) =>
                   setMultiValues((prev) =>
@@ -128,8 +126,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
               <NumberAnswerInput
                 value={textValue}
                 onChange={setTextValue}
-                maxLength={question.maxLength ?? 3}
-                period={question.period}
+                question={question}
                 historyItem={historyItem}
                 disabled={isLocked}
               />
@@ -139,17 +136,31 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
               <TextAnswerInput
                 value={textValue}
                 onChange={setTextValue}
-                maxLength={question.maxLength}
-                imageSrc={question.imageSrc}
-                period={question.period}
+                question={question}
                 historyItem={historyItem}
                 disabled={isLocked}
               />
             )}
 
-            <div className="mt-2 text-center font-fc-quantum text-sm opacity-80">
-              <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
-              <p className="mt-1">นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน</p>
+            <div className="mt-2 text-center font-fc-quantum opacity-80">
+              <div
+                className={`font-medium ${question.period === "morning" ? "text-brownie" : "text-midnight-light"}`}
+              >
+                {(status === "locked" || status === "open") && (
+                  <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
+                )}
+                {status === "awaiting-reveal" && !historyItem && (
+                  <>
+                    <p>ปิดรับคำตอบแล้ว</p>
+                    <p className={`text-sm ${BODY_TEXT[question.period]}`}>
+                      รอเฉลยคำตอบพร้อมกัน
+                      <br />
+                      {formatBangkokTime(question.revealsAt)} ได้เลย
+                    </p>
+                  </>
+                )}
+              </div>
+              <p className="text-sm mt-1">นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน</p>
             </div>
           </div>
         </div>

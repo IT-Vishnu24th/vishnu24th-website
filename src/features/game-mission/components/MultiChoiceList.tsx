@@ -1,11 +1,11 @@
 "use client"
 
+import { RevealFooter } from "@/features/game-mission/components/RevealFooter"
 import { ChoiceOption, type ChoiceVisualState } from "./ChoiceOption"
-import type { MissionOption, MissionPeriod, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
 
 interface MultiChoiceListProps {
-  options: MissionOption[]
-  period: MissionPeriod
+  question: Extract<MissionQuestion, { type: "single" | "multi" }>
   /** Locally-picked values, before saving */
   selectedValues: string[]
   onToggle: (value: string) => void
@@ -14,8 +14,7 @@ interface MultiChoiceListProps {
 }
 
 export function MultiChoiceList({
-  options,
-  period,
+  question,
   selectedValues,
   onToggle,
   historyItem,
@@ -28,7 +27,7 @@ export function MultiChoiceList({
 
   return (
     <div className="flex flex-col gap-3 rounded-3xl border-2 p-3 border-current/10">
-      {options.map((option) => {
+      {question.options.map((option) => {
         let state: ChoiceVisualState = "default"
         const wasSubmitted = submittedValues.includes(option.value)
         const isCorrectOption = correctValues.includes(option.value)
@@ -50,12 +49,13 @@ export function MultiChoiceList({
             key={option.value}
             label={option.label}
             state={state}
-            period={period}
+            period={question.period}
             disabled={disabled}
             onClick={() => !disabled && onToggle(option.value)}
           />
         )
       })}
+      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

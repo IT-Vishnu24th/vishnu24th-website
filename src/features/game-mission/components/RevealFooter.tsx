@@ -1,26 +1,39 @@
 "use client"
 
 import { Check, X } from "lucide-react"
-import type { UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
+import { formatBangkokTime, getMissionStatus } from "@/features/game-mission/utils/schedule"
 
 interface RevealFooterProps {
   historyItem: UserAnswerHistoryItem | null
+  question: MissionQuestion
 }
 
 /** Shown under number/text inputs once submitted, matching the history-card layout (Image 9) */
-export function RevealFooter({ historyItem }: RevealFooterProps) {
+export function RevealFooter({ historyItem, question }: RevealFooterProps) {
   if (!historyItem) return null
 
   const userAnswer = historyItem.userAnswer as string | null
   const correctAnswer = historyItem.correctAnswer as string | null
 
+  if (getMissionStatus(question) === "revealed") {
+    return null
+  }
+
   if (!historyItem.isRevealed) {
     return (
-      <p className="mt-3 text-center text-sm opacity-70 font-fc-quantum">
-        ส่งคำตอบแล้ว
-        <br />
-        รอเฉลยตามเวลาที่กำหนด
-      </p>
+      <div className="mt-3 text-center font-fc-quantum">
+        <p
+          className={`font-medium ${question.period === "morning" ? "text-brownie" : "text-midnight-light"}`}
+        >
+          บันทึกคำตอบเรียบร้อย!
+        </p>
+        <p className="text-sm">
+          รอเฉลยคำตอบพร้อมกัน
+          <br />
+          {formatBangkokTime(question.revealsAt)} ได้เลย
+        </p>
+      </div>
     )
   }
 
