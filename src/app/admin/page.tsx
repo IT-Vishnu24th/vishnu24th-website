@@ -49,7 +49,7 @@ const links = [
   },
 ]
 
-export default function AdminPage() {
+export default async function AdminPage() {
   return (
     <div className="w-full overflow-x-hidden text-black">
       <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black">
