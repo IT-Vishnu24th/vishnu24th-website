@@ -30,7 +30,7 @@ export function TextAnswerInput({
   return (
     <div className="flex flex-col items-center gap-6">
       {question.imageSrc && (
-        <div className="relative h-64 w-40 overflow-hidden rounded-2xl border-4 border-white shadow-lg">
+        <div className="relative h-60 w-24 overflow-hidden rounded-2xl border-4 border-white shadow-lg">
           <Image src={question.imageSrc} alt="" fill className="object-cover" />
         </div>
       )}

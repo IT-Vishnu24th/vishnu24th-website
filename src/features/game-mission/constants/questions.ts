@@ -81,7 +81,7 @@ export const MISSION_QUESTIONS: MissionQuestion[] = [
     type: "text",
     title: "ปริศนาช่วงเช้า",
     prompt: "ทายตัวละครจากแถบสี (ตอบเป็นภาษาไทย)",
-    imageSrc: "/game/ikyu.png",
+    imageSrc: "/game/char_guess.png",
     maxLength: 30,
     dateKey: "2026-07-23",
     opensAt: "2026-07-23T08:00:00+07:00",
