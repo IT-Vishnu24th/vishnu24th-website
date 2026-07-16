@@ -103,33 +103,27 @@ export const QuestionaireSeciton = ({
   const [scenarioIdx, setScenarioIdx] = useState(0)
   const [playGlitch, setPlayGlitch] = useState(false)
 
-  const [currentScenario, setCurrentScenario] = useState(scenario[0])
-  const [displayedText, setDisplayedText] = useState("")
-  const [showChoice, setShowChoice] = useState(false)
+  const currentScenario = scenario[scenarioIdx]
+  const [typedLength, setTypedLength] = useState(0)
+  const displayedText = currentScenario.text.slice(0, typedLength)
+  const showChoice = typedLength >= currentScenario.text.length
 
   useEffect(() => {
     if (!start) return
-    const current = scenario[scenarioIdx]
-
-    setCurrentScenario(current)
-    setDisplayedText("")
-    setShowChoice(false)
-
-    let index = 0
 
     const interval = setInterval(() => {
-      index++
+      setTypedLength((length) => {
+        if (length >= currentScenario.text.length) {
+          clearInterval(interval)
+          return length
+        }
 
-      setDisplayedText(current.text.slice(0, index))
-
-      if (index >= current.text.length) {
-        clearInterval(interval)
-        setShowChoice(true)
-      }
+        return length + 1
+      })
     }, 35)
 
     return () => clearInterval(interval)
-  }, [scenarioIdx, start])
+  }, [currentScenario.text, start])
 
   return (
     <div className="bg-white">
@@ -182,6 +176,7 @@ export const QuestionaireSeciton = ({
                           key={index}
                           onClick={() => {
                             if (scenarioIdx < scenario.length - 1) {
+                              setTypedLength(0)
                               setScenarioIdx((prev) => prev + 1)
                             } else {
                               setFinish(true)
