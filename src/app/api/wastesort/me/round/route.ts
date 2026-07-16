@@ -30,11 +30,16 @@ export async function POST(req: NextRequest) {
   const [flagErr] = await requireFlag("game-sustain")
   if (flagErr) return flagErr
 
+  const MAX_SCORE = 30
   const body = await req.json()
   const score = Number(body?.score)
 
   if (!Number.isFinite(score)) {
     return failure(400, AppErrorCode.INVALID_BODY, "score must be a number")
+  }
+
+  if (score < 0 || score > MAX_SCORE) {
+    return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
   }
 
   try {

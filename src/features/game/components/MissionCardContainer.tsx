@@ -143,7 +143,7 @@ export const MissionCardContainer = () => {
     })
   }, [featureFlagsData?.data, missionData?.data])
   return (
-    <section className="w-full bg-[linear-gradient(0deg,#2D3542_5.3%,#F0865C_96.95%)] pb-6 pt-20">
+    <section className="w-full pb-6">
       <div className="w-full grid grid-cols-1 place-items-center pb-15 [@media(min-width:748px)]:grid-cols-2">
         {missions.map((mission) => (
           <MissionCard

@@ -35,6 +35,7 @@ const getRandomTrash = (): SustainFallingTrash => {
 
   return {
     ...template,
+    score: 1,
     instanceId: `${template.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     x,
     y: -size,
@@ -284,7 +285,7 @@ export function SustainGame() {
       const targetBin = droppedTrash ? getBinUnderTrash(droppedTrash) : undefined
 
       if (droppedTrash && targetBin?.type === droppedTrash.type) {
-        setScore((current) => current + SUSTAIN_SCORE_PER_TRASH)
+        setScore((current) => current + droppedTrash.score)
       }
 
       setTrash((current) => current.filter((item) => item.instanceId !== drag.id))

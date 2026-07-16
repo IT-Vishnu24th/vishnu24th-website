@@ -29,7 +29,7 @@ export const ScheduleTime = ({ status, date }: ScheduleTimeProps) => {
         </div>
         <div>
           <img
-            src={`/explore/schedule/line_${status}.svg`}
+            src={`/explore/schedule/line_${status === "delayed" ? "upcoming" : status}.svg`}
             className="h-full object-cover"
             alt="line"
           />

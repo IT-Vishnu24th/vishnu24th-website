@@ -103,8 +103,8 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
                     className="object-contain border-4 border-brownie rounded-xl"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-brownie/60">
-                    Placeholder Map
+                  <div className="flex pt-10 items-center justify-center text-sm text-brownie/60">
+                    ชมรมนี้ไม่ได้จัดบูธ
                   </div>
                 )}
               </div>

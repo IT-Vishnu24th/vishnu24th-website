@@ -14,7 +14,7 @@ export const ScheduleList = () => {
     <div className=" w-full grow bg-midnight py-17 pt-20">
       <div className="pt-4">
         {schedule?.map((e, index) => (
-          <Link href="/club" key={e.id} className="flex px-4">
+          <Link href="/explore/club" key={e.id} className="flex px-4">
             <motion.div
               initial={{ x: -40, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
