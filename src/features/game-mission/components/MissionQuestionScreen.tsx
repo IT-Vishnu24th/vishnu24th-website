@@ -79,7 +79,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
 
   return (
     <div
-      className={`relative min-h-screen pb-32 ${BODY_BG[question.period]} ${BODY_TEXT[question.period]}`}
+      className={`relative min-h-screen pb-56 ${BODY_BG[question.period]} ${BODY_TEXT[question.period]}`}
     >
       <PageBottomGlobe />
 
@@ -156,19 +156,14 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
       </div>
 
       {!hasSubmitted && status === "open" && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2">
+        <div className="fixed z-100 bottom-28 left-1/2 -translate-x-1/2">
           <button
             type="button"
             onClick={handleSaveClick}
             disabled={!canSave}
-            className={`flex items-center gap-2 rounded-full px-8 py-3 font-fc-quantum text-xl shadow-xl transition-opacity disabled:opacity-50 ${
-              question.period === "morning"
-                ? "bg-brick-orange text-cream"
-                : "bg-turqoise text-midnight"
-            }`}
+            className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity disabled:opacity-80 ${BODY_BG[question.period]}`}
           >
-            <Save size={20} strokeWidth={2.5} />
-            บันทึก
+            <Save className="inline size-7 align-middle" /> บันทึก
           </button>
         </div>
       )}

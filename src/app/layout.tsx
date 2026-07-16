@@ -124,7 +124,7 @@ export default async function RootLayout({
               }}
               position="top-center"
             />
-            <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background">
+            <main className="relative mx-auto min-h-screen w-full max-w-[820px] bg-background overflow-x-clip">
               {children}
             </main>
           </AuthProvider>

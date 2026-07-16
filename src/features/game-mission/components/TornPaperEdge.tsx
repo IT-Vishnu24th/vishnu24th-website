@@ -2,19 +2,19 @@
 
 const STROKE = {
   morning: "fill-brick-orange",
-  evening: "fill-midnight",
+  evening: "fill-midnight-light",
 } as const
 
 const FILL_BELOW = {
   morning: "fill-cream-tanned",
-  evening: "fill-mint",
+  evening: "fill-turqoise",
 } as const
 
 type Period = "morning" | "evening"
 
 export function TornPaperEdge({ period }: { period: Period }) {
   return (
-    <div className="relative -mt-4.5 h-12 w-full" aria-hidden>
+    <div className="relative -mt-4.5 h-12 w-[105%] left-[-2.5%]" aria-hidden>
       <svg
         viewBox="0 0 408 48"
         fill="none"
