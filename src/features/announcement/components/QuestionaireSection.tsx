@@ -60,7 +60,7 @@ export const QuestionaireSeciton = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="relative"
+            className="relative overflow-x-hidden"
           >
             <div className="flex w-full flex-col items-center bg-white min-h-screen">
               <div className="text-black flex items-center gap-2 mb-6 z-30">
@@ -138,7 +138,7 @@ export const QuestionaireSeciton = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="relative"
+            className="relative overflow-x-hidden"
           >
             <div className="flex w-full flex-col items-center bg-white min-h-screen">
               <div className="text-black flex items-center gap-2 mb-6 z-30">
