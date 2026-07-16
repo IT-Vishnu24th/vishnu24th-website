@@ -36,7 +36,7 @@ export const club_data: Club[] = [
     id: "3",
     code: "intania-innovation-contest",
     name: {
-      th: "โครงการแข่งขันนวัตกรรมนักเรียนระดับมัธยมศึกษาตอนปลายในด้านวิศวกรรมศาสตร์",
+      th: "Intania Innovation Contest",
       en: "Intania Innovation Contest",
     },
     shortdescription: "ช่วยเปลี่ยนไอเดียของน้องมัธยมให้กลายเป็นนวัตกรรมจริง",
@@ -66,7 +66,7 @@ export const club_data: Club[] = [
   {
     id: "5",
     code: "intania-badminton-club",
-    name: { th: "ชมรมแบดมินตัน", en: "Intania Badminton Club" },
+    name: { th: "Intania Badminton Club", en: "Intania Badminton Club" },
     shortdescription: "ชมรมแบดมินตันสำหรับทุกคนที่รักการตีขนไก่",
     description:
       "ชมรมแบดมินตันคณะวิศวกรรมศาสตร์ เปิดพื้นที่ให้ทุกคนที่รักการตีขนไก่ได้มาออกกำลังกาย ฝึกซ้อม และสร้างมิตรภาพร่วมกัน ไม่ว่าจะเป็นมือใหม่หรือสายแข่งขันก็เข้าร่วมได้ ใครสนใจสมัครเข้าชมรม ติดตามรายละเอียดได้ทางไอจีของชมรมเลย",
@@ -81,7 +81,7 @@ export const club_data: Club[] = [
   {
     id: "6",
     code: "intania-volleyball-club",
-    name: { en: "Intania Volleyball Club", th: "วอลเล่บอล" },
+    name: { en: "Intania Volleyball Club", th: "Intania Volleyball Club" },
     shortdescription: "เล่นวอลเลย์บอลทุกสัปดาห์ เจอกันชั้น 12",
     description:
       "ชมรมที่ครับอยากรู้เข้ามาศึกษาเองมีเล่นทุกสัปดาห์+กินเก๊กฮวยเย็นๆชื่นใจพร้อมให้ร่างกายทำงานต่อไปในวันข้างหน้า เจอกันชั้น 12 คับ",
@@ -95,7 +95,7 @@ export const club_data: Club[] = [
   {
     id: "7",
     code: "intania-table-tennis-club",
-    name: { en: "Intania Table Tennis Club", th: "ชมรมเทเบิลเทนนิส" },
+    name: { en: "Intania Table Tennis Club", th: "Intania Table Tennis Club" },
     shortdescription: "ชมรมปิงปองที่ใจถึงที่สุดในคณะวิศวะจุฬา",
     description: "ชมรมปิงปองเป็นชมรมที่ใจถึงที่สุดในคณะวิศวะจุฬา เลี้ยงจริง แจกจริง อ้วนจริง",
     imageUrl: "Intania-Table-Tennis-Club.png",
@@ -108,7 +108,7 @@ export const club_data: Club[] = [
   {
     id: "8",
     code: "mma-intania-club",
-    name: { en: "MMA INTANIA CLUB", th: "ศิลปะการต่อสู้แบบผสมผสาน" },
+    name: { en: "MMA INTANIA CLUB", th: "MMA INTANIA CLUB" },
     shortdescription: "พื้นที่ปลดปล่อยความเครียด เรียนรู้ศิลปะป้องกันตัวแบบผสมผสาน",
     description:
       "อินทาเนียยุคใหม่ เรื่องเรียนเราไม่ถอย แต่เรื่องต่อยเราไม่หวั่น หยอก พบกับ ชมรม MMA INTANIA Club พื้นที่ปลดปล่อยความเครียดจากการดิฟและการอินทิเกรต มาเปลี่ยนพลังสมองเป็นพลังหมัด เข่า ศอก เรียนรู้วิชาป้องกันตัวแบบผสมผสาน ซ้อมสนุก ปลอดภัย ได้เพื่อนแท้สายเดือด ไม่อยากนั่งเหงาในช็อป มาเจอกันได้ที่ MMA INTANIA Club",
@@ -122,7 +122,7 @@ export const club_data: Club[] = [
   {
     id: "9",
     code: "intania-basketball-club",
-    name: { th: "ชมรมบาสเกตบอล", en: "Intania basketball club" },
+    name: { th: "Intania basketball club", en: "Intania basketball club" },
     shortdescription: "พื้นที่แห่งความสุขและมิตรภาพผ่านบาสเกตบอล",
     description:
       "IBC จะเป็นพื้นที่แห่งความสุขและมิตรภาพที่ไร้ขอบเขต ที่ซึ่งทุกคนสามารถเชื่อมต่อ ซัพพอร์ต และสร้างความทรงจำร่วมกันผ่านบาสเกตบอล",
@@ -136,7 +136,7 @@ export const club_data: Club[] = [
   {
     id: "10",
     code: "intania-football-club",
-    name: { en: "Intania football club", th: "ชมรมฟุตบอล" },
+    name: { en: "Intania football club", th: "Intania football club" },
     shortdescription: "สำหรับคนรักฟุตบอล พบพี่ๆ ได้ที่บูธชมรมบอล",
     description:
       "นิสิตคนไหนที่มีความชื่นชอบและรักในกีฬาฟุตบอลสามารถเข้าร่วมเป็นส่วนของชมรมฟุตบอลวิศวะจุฬาได้นะครับ และสามารถพบเจอกับพี่ๆได้ที่บูธชมรมบอล",
@@ -150,7 +150,7 @@ export const club_data: Club[] = [
   {
     id: "11",
     code: "intania-running-club",
-    name: { th: "ชมรมวิ่งวิศวะจุฬา", en: "Intania Chula Running Club" },
+    name: { th: "Intania Chula Running Club", en: "Intania Chula Running Club" },
     shortdescription: "ชมรมวิ่งสำหรับทุกระดับ ตั้งแต่มือใหม่ถึงสายแข่งขัน",
     description:
       "Intania Chula Running Club หรือชมรมวิ่งวิศวะจุฬา เป็นชมรมสำหรับนิสิตที่สนใจการวิ่ง ไม่ว่าจะเป็นมือใหม่หรือสายแข่งขัน เรามีกิจกรรมฝึกซ้อมร่วมกัน สนับสนุนสมาชิกในการลงแข่งขัน และส่งตัวแทนคณะเข้าร่วมรายการต่าง ๆ ใครอยากเริ่มวิ่ง พัฒนาตัวเอง หรือหาเพื่อนออกกำลังกาย มาร่วมเป็นส่วนหนึ่งของชมรมเราได้เลย",
@@ -164,7 +164,7 @@ export const club_data: Club[] = [
   {
     id: "12",
     code: "intania-rugby-club",
-    name: { en: "Intania Rugby Club", th: "ชมรักบี้ฟุตบอล กรรมการนิสิตคณะวิศวกรรมศาสตร์" },
+    name: { en: "Intania Rugby Club", th: "Intania Rugby Club" },
     shortdescription: "กว่า 80 ปีแห่งความรักใคร่กลมเกลียว หล่อหลอมสุภาพบุรุษ",
     description:
       "กว่า 80 ปีที่มีมา ชมรมกีฬาที่ความรักใคร่กลมเกลียวและแน่นแฟ้นที่สุด หล่อหลอม 'สุภาพบุรุษสีเลือดหมูเข้มข้น' จากรุ่นสู่รุ่น ชมรมที่ไม่ได้สอนแค่เล่นกีฬา แต่คือครอบครัวที่สร้างคนให้กลายเป็นสุภาพบุรุษ [ฝาก mc นำไปดัดแปลงใช้เองได้เลยครับ เป็นไปได้ฝากพูดว่า 'รักบี้คือกีฬาป่าเถื่อน ที่เล่นโดยสุภาพบุรุษ]",
@@ -238,7 +238,7 @@ export const club_data: Club[] = [
   {
     id: "17",
     code: "stepout",
-    name: { en: "StepOut", th: "ชมรมเต้นคณะวิศวกรรมศาสตร์" },
+    name: { en: "StepOut", th: "StepOut" },
     shortdescription: "ชมรมเต้นอันดับ 1 ของคณะวิศวะ ไม่ต้องออดิชั่น",
     description:
       "StepOut ชมรมเต้นอันดับ 1 ของคณะวิศวกรรมศาสตร์ ไม่ว่าชาย หญิง หรือใครก็สามารถเข้าชมรมนี้ได้ ชมรมนี้ไม่ต้องออดิชั่นไม่ต้องเต้นเก่งก็สามารถมาจอยกันได้ ขอแต่มีใจรักในการเต้นและเสียงดนตรีก็พอ ติดตามพวกเขาได้ที่ IG : stepout_intania หากใครที่พร้อมจะจอย พบกับพวกเขาได้เลย ขอต้อนรับ StepOuttt",
@@ -281,7 +281,7 @@ export const club_data: Club[] = [
   {
     id: "20",
     code: "intania-board-game-club",
-    name: { en: "Intania Board Game Club", th: "ชมรมหมากกระดาน" },
+    name: { en: "Intania Board Game Club", th: "Intania Board Game Club" },
     shortdescription: "เล่นหมากรุก โกะ เกมไพ่ และบอร์ดเกมหลากหลาย",
     description:
       "ชมรม Intania Board Game Club เป็นชมรมที่น้องๆ มาเล่นหมากรุก หมากฮอส โกะ เกมไพ่ต่างๆ และบอร์ดเกมอื่นๆ อีกมากมาย จนไปถึงการฝึกซ้อมเพื่อแข่งขันในระดับมหาวิทยาลัย นอกจากนี้ยังมีจัดเล่นบอร์ดเกมทุกๆ เข้าเดือนอีกด้วย! รอติดตามได้เร๊ย",
@@ -311,7 +311,7 @@ export const club_data: Club[] = [
     code: "intania-debate-club",
     name: {
       en: "Intania Debate Club",
-      th: "ชมรมโต้วาที กรรมการนิสิตคณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย",
+      th: "Intania Debate Club",
     },
     shortdescription: "ชมรมโต้วาทีที่ดีที่สุดในคณะวิศวะ ฝึกทักษะการพูด",
     description:
@@ -327,7 +327,7 @@ export const club_data: Club[] = [
   {
     id: "23",
     code: "rapidamente",
-    name: { en: "Rapidamente", th: "ชมรมฟอร์มูล่า" },
+    name: { en: "Rapidamente", th: "Rapidamente" },
     shortdescription: "ออกแบบและสร้างรถแข่ง Formula Student ด้วยฝีมือนิสิต",
     description:
       "Rapidamente (ชมรมฟอมูล่า) เป็นชมรมที่รวมนิสิตคณะวิศวกรรมจากหลากหลายสาขา รวมถึงหลากหลายคณะ ที่มีความสนใจด้านยานยนต์และมอเตอร์สปอร์ต มาร่วมกันออกแบบ ผลิต และพัฒนารถแข่ง Formula Student ด้วยฝีมือนักศึกษาเองทั้งหมด เป็นชมรมที่เปลี่ยนไอเดียบนหน้ากระดาษให้กลายเป็นรถแข่งจริง เปิดโอกาสให้นิสิตได้เรียนรู้ ออกแบบ และสร้างสรรค์ผลงานร่วมกัน พร้อมเก็บเกี่ยวประสบการณ์การทำงานจริงตลอด 1 ปีที่หาไม่ได้จากในห้องเรียน",
@@ -363,7 +363,7 @@ export const club_data: Club[] = [
   {
     id: "26",
     code: "intania-tennis-club",
-    name: { th: "ชมรมเทนนิสคณะวิศวกรรมศาสตร์", en: "Intania Tennis Club" },
+    name: { th: "Intania Tennis Club", en: "Intania Tennis Club" },
     shortdescription: "ชมรมเทนนิสที่เปิดให้ทุกคนเข้าถึงกีฬาเทนนิสได้ง่ายขึ้น",
     description: "Intania tennis club ชมรมที่ทำให้กีฬาเทนนิสเข้าถึงได้สำหรับทุกคน",
     imageUrl: "Intania-Tennis-Club.png",
@@ -417,7 +417,7 @@ export const club_data: Club[] = [
   {
     id: "30",
     code: "intania-futsal-club",
-    name: { th: "ฟุตซอล", en: "intania futsal" },
+    name: { th: "intania futsal", en: "intania futsal" },
     shortdescription: "ชมรมฟุตซอลสำหรับคนรักกีฬา ฝึกฝนและสร้างระเบียบวินัยนักกีฬา",
     description:
       "เป็นชมรมเปิดโอกาสให้คนรักในกีฬาได้มาสัมผัสประสบการณ์ เรียนรู้ ฝึกระเบียบวินัยของนักกีฬา",
