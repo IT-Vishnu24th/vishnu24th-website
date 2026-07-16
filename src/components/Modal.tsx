@@ -31,7 +31,9 @@ export function Modal() {
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="pointer-events-auto">{component}</div>
+                <div className="w-full h-full p-8 pb-24 flex flex-col items-center justify-center pointer-events-auto">
+                  {component}
+                </div>
               </motion.div>
             </Dialog.Content>
           </Dialog.Portal>

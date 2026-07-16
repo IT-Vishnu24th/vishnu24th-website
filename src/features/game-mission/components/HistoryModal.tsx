@@ -19,7 +19,7 @@ export function HistoryModal() {
   const { data: history, isLoading, isError } = useMissionHistory()
 
   return (
-    <div className="mx-auto flex max-h-[80vh] w-[92vw] max-w-md flex-col overflow-hidden rounded-3xl bg-cream-tanned shadow-2xl">
+    <div className="flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-cream-tanned shadow-2xl">
       <HistoryTornPaperEdge />
       <h2 className="pt-4 pb-3 text-center font-sov-yeehor text-3xl text-brownie-dark">
         ประวัติการตอบ

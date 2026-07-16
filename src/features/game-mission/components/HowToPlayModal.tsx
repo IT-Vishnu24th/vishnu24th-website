@@ -29,7 +29,7 @@ export function HowToPlayModal({ period }: HowToPlayModalProps) {
 
   return (
     <div
-      className={`mx-auto w-[92vw] max-w-md rounded-3xl ${theme.bg} ${theme.text} px-6 py-8 text-center shadow-2xl`}
+      className={`w-full max-w-md rounded-3xl ${theme.bg} ${theme.text} px-6 py-8 text-center shadow-2xl`}
     >
       <Sparkles className={`mx-auto mb-2 ${theme.accent}`} size={28} />
       <h2 className="font-sov-yeehor text-3xl">ปริศนาฟ้าลิขิต</h2>
