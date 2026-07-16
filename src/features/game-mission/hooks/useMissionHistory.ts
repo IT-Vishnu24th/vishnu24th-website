@@ -10,7 +10,7 @@ async function fetchMissionHistory(): Promise<UserAnswerHistoryItem[]> {
     throw new Error(json?.message ?? "โหลดประวัติการตอบไม่สำเร็จ")
   }
   // Defensive: some empty-state responses come back as {} rather than [].
-  return Array.isArray(json?.data) ? json.data : []
+  return Array.isArray(json?.data.answers) ? json.data.answers : []
 }
 
 export function useMissionHistory() {
