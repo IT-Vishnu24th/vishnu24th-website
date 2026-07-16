@@ -43,8 +43,10 @@ export function SaveConfirmModal({ period, onConfirm, isSubmitting }: SaveConfir
         <br />
         คำตอบหรือไม่?
       </h2>
-      <p className="mt-2 font-fc-quantum text-sm underline underline-offset-2">
-        *มีโอกาสในการตอบคำถามครั้งเดียวเท่านั้น!
+      <p className="mt-2 font-fc-quantum text-sm">
+        มีโอกาสในการตอบคำถาม
+        <br />
+        <span className="underline underline-offset-2">ครั้งเดียวเท่านั้น!</span>
       </p>
 
       <div className="mt-6 flex items-center justify-center gap-3">
@@ -52,7 +54,7 @@ export function SaveConfirmModal({ period, onConfirm, isSubmitting }: SaveConfir
           type="button"
           onClick={close}
           disabled={isSubmitting}
-          className={`rounded-full px-6 py-2.5 font-fc-quantum text-lg ${theme.cancelBtn}`}
+          className={`rounded-full px-6 py-2.5 font-fc-quantum text-lg enabled:cursor-pointer ${theme.cancelBtn}`}
         >
           ยกเลิก
         </button>
@@ -60,7 +62,7 @@ export function SaveConfirmModal({ period, onConfirm, isSubmitting }: SaveConfir
           type="button"
           onClick={onConfirm}
           disabled={isSubmitting}
-          className={`rounded-full px-6 py-2.5 font-fc-quantum text-lg disabled:opacity-60 ${theme.confirmBtn}`}
+          className={`rounded-full px-6 py-2.5 font-fc-quantum text-lg enabled:cursor-pointer disabled:opacity-60 ${theme.confirmBtn}`}
         >
           {isSubmitting ? "กำลังบันทึก..." : "บันทึก"}
         </button>

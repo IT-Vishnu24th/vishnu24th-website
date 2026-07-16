@@ -29,7 +29,7 @@ export function NumberAnswerInput({
       <input
         type="text"
         inputMode="numeric"
-        pattern="[0-9]*"
+        pattern="\d*"
         placeholder="XXX"
         maxLength={maxLength}
         value={displayValue ?? ""}

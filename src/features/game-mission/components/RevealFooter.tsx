@@ -17,7 +17,9 @@ export function RevealFooter({ historyItem }: RevealFooterProps) {
   if (!historyItem.isRevealed) {
     return (
       <p className="mt-3 text-center text-sm opacity-70 font-fc-quantum">
-        ส่งคำตอบแล้ว รอเฉลยตามเวลาที่กำหนด
+        ส่งคำตอบแล้ว
+        <br />
+        รอเฉลยตามเวลาที่กำหนด
       </p>
     )
   }

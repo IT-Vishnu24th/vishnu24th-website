@@ -63,7 +63,9 @@ export function MissionHeaderBanner({
             </button>
           )}
 
-          <h1 className={`font-sov-yeehor text-4xl md:text-5xl ${TITLE_COLOR[period]}`}>{title}</h1>
+          <h1 className={`font-sov-yeehor mb-2 text-4xl md:text-5xl ${TITLE_COLOR[period]}`}>
+            {title}
+          </h1>
 
           {onHelpClick && (
             <button
