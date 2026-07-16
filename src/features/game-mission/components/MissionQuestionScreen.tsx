@@ -94,10 +94,10 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
           onHelpClick={() => open(<HowToPlayModal period={question.period} />)}
         />
 
-        <div className="relative mx-auto mt-8 flex max-w-md flex-col items-center gap-6 px-5">
+        <div className="relative mt-8 flex flex-col items-center gap-6 px-24">
           <BackgroundIllustration />
 
-          <div className="relative z-10 flex w-full flex-col items-center gap-6">
+          <div className="relative mx-auto z-10 flex flex-col items-center gap-6">
             {question.type === "single" && question.options && (
               <SingleChoiceList
                 options={question.options}
@@ -174,8 +174,10 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
       )}
 
       {status === "locked" && (
-        <p className="mt-6 text-center font-fc-quantum opacity-70">
-          คำถามนี้ยังไม่เปิดให้ตอบ กลับมาใหม่ตามเวลาที่กำหนด
+        <p className="mt-6 px-24 text-center font-fc-quantum opacity-70">
+          คำถามนี้ยังไม่เปิดให้ตอบ
+          <br />
+          กลับมาใหม่ตามเวลาที่กำหนด
         </p>
       )}
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { HelpCircle, RotateCcw } from "lucide-react"
+import { HelpCircle, History } from "lucide-react"
 import type { MissionPeriod } from "@/types/mission"
 import { Header2 } from "@/components/Headers"
 import { TornPaperEdge } from "./TornPaperEdge"
@@ -45,11 +45,7 @@ export function MissionHeaderBanner({
 }: MissionHeaderBannerProps) {
   return (
     <div>
-      <div
-        className={`${GRADIENTS[period]} ${compact ? "rounded-2xl" : "rounded-b-3xl"} px-5 ${
-          compact ? "py-2 pb-5" : "pb-10"
-        }`}
-      >
+      <div className={`${GRADIENTS[period]} px-5 ${compact ? "py-2 pb-5" : "pb-10"}`}>
         {/* Rendered inside the gradient (not above it) so the color stretches
             all the way to the very top of the screen, behind the back button
             and user chip. */}
@@ -63,7 +59,7 @@ export function MissionHeaderBanner({
               className={`flex h-10 w-10 items-center justify-center rounded-full ${ICON_BG[period]}`}
               aria-label="ประวัติการตอบ"
             >
-              <RotateCcw size={18} strokeWidth={2.5} />
+              <History size={18} strokeWidth={2.5} />
             </button>
           )}
 
