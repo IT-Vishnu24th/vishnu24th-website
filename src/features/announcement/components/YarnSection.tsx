@@ -57,7 +57,7 @@ export const YarnSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.6 }}
         >
-          <LineSection />
+          <LineSection yaan={yaan ?? ""} />
         </motion.div>
       </div>
       <img src="/yaan/finish_bg.png" className="absolute inset-0 shrink-0 h-full w-full" />
