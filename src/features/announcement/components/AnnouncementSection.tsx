@@ -23,12 +23,12 @@ export const AnnouncementSection = () => {
 
   useEffect(() => {
     if (isLoading) return
-    if (user === null || !showYarn) {
+    if (!user || !showYarn) {
       router.push("/")
     }
   }, [user, showYarn, isLoading, router])
 
-  if (user === null || !showYarn || userLoading) return null
+  if (!user || !showYarn || userLoading) return null
   return (
     <>
       {hasYarnAccepted ? (
