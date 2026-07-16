@@ -98,7 +98,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
           <BackgroundIllustration />
 
           <div className="relative mx-auto z-10 flex flex-col items-center gap-6">
-            {question.type === "single" && question.options && (
+            {question.type === "single" && (
               <SingleChoiceList
                 options={question.options}
                 period={question.period}
@@ -109,7 +109,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
               />
             )}
 
-            {question.type === "multi" && question.options && (
+            {question.type === "multi" && (
               <MultiChoiceList
                 options={question.options}
                 period={question.period}
