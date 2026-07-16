@@ -36,7 +36,7 @@ const BODY_TEXT = {
 export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) {
   const open = useModalStore((s) => s.open)
   const status = getMissionStatus(question)
-  const { item: historyItem } = useMissionHistoryItem(question.id)
+  const { item: historyItem, isPending } = useMissionHistoryItem(question.id)
   const submitMutation = useSubmitMissionAnswer()
 
   const [singleValue, setSingleValue] = useState<string | null>(null)
@@ -155,7 +155,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         </div>
       </div>
 
-      {!hasSubmitted && status === "open" && (
+      {!hasSubmitted && !isPending && status === "open" && (
         <div className="fixed z-100 bottom-28 left-1/2 -translate-x-1/2">
           <button
             type="button"
