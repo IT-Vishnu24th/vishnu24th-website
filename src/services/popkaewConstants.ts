@@ -1,0 +1,2 @@
+export const POPKAEW_BUCKET_CAPACITY = 100
+export const POPKAEW_REFILL_TIME_MS = 5000
