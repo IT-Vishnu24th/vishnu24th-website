@@ -1,40 +1,63 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { Header2 } from "@/components/Headers"
 import { useRouter } from "next/navigation"
 import type { ScanResponse } from "@/types/scan"
 import Image from "next/image"
 import { club_data } from "@/features/clubs/const/club-data"
 
+type ParsedScanResult =
+  | { status: "missing"; result: null; error?: never }
+  | { status: "invalid"; result: null; error: unknown }
+  | { status: "valid"; result: ScanResponse; error?: never }
+
+const subscribeToScanResult = (onStoreChange: () => void) => {
+  window.addEventListener("storage", onStoreChange)
+  return () => window.removeEventListener("storage", onStoreChange)
+}
+
+const getScanResultSnapshot = () => sessionStorage.getItem("scanResult")
+
+const getScanResultServerSnapshot = () => null
+
 export default function RewardPage() {
   const router = useRouter()
 
   const [opened, setOpened] = useState(false)
   const [showResult, setShowResult] = useState(false)
-  const [result, setResult] = useState<ScanResponse | null>(null)
-  const hasRun = useRef(false)
+  const rawScanResult = useSyncExternalStore(
+    subscribeToScanResult,
+    getScanResultSnapshot,
+    getScanResultServerSnapshot
+  )
+
+  const parsedScanResult = useMemo<ParsedScanResult>(() => {
+    if (!rawScanResult) return { status: "missing", result: null }
+    try {
+      return { status: "valid", result: JSON.parse(rawScanResult) as ScanResponse }
+    } catch (err) {
+      return { status: "invalid", result: null, error: err }
+    }
+  }, [rawScanResult])
+
+  const result = parsedScanResult.result
 
   useEffect(() => {
-    if (hasRun.current) return
-    hasRun.current = true
-
-    const raw = sessionStorage.getItem("scanResult")
-    if (!raw) {
-      router.replace("/scan")
+    if (parsedScanResult.status === "missing") {
+      if (!sessionStorage.getItem("scanResult")) {
+        router.replace("/scan")
+      }
       return
     }
 
-    try {
-      setResult(JSON.parse(raw))
-    } catch (err) {
-      console.error("Failed to parse scan result:", err)
+    sessionStorage.removeItem("scanResult")
+
+    if (parsedScanResult.status === "invalid") {
+      console.error("Failed to parse scan result:", parsedScanResult.error)
       router.replace("/scan")
-      return
-    } finally {
-      sessionStorage.removeItem("scanResult")
     }
-  }, [router])
+  }, [parsedScanResult, router])
 
   const club = useMemo(() => {
     if (!result) return undefined

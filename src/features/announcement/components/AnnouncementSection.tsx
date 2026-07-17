@@ -13,6 +13,7 @@ export const AnnouncementSection = () => {
   const user = data?.data
   const router = useRouter()
   const [yarnAccepted, setYarnAccepted] = useState(false)
+  const hasYarnAccepted = yarnAccepted || (user?.yarnAccepted ?? false)
 
   const showYarn = useMemo(() => {
     const showVessel = featureFlagsData?.data.filter((e) => e.id === "reveal-vessel")
@@ -21,20 +22,20 @@ export const AnnouncementSection = () => {
   }, [featureFlagsData?.data])
 
   useEffect(() => {
-    setYarnAccepted(user?.yarnAccepted || false)
-  }, [userLoading])
-
-  useEffect(() => {
-    if (isLoading) return
-    if (user === null || !showYarn) {
+    if (isLoading || userLoading) return
+    if (!user || !showYarn) {
       router.push("/")
     }
-  }, [user, showYarn, isLoading])
+  }, [user, showYarn, isLoading, router])
 
-  if (user === null || !showYarn || userLoading) return null
+  if (!user || !showYarn || userLoading) return null
   return (
     <>
-      {yarnAccepted ? <YarnSection /> : <QuestionaireSeciton setYarnAccepted={setYarnAccepted} />}
+      {hasYarnAccepted ? (
+        <YarnSection />
+      ) : (
+        <QuestionaireSeciton setYarnAccepted={setYarnAccepted} />
+      )}
     </>
   )
 }

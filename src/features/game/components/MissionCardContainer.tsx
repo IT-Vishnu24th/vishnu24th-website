@@ -96,7 +96,8 @@ export const MissionCardContainer = () => {
   const { data: phaseData } = usePhase()
   const { data: missionData } = useMyMissions()
 
-  const value = Number(phaseData?.data?.vishnuMission.current.at(-1) ?? "0")
+  // day 0 = missions disabled (phase null/missing) or phase not yet loaded
+  const value = Number(phaseData?.data?.vishnuMission?.current?.at(-1) ?? "0")
   const day = Number.isNaN(value) ? 0 : value
 
   const latestAnswer = useMemo(() => {
@@ -131,7 +132,9 @@ export const MissionCardContainer = () => {
       } else if (deadline && now > deadline) {
         status = "completed"
       } else if (mission.id === "game-mission") {
-        if (latestAnswerId === day.toString()) {
+        if (day === 0) {
+          status = "locked"
+        } else if (latestAnswerId === day.toString()) {
           status = "completed"
         } else status = "active"
       }
@@ -141,7 +144,7 @@ export const MissionCardContainer = () => {
         status,
       }
     })
-  }, [featureFlagsData?.data, missionData?.data])
+  }, [featureFlagsData?.data, missionData?.data, latestAnswerId, day])
   return (
     <section className="w-full pb-6">
       <div className="w-full grid grid-cols-1 place-items-center pb-15 [@media(min-width:748px)]:grid-cols-2">
