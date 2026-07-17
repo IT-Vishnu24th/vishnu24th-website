@@ -20,7 +20,7 @@ export const PopkaewCharacter = ({ disabled = false, isPressed, onPop }: Popkaew
           onPop()
         }
       }}
-      className="relative z-20 mx-auto flex h-[253px] w-[267px] touch-manipulation select-none items-end justify-center outline-none focus-visible:ring-4 focus-visible:ring-white/75 disabled:cursor-not-allowed disabled:opacity-80"
+      className="relative z-20 mx-auto flex h-63.25 w-66.75 touch-manipulation select-none items-end justify-center outline-none focus-visible:ring-4 focus-visible:ring-white/75 disabled:cursor-not-allowed disabled:opacity-80"
     >
       <Image
         src={isPressed ? "/game-popkaew/parrot-pressed.png" : "/game-popkaew/parrot-idle.png"}
@@ -30,7 +30,7 @@ export const PopkaewCharacter = ({ disabled = false, isPressed, onPop }: Popkaew
         priority
         draggable={false}
         className={`pointer-events-none h-auto object-contain drop-shadow-[0_8px_8px_rgba(80,45,28,0.16)] ${
-          isPressed ? "w-[267px]" : "mb-1 w-[237px]"
+          isPressed ? "w-66.75" : "mb-1 w-59.25"
         }`}
       />
     </button>

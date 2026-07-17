@@ -1,41 +1,98 @@
 "use client"
 
-import { PopkaewCharacter } from "./PopkaewCharacter"
-import type { PopkaewVesselScore } from "../types"
-import { formatPopkaewScore } from "../utils"
-import { PopkaewArtwork } from "./PopkaewArtwork"
-import { Header2 } from "@/components/Headers"
+import { useCallback, useEffect, useRef, useState } from "react"
 
-type ViewMode = "game" | "leaderboard"
+import { PopkaewArtwork } from "./PopkaewArtwork"
+import { PopkaewCharacter } from "./PopkaewCharacter"
+import { PopkaewHeroSection } from "./PopkaewHeroSection"
+import { formatPopkaewScore } from "../utils"
+
+import { useFeatureFlag, usePopkaewClick, usePopkaewMe } from "@/hooks/useApi"
+import useAuth from "@/hooks/useAuth"
+import { PopkaewBottomsheet } from "./PopkaewBottomsheet"
 
 const PRESS_ANIMATION_MS = 130
-
-const fallbackLeaderboard: PopkaewVesselScore[] = Array.from({ length: 18 }, (_, index) => ({
-  rank: index + 1,
-  vesselName: {
-    th: `ยานอนาคอนด้า ${index + 1}`,
-    en: `Anaconda ${index + 1}`,
-  },
-  popkaewscore: 0,
-}))
+const FLUSH_INTERVAL = 10_000
+const CLICK_THRESHOLD = 100
 
 export function PopkaewGame() {
+  const { user } = useAuth()
+
+  const { data: featureFlag, isLoading } = useFeatureFlag("game-popkaew")
+  const { data: me } = usePopkaewMe()
+  const { mutate } = usePopkaewClick()
+
+  const isPlayable = !isLoading && (featureFlag?.data.enabled ?? false) && user !== null
+
+  const [score, setScore] = useState(0)
+  const [isPressed, setIsPressed] = useState(false)
+
+  const pendingClicksRef = useRef(0)
+  const isFlushingRef = useRef(false)
+
+  useEffect(() => {
+    if (me) {
+      setScore(me.data.popkaewscore)
+    }
+  }, [me])
+
+  const flushClicks = useCallback(() => {
+    if (isFlushingRef.current) return
+
+    const clicks = pendingClicksRef.current
+    if (clicks === 0) return
+
+    isFlushingRef.current = true
+    pendingClicksRef.current = 0
+
+    mutate(clicks, {
+      onSuccess: (res) => {
+        setScore(res.data.score)
+      },
+      onError: () => {
+        pendingClicksRef.current += clicks
+      },
+      onSettled: () => {
+        isFlushingRef.current = false
+      },
+    })
+  }, [mutate])
+
+  useEffect(() => {
+    if (!isPlayable) return
+    const interval = setInterval(flushClicks, FLUSH_INTERVAL)
+    return () => {
+      clearInterval(interval)
+      flushClicks()
+    }
+  }, [flushClicks, isPlayable])
+
+  const handlePop = () => {
+    if (!isPlayable || isPressed) return
+    setIsPressed(true)
+    setTimeout(() => {
+      setIsPressed(false)
+    }, PRESS_ANIMATION_MS)
+    setScore((prev) => prev + 1)
+    pendingClicksRef.current += 1
+    if (pendingClicksRef.current >= CLICK_THRESHOLD) {
+      flushClicks()
+    }
+  }
+
   return (
-    <section className="relative h-218.5 overflow-x-hidden">
+    <section className="relative h-screen w-full overflow-hidden">
+      <PopkaewHeroSection />
       <PopkaewArtwork />
-      <Header2 title="เกมส์" url="/game" />
 
-      {true && (
-        <>
-          <p className="font-sov-yeehor absolute inset-x-0 top-[276px] z-20 text-center text-[64px] font-normal leading-[0.69] tracking-[1.28px] text-[#3c2927] tabular-nums">
-            {formatPopkaewScore(0)}
-          </p>
+      <p className="font-sov-yeehor absolute inset-x-0 top-75 z-20 text-center text-[64px] font-normal leading-[0.69] tracking-[1.28px] text-[#3c2927] tabular-nums">
+        {formatPopkaewScore(score)}
+      </p>
 
-          <div className="absolute inset-x-0 top-[318px] z-20">
-            <PopkaewCharacter disabled={true} isPressed={true} onPop={() => {}} />
-          </div>
-        </>
-      )}
+      <div className="absolute inset-x-0 top-85.5 z-20">
+        <PopkaewCharacter disabled={!isPlayable} isPressed={isPressed} onPop={handlePop} />
+      </div>
+      <PopkaewBottomsheet />
     </section>
   )
 }

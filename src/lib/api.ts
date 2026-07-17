@@ -58,6 +58,10 @@ export const featureFlagApi = {
     return api.get<{ data: FeatureFlag[] }>("/flags")
   },
 
+  getFeatureFlag: async (id: string) => {
+    return api.get<{ data: FeatureFlag }>(`/flags/${id}`)
+  },
+
   createFeatureFlag: async (body: { id: string; name: MultiLang; enabled?: boolean }) => {
     return api.post<{ data: FeatureFlag }>("/flags", body)
   },

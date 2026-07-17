@@ -97,6 +97,14 @@ export function useFeatureFlags() {
   })
 }
 
+export function useFeatureFlag(id: string) {
+  return useQuery({
+    queryKey: ["featureFlag", id],
+    queryFn: () => featureFlagApi.getFeatureFlag(id),
+    enabled: !!id,
+  })
+}
+
 export function useCreateFeatureFlag() {
   const queryClient = useQueryClient()
   return useMutation({
