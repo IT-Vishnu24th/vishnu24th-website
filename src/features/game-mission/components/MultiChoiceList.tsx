@@ -1,6 +1,5 @@
 "use client"
 
-import { RevealFooter } from "@/features/game-mission/components/RevealFooter"
 import { ChoiceOption, type ChoiceVisualState } from "./ChoiceOption"
 import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
 
@@ -55,7 +54,6 @@ export function MultiChoiceList({
           />
         )
       })}
-      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

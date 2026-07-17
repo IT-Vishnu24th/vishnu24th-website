@@ -1,7 +1,6 @@
 "use client"
 
 import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
-import { RevealFooter } from "./RevealFooter"
 
 interface NumberAnswerInputProps {
   value: string
@@ -42,7 +41,6 @@ export function NumberAnswerInput({
         }}
         className={`w-40 rounded-2xl border-2 bg-transparent px-6 py-4 text-center text-3xl font-fc-quantum tracking-widest outline-none disabled:opacity-70 ${borderClass}`}
       />
-      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

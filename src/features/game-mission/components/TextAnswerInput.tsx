@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
-import { RevealFooter } from "./RevealFooter"
 
 interface TextAnswerInputProps {
   value: string
@@ -44,7 +43,6 @@ export function TextAnswerInput({
         onChange={(e) => onChange(e.target.value)}
         className={`w-full max-w-xs rounded-2xl border-2 bg-transparent px-6 py-4 text-center text-xl font-fc-quantum outline-none disabled:opacity-70 ${borderClass}`}
       />
-      <RevealFooter historyItem={historyItem} question={question} />
     </div>
   )
 }

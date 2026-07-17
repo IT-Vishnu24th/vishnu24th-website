@@ -146,21 +146,25 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
               <div
                 className={`font-medium ${question.period === "morning" ? "text-brownie" : "text-midnight-light"}`}
               >
-                {(status === "locked" || status === "open") && (
+                {status !== "revealed" && hasSubmitted && (
+                  <p className="mb-2">บันทึกคำตอบเรียบร้อย!</p>
+                )}
+                {status === "locked" && <p>เปิดให้ตอบ {formatBangkokTime(question.opensAt)}</p>}
+                {status === "open" && !hasSubmitted && (
                   <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
                 )}
-                {status === "awaiting-reveal" && !historyItem && (
-                  <>
-                    <p>ปิดรับคำตอบแล้ว</p>
-                    <p className={`text-sm ${BODY_TEXT[question.period]}`}>
-                      รอเฉลยคำตอบพร้อมกัน
-                      <br />
-                      {formatBangkokTime(question.revealsAt)} ได้เลย
-                    </p>
-                  </>
-                )}
+                {status === "awaiting-reveal" && !hasSubmitted && <p>ปิดรับคำตอบแล้ว</p>}
+                {status === "revealed" && !hasSubmitted && <p>คุณไม่ได้ตอบ</p>}
               </div>
-              <p className="text-sm mt-1">นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน</p>
+
+              {(status === "awaiting-reveal" || (status === "open" && hasSubmitted)) && (
+                <p className="text-sm mt-2">
+                  รอเฉลยคำตอบพร้อมกัน
+                  <br />
+                  {formatBangkokTime(question.revealsAt)} ได้เลย
+                </p>
+              )}
+              <p className="text-sm mt-2">นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน</p>
             </div>
           </div>
         </div>
@@ -172,7 +176,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
             type="button"
             onClick={handleSaveClick}
             disabled={!canSave}
-            className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity disabled:opacity-80 ${BODY_BG[question.period]}`}
+            className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity opacity-95 disabled:opacity-80 ${BODY_BG[question.period]}`}
           >
             <Save className="inline size-7 align-middle" /> บันทึก
           </button>
