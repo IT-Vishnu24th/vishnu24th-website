@@ -19,14 +19,14 @@ const geistMono = Geist_Mono({
 })
 
 const fcQuantum = localFont({
-  src: "../fonts/FC Quantum [Non-commercial].otf",
-  variable: "--font-fc-quantum",
+  src: "../fonts/FC_Quantum.otf",
+  variable: "--font-fc-quantum-family",
   display: "swap",
 })
 
 const sovYeeHor = localFont({
   src: "../fonts/SOV_YeeHor.ttf",
-  variable: "--font-sov-yeehor",
+  variable: "--font-sov-yeehor-family",
   display: "swap",
 })
 
@@ -63,7 +63,7 @@ const ppFragmentGlare = localFont({
       style: "italic",
     },
   ],
-  variable: "--font-ppfragment-glare",
+  variable: "--font-ppfragment-glare-family",
   display: "swap",
 })
 
@@ -85,7 +85,7 @@ const arthemis = localFont({
       style: "oblique",
     },
   ],
-  variable: "--font-arthemis",
+  variable: "--font-arthemis-family",
   display: "swap",
 })
 

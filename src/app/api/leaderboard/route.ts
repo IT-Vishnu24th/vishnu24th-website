@@ -12,7 +12,7 @@ export async function GET() {
     const [user, groups, clubScanFlag, revealVessel] = await Promise.all([
       getAuthenticatedRawUser(),
       groupService.rawList(),
-      featureFlagsService.getFlag("game-clubscan"),
+      featureFlagsService.isEnabled("game-clubscan"),
       featureFlagsService.isEnabled("reveal-vessel"),
     ])
 

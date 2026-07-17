@@ -5,7 +5,7 @@ import { adminAuth } from "@/firebase/admin"
 import userService from "@/services/userService"
 
 const STUDENT_EMAIL_PATTERN = /^6[89]\d{6}21@student\.chula\.ac\.th$/
-const SESSION_EXPIRES_IN_MS = 1000 * 60 * 60 * 24 * 5 // 5 days
+const SESSION_EXPIRES_IN_MS = 1000 * 60 * 60 * 24 * 7 // 7 days
 
 const sessionPayloadSchema = z.object({
   idToken: z.string(),

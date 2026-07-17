@@ -10,12 +10,15 @@ export function useClubFilter(
   boothFilter: BoothFilter = "all"
 ) {
   return useMemo(() => {
+    const q = query.toLowerCase()
+
     return clubs.filter((club) => {
-      const matchName = club.name.toLowerCase().includes(query.toLowerCase())
+      const matchName =
+        club.name.th.toLowerCase().includes(q) || club.name.en.toLowerCase().includes(q)
 
       // ไม่เลือกหมวดหมู่ใดเลย = แสดงทั้งหมด
       // เลือกหลายหมวด = แสดงรวมกัน (OR)
-      const matchCategory = categories.length === 0 || categories.includes(club.categoryId)
+      const matchCategory = categories.length === 0 || categories.includes(club.category)
 
       const matchBooth =
         boothFilter === "all" ||

@@ -24,10 +24,10 @@ export default function FooterNavigation() {
       name: "Explore",
       icon: Compass,
       path: "/explore",
-      subpaths: ["/explore/schedule"],
+      subpaths: ["/explore/schedule", "/explore/club", "/explore/map", "/explore/slide"],
       requiresAuth: false,
     },
-    { name: "Ranking", icon: Ship, path: "/ranking", requiresAuth: true },
+    { name: "Leaderboard", icon: Ship, path: "/leaderboard", requiresAuth: true },
     { name: "Game", icon: Gamepad2, path: "/game", requiresAuth: true },
     ...(isAdmin
       ? [

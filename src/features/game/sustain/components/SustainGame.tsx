@@ -52,7 +52,7 @@ const getRandomTrash = (): SustainFallingTrash => {
 
   return {
     ...template,
-    score: randomScore(),
+    score: 1,
     instanceId: `${template.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     x,
     y: -size,

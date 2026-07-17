@@ -1,9 +1,11 @@
-export const LineLogo = () => {
+import { cn } from "@/utils/cn"
+
+export const LineLogo = ({ className }: { className?: string }) => {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 48 48"
-      className="size-[clamp(2.25rem,9vw,3rem)] drop-shadow-sm"
+      className={cn("size-[clamp(2.25rem,9vw,3rem)] drop-shadow-sm", className)}
     >
       <rect width="48" height="48" rx="10" fill="#06C755" />
       <path
