@@ -8,7 +8,6 @@ import { YarnSection } from "@/features/auth/components/YarnSection"
 import { modalStore } from "@/stores/modalStore"
 import { UserInfoSection } from "./UserInfoSection"
 import { motion } from "motion/react"
-import { LanguageChangerButton } from "@/features/i18n/components/LanguageChangerButton"
 import { useMe } from "@/hooks/useApi"
 import { LogoutButton } from "./LogoutButton"
 
@@ -24,7 +23,7 @@ export const UserInfoModal = () => {
       </Dialog.Description>
 
       <div className="flex items-center justify-between px-4.5 pt-6">
-        <LanguageChangerButton />
+        <div />
         <button
           type="button"
           aria-label="ปิด"
