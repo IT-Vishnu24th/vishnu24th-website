@@ -1,74 +1,134 @@
-import Image from "next/image"
+import { cn } from "@/utils/cn"
+import { Calendar, Check, Clock, Lock } from "lucide-react"
+import Link from "next/link"
+import { ReactNode } from "react"
 
-type MissionStatus = "active" | "locked" | "completed"
+export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
-interface MissionCardProps {
+export interface MissionCardProps {
   title: string
-  reward: string
+  reward: number
   status: MissionStatus
+  deadline: string
+  banner?: ReactNode
+  img?: string
+  href: string
 }
 
-const statusStyle: Record<MissionStatus, { label: string; className: string }> = {
+const formatRemainingTimeTH = (deadline: string | Date) => {
+  const diff = new Date(deadline).getTime() - Date.now()
+
+  if (diff <= 0) return "หมดเวลา"
+
+  const totalMinutes = Math.floor(diff / (1000 * 60))
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  return `${hours.toLocaleString("th-TH")} ชั่วโมง ${minutes.toLocaleString("th-TH")} นาที`
+}
+
+const statusConfig = {
   active: {
-    label: "ทำภารกิจ",
-    className: "bg-[#2c2c2c] text-[#f5f5f5]",
+    Icon: Clock,
+    text: (deadline: string) => formatRemainingTimeTH(deadline),
+    className: "bg-brownie-light",
   },
   locked: {
-    label: "ทำภารกิจ",
-    className: "bg-[#d9d9d9] text-[#b3b3b3]",
+    Icon: Lock,
+    text: () => "เล่นไม่ได้ในช่วงนี้",
+    className: "bg-brownie",
   },
   completed: {
-    label: "ภารกิจสำเร็จ",
-    className: "bg-transparent text-[#303030]",
+    Icon: Check,
+    text: () => "ทำภารกิจสำเร็จ",
+    className: "bg-brownie-light",
   },
-}
+  upcoming: {
+    Icon: Calendar,
+    text: () => "เร็วๆนี้",
+    className: "bg-brownie",
+  },
+} satisfies Record<
+  MissionStatus,
+  {
+    Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+    text: (deadline: string) => string
+    className: string
+  }
+>
 
-export default function MissionCard({ title, reward, status }: MissionCardProps) {
-  const currentStatus = statusStyle[status]
+const StatusPill = ({ status, deadline }: { status: MissionStatus; deadline: string }) => {
+  const { Icon, text, className } = statusConfig[status]
 
   return (
-    <article className="flex w-full flex-col items-center gap-4 overflow-hidden bg-[#d7d7d7] px-4 pb-6 pt-4 text-center text-black">
-      <p className="w-full text-[64px] uppercase leading-[1.2] tracking-[-5.12px]">Wanted</p>
-
-      <div className="flex w-full flex-col items-center">
-        <div className="relative h-60 w-70 overflow-hidden">
-          <Image
-            src="/game/character-bg.png"
-            alt=""
-            fill
-            sizes="280px"
-            className="object-cover"
-            priority
-          />
-          <Image
-            src="/game/parrot.png"
-            alt=""
-            width={243}
-            height={228}
-            sizes="243px"
-            className="absolute left-4.5 top-1.5 h-57 w-60.75 object-cover object-[50%_22%]"
-            priority
-          />
+    <div
+      className={`${className} w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2`}
+    >
+      <Icon className="size-4" strokeWidth={3} />
+      <div className="mb-0.75">{text(deadline)}</div>
+    </div>
+  )
+}
+export default function MissionCard({
+  title,
+  reward,
+  status,
+  deadline,
+  banner,
+  img,
+  href,
+}: MissionCardProps) {
+  return (
+    <Link
+      className={cn(
+        "relative w-93.5 h-125 cursor-pointer",
+        status !== "active" && "cursor-not-allowed"
+      )}
+      href={href}
+      onClick={(e) => {
+        if (status !== "active") e.preventDefault()
+      }}
+    >
+      <img
+        src={
+          status === "locked"
+            ? "/game/locked_sheet.png"
+            : status === "upcoming"
+              ? "/game/upcoming_sheet.png"
+              : "/game/normal_sheet.png"
+        }
+        className="w-93.5 absolute"
+      />
+      <div className="absolute top-7 flex w-full max-w-120 flex-col items-center overflow-hidden bg-none px-4 pt-5 pb-6 text-center text-brownie">
+        <div className="font-arthemis text-[48px] mb-2 h-10">
+          {status === "upcoming" ? "?????????" : "WANTED"}
         </div>
 
-        <h2 className="w-full text-[42px] leading-none tracking-[-0.84px] min-[390px]:text-[48px]">
-          {title}
-        </h2>
+        <div className="relative w-68.75 aspect-square">
+          {banner !== undefined && status !== "upcoming" ? (
+            banner
+          ) : (
+            <img
+              src={status === "upcoming" ? "/game/question_banner.png" : img}
+              className="absolute inset-0 h-full w-full object-cover"
+              alt=""
+            />
+          )}
+          <div className="bottom-2 left-1/2 -translate-x-1/2 absolute w-full flex justify-center">
+            <StatusPill status={status} deadline={deadline} />
+          </div>
+        </div>
+
+        <div className="font-sov-yeehor text-[48px] mb-1.5 leading-8.5 whitespace-pre">
+          {status === "upcoming" ? "???????" : title}
+        </div>
+
+        <div className="font-fc-quantum text-[20px]">
+          {status === "upcoming"
+            ? "????????????????????"
+            : `รางวัล: ${reward.toLocaleString()} เหรียญอวกาศ`}
+        </div>
       </div>
-
-      <p className="w-full text-[20px] leading-[1.2] tracking-[0.4px]">
-        รางวัล: {reward} เหรียญอวกาศ
-      </p>
-
-      <button
-        type="button"
-        disabled={status !== "active"}
-        className={`flex w-70 items-center justify-center rounded-full px-3 py-3 text-[16px] leading-[1.4] transition ${currentStatus.className} ${
-          status === "active" ? "hover:bg-[#1f1f1f]" : "cursor-default"
-        }`}
-      >
-        {currentStatus.label}
-      </button>
-    </article>
+    </Link>
   )
 }

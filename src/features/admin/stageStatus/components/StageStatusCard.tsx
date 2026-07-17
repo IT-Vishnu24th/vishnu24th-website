@@ -1,59 +1,105 @@
 "use client"
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import { useMemo, useState } from "react"
-import { cardClasses, Status, statusClasses } from "../const/status"
+import { useMemo } from "react"
+import { cardClasses, statusClasses } from "../const/status"
+import { StagePerformance, StagePerformanceStatus } from "@/types/stagePerformance"
 
 interface StageStatusCardProps {
-  title: string
-  startTime: string
-  endTime: string
-  initialStatus: Status
+  stage: StagePerformance
+  onChange: (updates: Partial<StagePerformance>) => void
 }
 
-const TimeBlock = ({ label, value }: { label: string; value: string }) => {
+const toLocalISOString = (dateStr: string) => {
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return ""
+
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  const year = d.getFullYear()
+  const month = pad(d.getMonth() + 1)
+  const day = pad(d.getDate())
+  const hours = pad(d.getHours())
+  const minutes = pad(d.getMinutes())
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+const parseLocalInputToISO = (inputValue: string) => {
+  if (!inputValue) return ""
+  const [datePart, timePart] = inputValue.split("T")
+  if (!datePart || !timePart) return ""
+  const [year, month, day] = datePart.split("-").map(Number)
+  const [hours, minutes] = timePart.split(":").map(Number)
+  const dateObj = new Date(year, month - 1, day, hours, minutes)
+  return dateObj.toISOString()
+}
+
+const TimeInput = ({
+  label,
+  value,
+  onChange,
+  isDark,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  isDark: boolean
+}) => {
+  const localVal = useMemo(() => toLocalISOString(value), [value])
+
   return (
-    <div className="flex min-w-16 flex-col items-start gap-0.5">
-      <span className="text-[10px] leading-[1.4] opacity-80">{label}</span>
-      <span className="text-[14px] leading-[1.4]">{value}</span>
+    <div className="flex flex-col items-start gap-0.5">
+      <span className="text-[14px] leading-[1.4] opacity-80 font-fc-quantum">{label}</span>
+      <input
+        type="datetime-local"
+        value={localVal}
+        onChange={(e) => {
+          const isoVal = parseLocalInputToISO(e.target.value)
+          if (isoVal) onChange(isoVal)
+        }}
+        style={{ colorScheme: isDark ? "dark" : "light" }}
+        className="bg-transparent text-[13px] font-ppfragment-glare leading-[1.4] border-b border-dashed border-current/30 hover:border-current/60 focus:border-current outline-none cursor-pointer transition-colors max-w-full"
+      />
     </div>
   )
 }
 
-const StatusPill = ({ status }: { status: Status }) => (
+const StatusPill = ({ status }: { status: StagePerformanceStatus }) => (
   <div
-    className={`flex w-21.25 shrink-0 items-center justify-center rounded-2xl p-2 text-[14px] leading-[1.4] text-white ${statusClasses[status]}`}
+    className={`flex w-21.25 shrink-0 border font-ppfragment-glare items-center justify-center rounded-2xl p-2 text-[14px] leading-[1.4] text-white ${statusClasses[status]}`}
   >
     {status}
   </div>
 )
 
-export const StageStatusCard = ({
-  title,
-  startTime,
-  endTime,
-  initialStatus,
-}: StageStatusCardProps) => {
-  const [status, setStatus] = useState<Status>(initialStatus)
-
+export const StageStatusCard = ({ stage, onChange }: StageStatusCardProps) => {
+  const status = stage.status
+  const isDark = status === "live" || status === "delayed" || status === "upcoming"
   const cardClass = useMemo(() => cardClasses[status], [status])
 
   return (
     <article
       className={`flex w-full items-center justify-between rounded-xl px-2 py-4 ${cardClass}`}
     >
-      <div className="size-8 shrink-0 rounded-full bg-[radial-gradient(circle_at_center,#e9e9e9_0_35%,transparent_36%),repeating-linear-gradient(45deg,#ededed_0_1px,#ffffff_1px_3px)]" />
-
-      <div className="flex w-48 shrink-0 flex-col items-start gap-2">
-        <h2 className="w-full text-[16px] leading-[1.4]">{title}</h2>
-        <div className="flex items-center gap-3">
-          <TimeBlock label="เวลาเริ่ม" value={startTime} />
+      <div className="flex flex-1 min-w-0 flex-col items-start gap-2 mx-4">
+        <h2 className="w-full text-[16px] font-fc-quantum">{stage.name.th}</h2>
+        <div className="flex items-center gap-3 w-full">
+          <TimeInput
+            label="เวลาเริ่ม"
+            value={stage.start}
+            onChange={(v) => onChange({ start: v })}
+            isDark={isDark}
+          />
           <div className="h-7 w-0.5 shrink-0 rounded-full bg-current/40" />
-          <TimeBlock label="เวลาสิ้นสุด" value={endTime} />
+          <TimeInput
+            label="เวลาสิ้นสุด"
+            value={stage.end}
+            onChange={(v) => onChange({ end: v })}
+            isDark={isDark}
+          />
         </div>
       </div>
 
-      <DropdownMenu.Root>
+      <DropdownMenu.Root modal={false}>
         <DropdownMenu.Trigger asChild>
           <button type="button" className="w-21.25 shrink-0 cursor-pointer">
             <StatusPill status={status} />
@@ -64,17 +110,19 @@ export const StageStatusCard = ({
           <DropdownMenu.Content
             sideOffset={6}
             align="end"
-            className="z-20 w-21.25 overflow-hidden rounded-lg bg-white"
+            className="z-20 w-21.25 overflow-hidden rounded-lg bg-white shadow-lg"
           >
-            {(["Completed", "Upcoming", "Live", "None"] as Status[]).map((nextStatus) => (
-              <DropdownMenu.Item
-                key={nextStatus}
-                onSelect={() => setStatus(nextStatus)}
-                className={`flex cursor-pointer items-center justify-center p-2 text-[14px] leading-[1.4] text-white outline-none ${statusClasses[nextStatus]}`}
-              >
-                {nextStatus}
-              </DropdownMenu.Item>
-            ))}
+            {(["complete", "upcoming", "delayed", "live"] as StagePerformanceStatus[]).map(
+              (nextStatus) => (
+                <DropdownMenu.Item
+                  key={nextStatus}
+                  onSelect={() => onChange({ status: nextStatus })}
+                  className={`flex cursor-pointer border items-center justify-center font-ppfragment-glare p-2 text-[14px] leading-[1.4] text-white outline-none ${statusClasses[nextStatus]}`}
+                >
+                  {nextStatus}
+                </DropdownMenu.Item>
+              )
+            )}
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
