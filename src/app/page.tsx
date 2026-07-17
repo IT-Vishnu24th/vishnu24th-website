@@ -3,32 +3,33 @@ import Link from "next/link"
 import SponsorFooter from "@/features/landing-page/components/SponsorFooterForHome"
 import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
-import { MapPin, Ship } from "lucide-react"
+import { MapPin } from "lucide-react"
 import FAQFooter from "@/features/landing-page/components/QuestionFooter"
 import { YarnAnnouncementButton } from "@/features/announcement/components/YarnAnnouncementButton"
+import { ParallaxLayer } from "@/components/ParallaxLayer"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#2D3542] to-[#2D4D61]">
       {/* พื้นหลังลายเฟือง */}
-      <div className="absolute inset-0 z-0">
+      <ParallaxLayer className="absolute inset-0 z-0" speed={0.4}>
         <Image
           src="/landingpage/art-background.png"
           alt=""
           fill
           className="pointer-events-none object-contain object-[center_6%]"
         />
-      </div>
+      </ParallaxLayer>
 
       {/* ตึกซ้าย-ขวา + เฟืองมุมบน วางทับด้านหน้า */}
-      <div className="pointer-events-none absolute inset-0 z-10">
+      <ParallaxLayer className="absolute inset-0 z-10" speed={0.75}>
         <Image
           src="/landingpage/art-foreground.png"
           alt=""
           fill
           className="pointer-events-none object-contain object-top object-[center_22%]"
         />
-      </div>
+      </ParallaxLayer>
 
       <div className="relative z-10">
         <Header />
@@ -82,27 +83,27 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative w-full h-6 md:h-8 z-10">
-          <Image src="/landingpage/blue-line.png" alt="" fill className="object-fill" />
+        <div className="relative z-10 -mb-5 h-12 w-full md:h-14">
+          <Image src="/landingpage/blue-line.svg" alt="" fill className="object-fill" />
         </div>
 
         {/* <AuthResult isSucess={true} /> */}
 
         <div className="z-20">
-          <div className="-mt-3 md:-mt-4 relative ">
+          <div className="-mt-5 md:-mt-6 relative ">
             <SponsorFooter />
           </div>
 
-          <div className="relative -top-40 w-full h-10 md:h-8 -mt-1">
+          <div className="relative -top-40 -mt-1 h-[72px] w-full md:h-20">
             <Image
-              src="/landingpage/cream-line.png"
+              src="/landingpage/cream-line.svg"
               alt=""
               fill
               className="object-fill scale-105"
             />
           </div>
         </div>
-        <div className="relative -top-44 -mb-30">
+        <div className="relative -top-47 -mb-30">
           <FAQFooter />
         </div>
 
