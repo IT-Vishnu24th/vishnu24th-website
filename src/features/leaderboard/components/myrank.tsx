@@ -1,9 +1,12 @@
 import Image from "next/image"
 import type { LeaderboardResponse } from "@/types/leaderboard"
+import { getYaanBannerSrc } from "@/features/leaderboard/utils/yaanBanner"
 
 type Props = Pick<LeaderboardResponse, "rank" | "vesselName" | "score">
 
 export default function MyRank({ rank, vesselName, score }: Props) {
+  const yaanBannerSrc = getYaanBannerSrc(vesselName)
+
   return (
     <div className="relative mx-4 overflow-hidden rounded-md py-10">
       <Image src="/leaderboard/wanted-own.png" alt="" fill className="z-10 object-cover" />
@@ -19,15 +22,27 @@ export default function MyRank({ rank, vesselName, score }: Props) {
         </span>
       </div>
 
+      {yaanBannerSrc && (
+        <div className="relative z-10 mx-auto mt-5 h-44 w-44">
+          <Image
+            src={yaanBannerSrc}
+            alt={vesselName?.th ?? "Vessel"}
+            fill
+            sizes="176px"
+            className="object-contain"
+          />
+        </div>
+      )}
+
       {vesselName && (
-        <p className="relative z-10 mt-4 break-words text-center font-sov-yeehor text-5xl text-[#3a2a1a]">
+        <p className="relative z-10 mt-3 break-words text-center font-sov-yeehor text-5xl text-[#3a2a1a]">
           {vesselName.th ?? "Name"}
         </p>
       )}
 
       {score !== null && score !== undefined && (
         <p className="relative z-10 mb-10 text-center font-sov-yeehor text-5xl text-[#c46a2e]">
-          {score.toLocaleString()} คะแนน
+          {score.toLocaleString()} เหรียญทอง
         </p>
       )}
     </div>
