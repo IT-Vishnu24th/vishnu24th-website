@@ -5,10 +5,10 @@ export default function Footer() {
   const allSmallSponsors = [...mediumSponsors, ...smallSponsors]
 
   return (
-    <footer className="relative w-full bg-brick-orange pt-16 pb-34">
+    <footer className="relative w-full bg-brick-orange pt-10 pb-34">
       {/* เส้นลายกระดาษฉีกด้านบน */}
-      <div className="absolute z-40 top-0 left-0 h-10 w-full -translate-y-1/2 overflow-hidden">
-        <Image src="/sponsor/sponsor-line.png" alt="" fill className="object-fill scale-105" />
+      <div className="absolute top-0 left-0 z-40 h-12 w-full -translate-y-1/2 overflow-hidden">
+        <Image src="/sponsor/sponsor-line.svg" alt="" fill className="object-fill scale-x-105" />
       </div>
 
       <div className="mx-auto max-w-6xl px-3">

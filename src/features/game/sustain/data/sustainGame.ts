@@ -10,7 +10,7 @@ export const SUSTAIN_BINS: SustainBin[] = [
   {
     type: "general",
     label: "ขยะทั่วไป",
-    hint: "ถุงขนม หลอด กิ่งไม้",
+    hint: "ถุงขนม หลอด แก้วใช้แล้ว",
     x: 15,
     y: 498,
     width: 86,
@@ -41,10 +41,10 @@ const randomScore = () => RANDOM_SCORES[Math.floor(Math.random() * RANDOM_SCORES
 
 export const SUSTAIN_TRASH_ITEMS: SustainTrashTemplate[] = [
   { id: "snack-bag", label: "ซองขนม", icon: "▣", type: "general", score: randomScore() },
-  { id: "used-cup", label: "แก้วน้ำ", icon: "◡", type: "recycle", score: randomScore() },
+  { id: "used-cup", label: "แก้วใช้แล้ว", icon: "◡", type: "general", score: randomScore() },
   { id: "paper", label: "กระดาษ", icon: "□", type: "recycle", score: randomScore() },
   { id: "can", label: "กระป๋อง", icon: "◎", type: "recycle", score: randomScore() },
-  { id: "banana-peel", label: "เศษอาหาร", icon: "◜", type: "food", score: randomScore() },
+  { id: "banana-peel", label: "เปลือกผลไม้", icon: "◜", type: "food", score: randomScore() },
   { id: "leftover", label: "เศษอาหาร", icon: "●", type: "food", score: randomScore() },
 
   // added from the full design icon sheet
@@ -60,8 +60,8 @@ export const SUSTAIN_TRASH_ITEMS: SustainTrashTemplate[] = [
   },
   { id: "cardboard-box", label: "กระดาษลัง", icon: "▥", type: "recycle", score: randomScore() },
   { id: "milk-carton", label: "กล่องนม", icon: "▨", type: "recycle", score: randomScore() },
-  { id: "chicken-bone", label: "เศษอาหาร", icon: "◈", type: "food", score: randomScore() },
-  { id: "watermelon", label: "เศษอาหาร", icon: "◑", type: "food", score: randomScore() },
-  { id: "apple-core", label: "เศษอาหาร", icon: "❋", type: "food", score: randomScore() },
-  { id: "veggie-scraps", label: "เศษอาหาร", icon: "❀", type: "food", score: randomScore() },
+  { id: "chicken-bone", label: "กระดูกไก่", icon: "◈", type: "food", score: randomScore() },
+  { id: "watermelon", label: "เปลือกแตงโม", icon: "◑", type: "food", score: randomScore() },
+  { id: "apple-core", label: "แกนแอปเปิ้ล", icon: "❋", type: "food", score: randomScore() },
+  { id: "veggie-scraps", label: "เศษผัก", icon: "❀", type: "food", score: randomScore() },
 ]
