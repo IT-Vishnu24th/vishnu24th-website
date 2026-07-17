@@ -50,7 +50,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
   const [textValue, setTextValue] = useState("")
   const [isRevealed, setRevealed] = useState(false)
 
-  const hasSubmitted = !!historyItem
+  const hasSubmitted = !!historyItem?.userAnswer
   const isLocked = status !== "open" || hasSubmitted
 
   const currentAnswer: string | string[] | null =
@@ -98,7 +98,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
   }
 
   function handleRevealClick() {
-    if (historyItem && (question.type === "number" || question.type === "text")) {
+    if (hasSubmitted && (question.type === "number" || question.type === "text")) {
       setTimeout(() => setRevealed(true), 50)
       open(
         <RevealAnswerModal
@@ -172,7 +172,9 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                   value={textValue}
                   onChange={setTextValue}
                   question={question}
+                  status={status}
                   historyItem={historyItem}
+                  correctAnswer={correctAnswer}
                   isRevealed={isRevealed}
                   disabled={isLocked}
                 />
@@ -183,14 +185,16 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                   value={textValue}
                   onChange={setTextValue}
                   question={question}
+                  status={status}
                   historyItem={historyItem}
+                  correctAnswer={correctAnswer}
                   isRevealed={isRevealed}
                   disabled={isLocked}
                 />
               )}
             </>
 
-            {status === "revealed" && historyItem !== null && (
+            {status === "revealed" && hasSubmitted && (
               <div
                 className={`mt-4 text-center text-lg font-fc-quantum ${EMPHASIS_TEXT[question.period]}`}
               >
@@ -223,7 +227,9 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                 {status === "open" && !hasSubmitted && (
                   <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
                 )}
-                {status === "awaiting-reveal" && !hasSubmitted && <p>ปิดรับคำตอบแล้ว</p>}
+                {status === "awaiting-reveal" && !isPending && !hasSubmitted && (
+                  <p>ปิดรับคำตอบแล้ว</p>
+                )}
                 {status === "revealed" && !isPending && !hasSubmitted && <p>คุณไม่ได้ตอบ</p>}
               </div>
 
@@ -234,7 +240,9 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                   {formatBangkokTime(question.revealsAt)} ได้เลย
                 </p>
               )}
-              <p className="text-sm mt-2">นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน</p>
+              <p className="text-sm mt-2 text-balance">
+                นับคะแนนที่ได้จากจำนวนน้องทั้งหมดที่ทายถูกในยาน
+              </p>
             </div>
           </div>
         </div>
@@ -260,7 +268,8 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
             onClick={handleRevealClick}
             disabled={
               !correctAnswer ||
-              (isRevealed && (question.type === "single" || question.type === "multi"))
+              (isRevealed && (question.type === "single" || question.type === "multi")) ||
+              (isRevealed && !hasSubmitted)
             }
             className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity opacity-95 disabled:opacity-80 ${BODY_BG[question.period]}`}
           >

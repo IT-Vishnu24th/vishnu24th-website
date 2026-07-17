@@ -37,7 +37,7 @@ export type AuthUser = Pick<User, "id" | "name" | "role" | "prefLanguage" | "yar
 
 export interface UserAnswerHistoryItem {
   id: string
-  userAnswer: string | string[]
+  userAnswer: string | string[] | null
   isRevealed: boolean
   isCorrect: boolean | null
   correctAnswer: string | string[] | null

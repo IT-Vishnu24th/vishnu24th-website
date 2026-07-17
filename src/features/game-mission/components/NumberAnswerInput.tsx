@@ -1,13 +1,15 @@
 "use client"
 
-import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, MissionStatus, UserAnswerHistoryItem } from "@/types/mission"
 import { cn } from "@/utils/cn"
 
 interface NumberAnswerInputProps {
   value: string
   onChange: (value: string) => void
   question: MissionQuestion
+  status: MissionStatus
   historyItem: UserAnswerHistoryItem | null
+  correctAnswer: string | null
   isRevealed: boolean
   disabled: boolean
 }
@@ -16,11 +18,19 @@ export function NumberAnswerInput({
   value,
   onChange,
   question,
+  status,
   historyItem,
+  correctAnswer,
   isRevealed,
   disabled,
 }: NumberAnswerInputProps) {
-  const displayValue = historyItem ? (historyItem.userAnswer as string) : value
+  const displayValue = historyItem?.userAnswer
+    ? (historyItem.userAnswer as string)
+    : isRevealed
+      ? correctAnswer
+      : status === "open"
+        ? value
+        : ""
   const borderClass =
     question.period === "morning"
       ? "border-brick-orange text-brownie-dark"
@@ -33,7 +43,7 @@ export function NumberAnswerInput({
       <div
         className={cn(
           isRevealed &&
-            !!historyItem &&
+            historyItem?.userAnswer != null &&
             `rounded-3xl border-4 p-2 ${historyItem.isCorrect ? "border-status-green" : "border-status-red"}`
         )}
       >
@@ -44,7 +54,7 @@ export function NumberAnswerInput({
           placeholder="XXX"
           maxLength={maxLength}
           value={displayValue ?? ""}
-          disabled={disabled || !!historyItem}
+          disabled={disabled}
           onChange={(e) => {
             const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, maxLength)
             onChange(digitsOnly)

@@ -19,21 +19,19 @@ export async function GET() {
         ? new Date(process.env.MOCK_CURRENT_TIME)
         : new Date()
 
-    const historyList = Object.keys(QUESTIONS)
-      .filter((qId) => userAnswers[qId as keyof UserAnswers] !== null)
-      .map((qId) => {
-        const q = QUESTIONS[qId]
-        const userAnswer = userAnswers[qId as keyof UserAnswers]!
-        const isRevealed = currentTime >= new Date(q.revealTime)
+    const historyList = Object.keys(QUESTIONS).map((qId) => {
+      const q = QUESTIONS[qId]
+      const userAnswer = userAnswers[qId as keyof UserAnswers] ?? null
+      const isRevealed = currentTime >= new Date(q.revealTime)
 
-        return {
-          id: qId,
-          userAnswer,
-          isRevealed,
-          isCorrect: isRevealed ? evaluateAnswer(qId, userAnswer) : null,
-          correctAnswer: isRevealed ? q.correctAnswer : null,
-        }
-      })
+      return {
+        id: qId,
+        userAnswer,
+        isRevealed,
+        isCorrect: userAnswer && isRevealed ? evaluateAnswer(qId, userAnswer) : null,
+        correctAnswer: isRevealed ? q.correctAnswer : null,
+      }
+    })
 
     return success<UserAnswersResponse>({ answers: historyList })
   } catch (error) {
