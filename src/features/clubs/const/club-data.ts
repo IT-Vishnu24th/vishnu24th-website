@@ -242,7 +242,7 @@ export const club_data: Club[] = [
     shortdescription: "ชมรมเต้นอันดับ 1 ของคณะวิศวะ ไม่ต้องออดิชั่น",
     description:
       "StepOut ชมรมเต้นอันดับ 1 ของคณะวิศวกรรมศาสตร์ ไม่ว่าชาย หญิง หรือใครก็สามารถเข้าชมรมนี้ได้ ชมรมนี้ไม่ต้องออดิชั่นไม่ต้องเต้นเก่งก็สามารถมาจอยกันได้ ขอแต่มีใจรักในการเต้นและเสียงดนตรีก็พอ ติดตามพวกเขาได้ที่ IG : stepout_intania หากใครที่พร้อมจะจอย พบกับพวกเขาได้เลย ขอต้อนรับ StepOuttt",
-    imageUrl: "Stepout-2.png",
+    imageUrl: "StepOut-2.png",
     mapimageUrl: "building100.png",
     category: "other",
     havebooth: true,
@@ -421,7 +421,7 @@ export const club_data: Club[] = [
     shortdescription: "ชมรมฟุตซอลสำหรับคนรักกีฬา ฝึกฝนและสร้างระเบียบวินัยนักกีฬา",
     description:
       "เป็นชมรมเปิดโอกาสให้คนรักในกีฬาได้มาสัมผัสประสบการณ์ เรียนรู้ ฝึกระเบียบวินัยของนักกีฬา",
-    imageUrl: "intania-futsal.JPG",
+    imageUrl: "intania-futsal.jpg",
     category: "sport",
     havebooth: false,
   },
@@ -431,7 +431,7 @@ export const club_data: Club[] = [
     name: { th: "แสงสีสวนจาม", en: "SangSeeSuan" },
     shortdescription: "แสงสีชมพูฟ้า",
     description: "แสงสีชมพูฟ้า",
-    imageUrl: "SangSeeSuan.JPG",
+    imageUrl: "SangSeeSuan.jpg",
     category: "other",
     havebooth: false,
   },
