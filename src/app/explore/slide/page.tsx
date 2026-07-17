@@ -1,6 +1,6 @@
 "use client"
 
-import { Download, FileText } from "lucide-react"
+import { Download, FileText, Lock } from "lucide-react"
 import { Header2 } from "@/components/Headers"
 import { SLIDES } from "@/features/slide/const/mock"
 import { useRouter } from "next/navigation"
@@ -10,6 +10,7 @@ import Image from "next/image"
 
 export default function DownloadPage() {
   const router = useRouter()
+  const now = new Date()
   return (
     <div className="mx-auto min-h-screen pb-8">
       <div className="bg-gradient-to-b from-midnight to-brownie">
@@ -34,34 +35,50 @@ export default function DownloadPage() {
       <div className="relative -mt-5 flex flex-col gap-4 bg-cream px-4 pt-15 pb-10">
         <Image src="/slide/slide-bg.png" alt="" fill className="pointer-events-none object-fill" />
 
-        {SLIDES.map((slide) => (
-          <div
-            key={slide.id}
-            className="relative z-10 rounded-2xl bg-cream-tanned px-5 py-5 shadow-sm font-fc-quantum"
-          >
-            {/* Top */}
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="min-w-0 flex-1 break-words text-xl font-semibold leading-tight text-brownie">
-                {slide.title}
-              </h2>
+        {SLIDES.map((slide) => {
+          const released = new Date() >= new Date(slide.releaseAt)
 
-              <a
-                href={`/slide/slidedownload/${slide.file}`}
-                download
-                target="_blank"
-                className="flex shrink-0 items-center justify-center gap-2 rounded-full border-2 border-midnight bg-turqoise px-5 py-3 font-fc-quantum transition hover:bg-turqoise-light"
+          if (!released) {
+            return (
+              <div
+                key={slide.id}
+                className="relative z-10 flex flex-col items-center justify-center rounded-2xl bg-cream-tanned py-10"
               >
-                <Download size={18} className="text-midnight" />
-                <span className="whitespace-nowrap text-md font-bold text-midnight">ดาวน์โหลด</span>
-              </a>
-            </div>
+                <Lock size={48} className="text-brownie" />
+                <p className="mt-4 font-fc-quantum text-brownie">เอกสารนี้ยังไม่เปิดให้ดาวน์โหลด</p>
+              </div>
+            )
+          }
 
-            {/* Description */}
-            <p className="mt-4 break-words text-base leading-relaxed text-brick-orange">
-              {slide.description}
-            </p>
-          </div>
-        ))}
+          return (
+            <div
+              key={slide.id}
+              className="relative z-10 rounded-2xl bg-cream-tanned px-5 py-5 shadow-sm font-fc-quantum"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="min-w-0 flex-1 break-words text-xl font-semibold leading-tight text-brownie">
+                  {slide.title}
+                </h2>
+
+                <a
+                  href={`/slide/slidedownload/${slide.file}`}
+                  download
+                  target="_blank"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-full border-2 border-midnight bg-turqoise px-5 py-3 transition hover:bg-turqoise-light"
+                >
+                  <Download size={18} className="text-midnight" />
+                  <span className="whitespace-nowrap text-md font-bold text-midnight">
+                    ดาวน์โหลด
+                  </span>
+                </a>
+              </div>
+
+              <p className="mt-4 break-words text-base leading-relaxed text-brick-orange">
+                {slide.description}
+              </p>
+            </div>
+          )
+        })}
       </div>
       <SponsorFooter />
       <NavigationFooter />
