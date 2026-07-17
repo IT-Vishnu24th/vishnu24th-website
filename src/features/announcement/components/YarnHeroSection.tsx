@@ -2,7 +2,7 @@ import { Header2 } from "@/components/Headers"
 
 export const YarnHeroSection = ({ yarnName }: { yarnName?: string }) => {
   return (
-    <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black">
+    <section className="w-full bg-[linear-gradient(180deg,#2D3542B3_38.94%,#2D4B5FB3_100%)] text-black">
       <Header2 url="/" title="หน้าหลัก" />
       <div className="px-4 pb-8 flex w-full flex-col items-center justify-center text-center">
         <p className="max-w-75 text-[20px] h-0 font-normal font-fc-quantum leading-none text-turqoise">
