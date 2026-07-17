@@ -187,22 +187,22 @@ export default function UnrevealedLeaderboard() {
           อันดับกลุ่ม
         </motion.h1>
         <motion.div
-          className="relative w-full h-10 overflow-hidden"
+          className="relative h-12 w-full overflow-hidden"
           initial={{ opacity: 0, y: 18, scaleX: 0.92 }}
           animate={{ opacity: 1, y: 0, scaleX: 1 }}
           transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
         >
           <Image
-            src="/landingpage/blue-line.png"
+            src="/landingpage/blue-line.svg"
             alt=""
             fill
             sizes="100vw"
-            className="object-fill scale-102 z-20"
+            className="z-20 object-fill scale-x-105"
           />
         </motion.div>
       </div>
 
-      <div className="relative bg-gradient-to-b from-cream-tanned to-clay-light -mt-5 overflow-hidden">
+      <div className="relative -mt-6 overflow-hidden bg-gradient-to-b from-cream-tanned to-clay-light">
         <div className="relative">
           <Image
             src="/leaderboard/leaderboard-bg.png"

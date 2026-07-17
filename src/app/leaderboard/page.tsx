@@ -96,7 +96,7 @@ export default function Page() {
             transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
           >
             <Image
-              src="/landingpage/blue-line.png"
+              src="/landingpage/blue-line.svg"
               alt=""
               fill
               sizes="100vw"
