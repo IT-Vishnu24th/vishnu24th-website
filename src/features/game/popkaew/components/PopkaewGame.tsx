@@ -24,17 +24,13 @@ export function PopkaewGame() {
 
   const isPlayable = !isLoading && (featureFlag?.data.enabled ?? false) && user !== null
 
-  const [score, setScore] = useState(0)
+  const [confirmedScore, setConfirmedScore] = useState<number | null>(null)
+  const [optimisticClicks, setOptimisticClicks] = useState(0)
   const [isPressed, setIsPressed] = useState(false)
 
   const pendingClicksRef = useRef(0)
   const isFlushingRef = useRef(false)
-
-  useEffect(() => {
-    if (me) {
-      setScore(me.data.popkaewscore)
-    }
-  }, [me])
+  const score = (confirmedScore ?? me?.data.popkaewscore ?? 0) + optimisticClicks
 
   const flushClicks = useCallback(() => {
     if (isFlushingRef.current) return
@@ -47,7 +43,8 @@ export function PopkaewGame() {
 
     mutate(clicks, {
       onSuccess: (res) => {
-        setScore(res.data.score)
+        setConfirmedScore(res.data.score)
+        setOptimisticClicks((prev) => Math.max(0, prev - clicks))
       },
       onError: () => {
         pendingClicksRef.current += clicks
@@ -73,7 +70,7 @@ export function PopkaewGame() {
     setTimeout(() => {
       setIsPressed(false)
     }, PRESS_ANIMATION_MS)
-    setScore((prev) => prev + 1)
+    setOptimisticClicks((prev) => prev + 1)
     pendingClicksRef.current += 1
     if (pendingClicksRef.current >= CLICK_THRESHOLD) {
       flushClicks()
