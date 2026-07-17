@@ -6,7 +6,6 @@ import type { wasteSortPlayer } from "@/types/wasteSort"
 export type * from "@/types/wasteSort"
 
 export const MAX_PLAYS_PER_DAY = 3
-
 /** Returns today's date key in YYYY-MM-DD (Asia/Bangkok). */
 function todayKey(): string {
   const now = new Date()
@@ -113,6 +112,7 @@ const wasteSortPlayerService = {
       }
 
       const playsToday = player.lastPlayDate === today ? player.playsToday : 0
+
       if (playsToday >= MAX_PLAYS_PER_DAY) {
         throw new Error("DAILY_LIMIT_REACHED")
       }
