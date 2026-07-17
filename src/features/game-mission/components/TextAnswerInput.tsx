@@ -2,12 +2,14 @@
 
 import Image from "next/image"
 import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
+import { cn } from "@/utils/cn"
 
 interface TextAnswerInputProps {
   value: string
   onChange: (value: string) => void
   question: MissionQuestion
   historyItem: UserAnswerHistoryItem | null
+  isRevealed: boolean
   disabled: boolean
 }
 
@@ -16,6 +18,7 @@ export function TextAnswerInput({
   onChange,
   question,
   historyItem,
+  isRevealed,
   disabled,
 }: TextAnswerInputProps) {
   const displayValue = historyItem ? (historyItem.userAnswer as string) : value
@@ -27,22 +30,30 @@ export function TextAnswerInput({
   const maxLength = question.maxLength ?? 60
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="w-full flex flex-col items-center gap-6">
       {question.imageSrc && (
         <div className="relative h-60 w-24 overflow-hidden rounded-2xl border-4 border-white shadow-lg">
           <Image src={question.imageSrc} alt="" fill className="object-cover" />
         </div>
       )}
 
-      <input
-        type="text"
-        placeholder="XXX"
-        maxLength={maxLength}
-        value={displayValue ?? ""}
-        disabled={disabled || !!historyItem}
-        onChange={(e) => onChange(e.target.value)}
-        className={`w-full max-w-xs rounded-2xl border-2 bg-transparent px-6 py-4 text-center text-xl font-fc-quantum outline-none disabled:opacity-70 ${borderClass}`}
-      />
+      <div
+        className={cn(
+          isRevealed &&
+            !!historyItem &&
+            `rounded-3xl border-4 p-2 ${historyItem.isCorrect ? "border-status-green" : "border-status-red"}`
+        )}
+      >
+        <input
+          type="text"
+          placeholder="XXX"
+          maxLength={maxLength}
+          value={displayValue ?? ""}
+          disabled={disabled || !!historyItem}
+          onChange={(e) => onChange(e.target.value)}
+          className={`w-full max-w-xs rounded-2xl border-2 bg-transparent px-6 py-4 text-center text-xl font-fc-quantum outline-none disabled:opacity-70 ${borderClass}`}
+        />
+      </div>
     </div>
   )
 }

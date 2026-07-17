@@ -9,6 +9,7 @@ interface MultiChoiceListProps {
   selectedValues: string[]
   onToggle: (value: string) => void
   historyItem: UserAnswerHistoryItem | null
+  isRevealed: boolean
   isLocked: boolean
 }
 
@@ -17,10 +18,10 @@ export function MultiChoiceList({
   selectedValues,
   onToggle,
   historyItem,
+  isRevealed,
   isLocked,
 }: MultiChoiceListProps) {
   const hasSubmitted = !!historyItem
-  const isRevealed = historyItem?.isRevealed ?? false
   const correctValues = isRevealed ? ((historyItem?.correctAnswer as string[] | null) ?? []) : []
   const submittedValues = hasSubmitted ? ((historyItem?.userAnswer as string[] | null) ?? []) : []
 

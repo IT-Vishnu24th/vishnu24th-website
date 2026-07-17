@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Save } from "lucide-react"
+import { Eye, Save } from "lucide-react"
 import NavigationFooter from "@/components/NavigationFooter"
 import { useModalStore } from "@/stores/modalStore"
 import type { MissionQuestion } from "@/types/mission"
@@ -18,6 +18,7 @@ import { NumberAnswerInput } from "./NumberAnswerInput"
 import { TextAnswerInput } from "./TextAnswerInput"
 import { BackgroundIllustration } from "./BackgroundIllustration"
 import { PageBottomGlobe } from "./PageBottomGlobe"
+import { RevealAnswerModal } from "@/features/game-mission/components/RevealAnswerModal"
 
 interface MissionQuestionScreenProps {
   question: MissionQuestion
@@ -33,6 +34,11 @@ const BODY_TEXT = {
   evening: "text-midnight",
 } as const
 
+const EMPHASIS_TEXT = {
+  morning: "text-brownie",
+  evening: "text-midnight-light",
+} as const
+
 export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) {
   const open = useModalStore((s) => s.open)
   const status = getMissionStatus(question)
@@ -42,6 +48,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
   const [singleValue, setSingleValue] = useState<string | null>(null)
   const [multiValues, setMultiValues] = useState<string[]>([])
   const [textValue, setTextValue] = useState("")
+  const [isRevealed, setRevealed] = useState(false)
 
   const hasSubmitted = !!historyItem
   const isLocked = status !== "open" || hasSubmitted
@@ -52,6 +59,19 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
       : question.type === "multi"
         ? multiValues
         : textValue.trim() || null
+
+  const correctAnswer = historyItem?.correctAnswer
+    ? question.type === "single" || question.type === "multi"
+      ? Array.isArray(historyItem.correctAnswer)
+        ? historyItem.correctAnswer
+            .map((ans) => question.options.find((o) => o.value === ans)!)
+            .map((o) => o.label)
+            .join(", ")
+        : question.options.find((o) => o.value === historyItem.correctAnswer)!.label
+      : Array.isArray(historyItem.correctAnswer)
+        ? historyItem.correctAnswer[0]
+        : historyItem.correctAnswer
+    : null
 
   const canSave =
     status === "open" &&
@@ -77,6 +97,21 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
     )
   }
 
+  function handleRevealClick() {
+    if (historyItem && (question.type === "number" || question.type === "text")) {
+      setTimeout(() => setRevealed(true), 50)
+      open(
+        <RevealAnswerModal
+          question={question}
+          historyItem={historyItem}
+          correctAnswer={correctAnswer}
+        />
+      )
+    } else {
+      setRevealed(true)
+    }
+  }
+
   return (
     <div
       className={`relative min-h-screen pb-56 ${BODY_BG[question.period]} ${BODY_TEXT[question.period]}`}
@@ -85,10 +120,8 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
 
       <div className="relative z-10">
         <MissionHeaderBanner
-          title={question.title}
-          prompt={question.prompt}
-          hint={question.hint}
-          period={question.period}
+          question={question}
+          status={status}
           showTopBar
           onHistoryClick={() => open(<HistoryModal />)}
           onHelpClick={() => open(<HowToPlayModal period={question.period} />)}
@@ -98,54 +131,91 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
           <BackgroundIllustration />
 
           <div className="relative mx-auto z-10 flex flex-col items-center gap-2">
-            {question.type === "single" && (
-              <SingleChoiceList
-                question={question}
-                selectedValue={singleValue}
-                onSelect={setSingleValue}
-                historyItem={historyItem}
-                isLocked={isLocked}
-              />
+            {status === "revealed" && (
+              <div
+                className={`mb-4 text-center text-xl font-fc-quantum ${EMPHASIS_TEXT[question.period]}`}
+              >
+                เฉลยมาแล้ว!
+              </div>
             )}
 
-            {question.type === "multi" && (
-              <MultiChoiceList
-                question={question}
-                selectedValues={multiValues}
-                onToggle={(value) =>
-                  setMultiValues((prev) =>
-                    prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-                  )
-                }
-                historyItem={historyItem}
-                isLocked={isLocked}
-              />
-            )}
+            {/* Answer section */}
+            <>
+              {question.type === "single" && (
+                <SingleChoiceList
+                  question={question}
+                  selectedValue={singleValue}
+                  onSelect={setSingleValue}
+                  historyItem={historyItem}
+                  isRevealed={isRevealed}
+                  isLocked={isLocked}
+                />
+              )}
 
-            {question.type === "number" && (
-              <NumberAnswerInput
-                value={textValue}
-                onChange={setTextValue}
-                question={question}
-                historyItem={historyItem}
-                disabled={isLocked}
-              />
-            )}
+              {question.type === "multi" && (
+                <MultiChoiceList
+                  question={question}
+                  selectedValues={multiValues}
+                  onToggle={(value) =>
+                    setMultiValues((prev) =>
+                      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+                    )
+                  }
+                  historyItem={historyItem}
+                  isRevealed={isRevealed}
+                  isLocked={isLocked}
+                />
+              )}
 
-            {question.type === "text" && (
-              <TextAnswerInput
-                value={textValue}
-                onChange={setTextValue}
-                question={question}
-                historyItem={historyItem}
-                disabled={isLocked}
-              />
+              {question.type === "number" && (
+                <NumberAnswerInput
+                  value={textValue}
+                  onChange={setTextValue}
+                  question={question}
+                  historyItem={historyItem}
+                  isRevealed={isRevealed}
+                  disabled={isLocked}
+                />
+              )}
+
+              {question.type === "text" && (
+                <TextAnswerInput
+                  value={textValue}
+                  onChange={setTextValue}
+                  question={question}
+                  historyItem={historyItem}
+                  isRevealed={isRevealed}
+                  disabled={isLocked}
+                />
+              )}
+            </>
+
+            {status === "revealed" && historyItem !== null && (
+              <div
+                className={`mt-4 text-center text-lg font-fc-quantum ${EMPHASIS_TEXT[question.period]}`}
+              >
+                <p>
+                  เป็นคำตอบที่
+                  {isRevealed ? (
+                    historyItem.isCorrect ? (
+                      <span className="font-bold text-status-green-dark">ถูกต้อง!</span>
+                    ) : (
+                      <span className="font-bold text-status-red-dark">ผิด...</span>
+                    )
+                  ) : (
+                    "..."
+                  )}
+                </p>
+                {isRevealed && !historyItem.isCorrect && correctAnswer && (
+                  <p>
+                    เฉลย: <span className="font-semibold">{correctAnswer}</span>
+                  </p>
+                )}
+              </div>
             )}
 
             <div className="mt-2 text-center font-fc-quantum opacity-80">
-              <div
-                className={`font-medium ${question.period === "morning" ? "text-brownie" : "text-midnight-light"}`}
-              >
+              <div className={`font-medium ${EMPHASIS_TEXT[question.period]}`}>
                 {status !== "revealed" && hasSubmitted && (
                   <p className="mb-2">บันทึกคำตอบเรียบร้อย!</p>
                 )}
@@ -154,7 +224,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                   <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
                 )}
                 {status === "awaiting-reveal" && !hasSubmitted && <p>ปิดรับคำตอบแล้ว</p>}
-                {status === "revealed" && !hasSubmitted && <p>คุณไม่ได้ตอบ</p>}
+                {status === "revealed" && !isPending && !hasSubmitted && <p>คุณไม่ได้ตอบ</p>}
               </div>
 
               {(status === "awaiting-reveal" || (status === "open" && hasSubmitted)) && (
@@ -170,7 +240,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         </div>
       </div>
 
-      {!hasSubmitted && !isPending && status === "open" && (
+      {status === "open" && !isPending && !hasSubmitted && (
         <div className="fixed z-100 bottom-28 left-1/2 -translate-x-1/2">
           <button
             type="button"
@@ -179,6 +249,22 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
             className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity opacity-95 disabled:opacity-80 ${BODY_BG[question.period]}`}
           >
             <Save className="inline size-7 align-middle" /> บันทึก
+          </button>
+        </div>
+      )}
+
+      {status === "revealed" && (
+        <div className="fixed z-100 bottom-28 left-1/2 -translate-x-1/2">
+          <button
+            type="button"
+            onClick={handleRevealClick}
+            disabled={
+              !correctAnswer ||
+              (isRevealed && (question.type === "single" || question.type === "multi"))
+            }
+            className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity opacity-95 disabled:opacity-80 ${BODY_BG[question.period]}`}
+          >
+            <Eye className="inline size-7 align-middle" /> ดูเฉลย
           </button>
         </div>
       )}

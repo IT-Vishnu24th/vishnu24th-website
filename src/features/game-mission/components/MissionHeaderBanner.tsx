@@ -1,15 +1,13 @@
 "use client"
 
 import { HelpCircle, History } from "lucide-react"
-import type { MissionPeriod } from "@/types/mission"
+import type { MissionPeriod, MissionQuestion, MissionStatus } from "@/types/mission"
 import { Header2 } from "@/components/Headers"
 import { TornPaperEdge } from "./TornPaperEdge"
 
 interface MissionHeaderBannerProps {
-  title: string
-  prompt: string
-  hint?: string
-  period: MissionPeriod
+  question: MissionQuestion
+  status: MissionStatus
   onHistoryClick?: () => void
   onHelpClick?: () => void
   /** Compact mode is used for the /game list preview cards */
@@ -34,15 +32,14 @@ const ICON_BG: Record<MissionPeriod, string> = {
 }
 
 export function MissionHeaderBanner({
-  title,
-  prompt,
-  hint,
-  period,
+  question,
+  status,
   onHistoryClick,
   onHelpClick,
   compact = false,
   showTopBar = false,
 }: MissionHeaderBannerProps) {
+  const { title, prompt, hint, period, type } = question
   return (
     <div>
       <div className={`${GRADIENTS[period]} px-5 ${compact ? "py-2 pb-5" : "pb-10"}`}>
@@ -80,13 +77,18 @@ export function MissionHeaderBanner({
         </div>
 
         <p
-          className={`mt-3 text-center font-fc-quantum text-base md:text-lg ${TITLE_COLOR[period]}`}
+          className={`mt-3 text-center font-fc-quantum text-base md:text-lg text-balance ${TITLE_COLOR[period]}`}
         >
           {prompt}
         </p>
         {hint && (
           <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
-            {hint}
+            ({question.hint})
+          </p>
+        )}
+        {type === "multi" && status === "open" && (
+          <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
+            เลือกได้หลายข้อ
           </p>
         )}
       </div>

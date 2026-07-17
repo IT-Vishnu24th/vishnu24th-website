@@ -10,6 +10,7 @@ interface SingleChoiceListProps {
   onSelect: (value: string) => void
   /** Server-truth submission, once one exists */
   historyItem: UserAnswerHistoryItem | null
+  isRevealed: boolean
   /** true once the question window has closed (locks picking) */
   isLocked: boolean
 }
@@ -19,10 +20,10 @@ export function SingleChoiceList({
   selectedValue,
   onSelect,
   historyItem,
+  isRevealed,
   isLocked,
 }: SingleChoiceListProps) {
   const hasSubmitted = !!historyItem
-  const isRevealed = historyItem?.isRevealed ?? false
   const correctValue = isRevealed ? (historyItem?.correctAnswer as string | null) : null
   const submittedValue = hasSubmitted ? (historyItem?.userAnswer as string | null) : null
 
