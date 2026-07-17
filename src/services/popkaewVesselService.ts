@@ -57,6 +57,28 @@ const popkaewVesselService = {
     })
   },
 
+  async ensureAllFromGroups(): Promise<void> {
+    await adminDb.runTransaction(async (tx) => {
+      const groupsSnapshot = await tx.get(adminDb.collection("groups"))
+      const vesselRefs = groupsSnapshot.docs.map((groupDoc) => vesselCollection.doc(groupDoc.id))
+      const vesselDocs = vesselRefs.length > 0 ? await tx.getAll(...vesselRefs) : []
+
+      for (const [index, groupDoc] of groupsSnapshot.docs.entries()) {
+        const vesselDoc = vesselDocs[index]
+        if (vesselDoc.exists) continue
+
+        const vesselName = groupDoc.get("vesselName") as popkaewVessel["vesselName"] | undefined
+        if (!vesselName) continue
+
+        tx.set(vesselRefs[index], {
+          group: groupDoc.id,
+          vesselName,
+          popkaewscore: 0,
+        })
+      }
+    })
+  },
+
   /** all vessels sorted by score desc (vesselName.en asc tie-break), standard competition ranking (1224) */
   async leaderboard() {
     const snapshot = await vesselCollection.get()
