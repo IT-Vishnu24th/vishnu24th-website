@@ -45,9 +45,13 @@ export default function ScanPage() {
         return
       }
 
-      // เก็บ response ทั้งก้อนไว้ให้หน้า reward อ่านต่อ
-      sessionStorage.setItem("scanResult", JSON.stringify(json.data))
-      router.replace("/scan/reward")
+      // ส่งผลลัพธ์ผ่าน query param แทน sessionStorage
+      // กัน context หายตอนสแกน QR / สลับแอปบนมือถือ
+      const params = new URLSearchParams({
+        code: json.data.code,
+        score: String(json.data.score),
+      })
+      router.replace(`/scan/reward?${params.toString()}`)
     } catch (err) {
       console.error("Scan request failed:", err)
       setErrorMsg("เกิดข้อผิดพลาด ลองใหม่อีกครั้ง")
