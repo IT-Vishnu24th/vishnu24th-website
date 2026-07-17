@@ -1,5 +1,5 @@
 "use client"
-import { Header2 } from "@/components/Headers"
+
 import Link from "next/link"
 import { HelpCircle } from "lucide-react"
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react"
@@ -57,7 +57,7 @@ const getRandomTrash = (): SustainFallingTrash => {
     x,
     y: -size,
     size,
-    speed: 60,
+    speed: 92,
     isDragging: false,
   }
 }
@@ -191,7 +191,7 @@ export function SustainGame() {
 
       spawnElapsedRef.current += deltaSeconds * 1000
       const spawnInterval = Math.max(430, 940 - elapsedSeconds * 18)
-      const fallSpeed = Math.min(200, 60 + elapsedSeconds * 5.5)
+      const fallSpeed = Math.min(310, 92 + elapsedSeconds * 8.8)
       const spawnedTrash: SustainFallingTrash[] = []
 
       while (spawnElapsedRef.current >= spawnInterval) {
@@ -375,14 +375,7 @@ export function SustainGame() {
   return (
     <main className="min-h-[100svh] bg-[#f9f9f9] text-black">
       <div className="mx-auto flex min-h-[100svh] w-full max-w-[393px] flex-col overflow-hidden bg-[#f9f9f9] font-mitr">
-        <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
-          <Header2 title="เกมส์" url="/game" />
-          <div className="w-full h-7"></div>
-          <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
-            <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-10" />
-            <img src="/explore/light_clay_curve.svg" alt="" className="w-full absolute z-20" />
-          </div>
-        </section>
+        <Header />
 
         <div
           ref={stageRef}
@@ -429,7 +422,7 @@ export function SustainGame() {
           )}
 
           {phase === "home" && (
-            <section className=" absolute left-1/2 top-[100px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 pb-6 pt-8 text-center shadow-xl">
+            <section className="absolute left-1/2 top-[100px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 pb-6 pt-8 text-center shadow-xl">
               <button
                 type="button"
                 aria-label="ดูวิธีเล่น"
@@ -439,7 +432,7 @@ export function SustainGame() {
                 <HelpCircle size={18} strokeWidth={2.2} />
               </button>
 
-              <h1 className="font-sov-yeehor  text-[40px] font-bold leading-snug text-[#8a3a2c]">
+              <h1 className="font-serif-th text-2xl font-bold leading-snug text-[#8a3a2c]">
                 ความจริงหน่ะ
                 <br />
                 มีเพียงถังเดียวเท่านั้น
@@ -449,14 +442,14 @@ export function SustainGame() {
                 type="button"
                 disabled={!canStart}
                 onClick={startGame}
-                className="font-fc-quantum  text-[20px] mt-6 rounded-full bg-[#e2683c] px-6 py-3 text-xl font-bold text-white shadow-sm transition active:scale-95 disabled:bg-black/10 disabled:text-black/25"
+                className="mt-6 rounded-full bg-[#e2683c] px-6 py-3 text-xl font-bold text-white shadow-sm transition active:scale-95 disabled:bg-black/10 disabled:text-black/25"
               >
                 {isStarting
                   ? "กำลังเริ่ม..."
                   : `เริ่มเกม (${plays.remainingPlays}/${plays.maxPlays})`}
               </button>
 
-              <div className="font-fc-quantum  text-[15px] mt-4 flex items-center justify-center gap-4 text-sm font-semibold text-[#c96a4d]">
+              <div className="mt-4 flex items-center justify-center gap-4 text-sm font-semibold text-[#c96a4d]">
                 <Link href="/game" className="transition active:scale-95">
                   กลับหน้าหลัก
                 </Link>
@@ -485,12 +478,10 @@ export function SustainGame() {
 
           {phase === "finished" && (
             <section className="absolute left-1/2 top-[190px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 py-8 text-center shadow-xl">
-              <h2 className="font-sov-yeehor  text-[51px] font-bold text-[#8a3a2c]">สรุปคะแนน</h2>
-              <p className="font-sov-yeehor  text-[100px] mt-2 font-mono text-4xl font-bold text-[#8a3a2c]">
-                {score}
-              </p>
+              <h2 className="font-serif-th text-2xl font-bold text-[#8a3a2c]">สรุปคะแนน</h2>
+              <p className="mt-2 font-mono text-4xl font-bold text-[#8a3a2c]">{score}</p>
 
-              <div className="font-fc-quantum  text-[30px] mt-5 flex items-center justify-center gap-3">
+              <div className="mt-5 flex items-center justify-center gap-3">
                 <Link
                   href="/game"
                   className="flex h-9 items-center justify-center rounded-full bg-[#f1d9c6] px-4 text-sm font-semibold text-[#8a3a2c] transition active:scale-95"
