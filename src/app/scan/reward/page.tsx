@@ -71,7 +71,7 @@ export default function RewardPage() {
 
     setTimeout(() => {
       setShowResult(true)
-    }, 1000)
+    }, 2000)
   }
 
   if (!result) return null
