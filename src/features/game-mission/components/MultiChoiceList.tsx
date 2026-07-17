@@ -21,7 +21,7 @@ export function MultiChoiceList({
   isRevealed,
   isLocked,
 }: MultiChoiceListProps) {
-  const hasSubmitted = !!historyItem
+  const hasSubmitted = !!historyItem?.userAnswer
   const correctValues = isRevealed ? ((historyItem?.correctAnswer as string[] | null) ?? []) : []
   const submittedValues = hasSubmitted ? ((historyItem?.userAnswer as string[] | null) ?? []) : []
 
@@ -33,8 +33,8 @@ export function MultiChoiceList({
         const isCorrectOption = correctValues.includes(option.value)
 
         if (isRevealed) {
-          if (isCorrectOption) state = "correct"
-          else if (wasSubmitted) state = "incorrect"
+          if (isCorrectOption && (wasSubmitted || !hasSubmitted)) state = "correct"
+          else if (isCorrectOption !== wasSubmitted) state = "incorrect"
           else state = "muted"
         } else if (hasSubmitted) {
           state = wasSubmitted ? "locked" : "muted"

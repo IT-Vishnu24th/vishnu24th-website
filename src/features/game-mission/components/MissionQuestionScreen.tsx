@@ -60,18 +60,21 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         ? multiValues
         : textValue.trim() || null
 
-  const correctAnswer = historyItem?.correctAnswer
-    ? question.type === "single" || question.type === "multi"
-      ? Array.isArray(historyItem.correctAnswer)
-        ? historyItem.correctAnswer
-            .map((ans) => question.options.find((o) => o.value === ans)!)
-            .map((o) => o.label)
-            .join(", ")
-        : question.options.find((o) => o.value === historyItem.correctAnswer)!.label
-      : Array.isArray(historyItem.correctAnswer)
-        ? historyItem.correctAnswer[0]
-        : historyItem.correctAnswer
-    : null
+  const correctAnswer =
+    question.id === "q4"
+      ? "ถูกทุกข้อ"
+      : historyItem?.correctAnswer
+        ? question.type === "single" || question.type === "multi"
+          ? Array.isArray(historyItem.correctAnswer)
+            ? historyItem.correctAnswer
+                .map((ans) => question.options.find((o) => o.value === ans)!)
+                .map((o) => o.label)
+                .join(", ")
+            : question.options.find((o) => o.value === historyItem.correctAnswer)!.label
+          : Array.isArray(historyItem.correctAnswer)
+            ? historyItem.correctAnswer[0]
+            : historyItem.correctAnswer
+        : null
 
   const canSave =
     status === "open" &&
