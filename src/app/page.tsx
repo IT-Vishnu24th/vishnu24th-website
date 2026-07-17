@@ -49,7 +49,7 @@ export default function HomePage() {
           <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             Intania First Date 2026
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">19 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">18 กรกฎาคม 2569</h3>
 
           {/* Vishnu 24th logo */}
           <div className="relative w-full max-w-[300px] md:max-w-[420px] mt-10 mb-3">
