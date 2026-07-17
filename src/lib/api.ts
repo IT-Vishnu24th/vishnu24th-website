@@ -5,6 +5,11 @@ import { FeatureFlag } from "@/types/featureFlag"
 import { MultiLang } from "@/types/util"
 import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 import { LeaderboardResponse } from "@/types/leaderboard"
+import {
+  PopkaewClickResponse,
+  PopkaewLeaderboardResponse,
+  PopkaewMeResponse,
+} from "@/features/game/popkaew/types"
 
 export const userApi = {
   getMe: async () => {
@@ -99,5 +104,21 @@ export const phaseApi = {
         vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase", body)
+  },
+}
+
+export const popkaewApi = {
+  getMe: async () => {
+    return api.get<{ data: PopkaewMeResponse }>("/popkaew/me")
+  },
+
+  getLeaderboard: async () => {
+    return api.get<{ data: PopkaewLeaderboardResponse }>("/popkaew/leaderboard")
+  },
+
+  click: async (click: number) => {
+    return api.post<{ data: PopkaewClickResponse }>("/popkaew/click", {
+      click,
+    })
   },
 }
