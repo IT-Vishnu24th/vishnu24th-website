@@ -2,14 +2,11 @@
 
 import { Header2 } from "@/components/Headers"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import Sponsor from "@/components/SponsorFooter"
 import BuildingInfo from "@/features/map/components/BuildingInfo"
 import NavigationFooter from "@/components/NavigationFooter"
 
 export default function MapPage() {
-  const router = useRouter()
-
   return (
     <div>
       {/* Top Bar */}
@@ -25,16 +22,16 @@ export default function MapPage() {
           จุดพยาบาล 24 ชั่วโมงที่ตึก 3 ชั้น 4 ห้อง 406
         </h3>
 
-        <div className="relative w-full h-8 overflow-hidden mt-3">
-          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102" />
+        <div className="relative mt-3 h-12 w-full overflow-hidden">
+          <Image src="/map/map-line.svg" alt="" fill className="object-fill scale-x-105" />
         </div>
       </div>
 
       {/* Map */}
-      <div className="bg-cream-tanned py-3 -mt-5 pb-10">
+      <div className="-mt-6 bg-cream-tanned py-3 pb-10">
         <div className="mx-4 mt-10 overflow-hidden rounded-2xl">
           <Image
-            src="/map/map.svg"
+            src="/map/map.png"
             alt="Map"
             width={1000}
             height={700}
