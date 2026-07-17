@@ -1,4 +1,5 @@
 import { adminDb } from "@/firebase/admin"
+import { POPKAEW_BUCKET_CAPACITY } from "@/services/popkaewConstants"
 
 import type { popkaewPlayer } from "@/types/popkaewPlayer"
 import type { popkaewVessel } from "@/types/popkaewVessel"
@@ -78,6 +79,7 @@ const popkaewPlayerService = {
           group,
           vesselName,
           popkaewscore: 0,
+          token: POPKAEW_BUCKET_CAPACITY,
         } satisfies popkaewPlayer)
       }
     })

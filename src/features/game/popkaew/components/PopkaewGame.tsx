@@ -1,10 +1,12 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 import { PopkaewArtwork } from "./PopkaewArtwork"
 import { PopkaewCharacter } from "./PopkaewCharacter"
 import { PopkaewHeroSection } from "./PopkaewHeroSection"
+import type { PopkaewMeResponse } from "../types"
 import { formatPopkaewScore } from "../utils"
 
 import { useFeatureFlag, usePopkaewClick, usePopkaewMe } from "@/hooks/useApi"
@@ -17,6 +19,7 @@ const CLICK_THRESHOLD = 100
 
 export function PopkaewGame() {
   const { user } = useAuth()
+  const queryClient = useQueryClient()
 
   const { data: featureFlag, isLoading } = useFeatureFlag("game-popkaew")
   const { data: me } = usePopkaewMe()
@@ -24,13 +27,12 @@ export function PopkaewGame() {
 
   const isPlayable = !isLoading && (featureFlag?.data.enabled ?? false) && user !== null
 
-  const [confirmedScore, setConfirmedScore] = useState<number | null>(null)
   const [optimisticClicks, setOptimisticClicks] = useState(0)
   const [isPressed, setIsPressed] = useState(false)
 
   const pendingClicksRef = useRef(0)
   const isFlushingRef = useRef(false)
-  const score = (confirmedScore ?? me?.data.popkaewscore ?? 0) + optimisticClicks
+  const score = (me?.data.popkaewscore ?? 0) + optimisticClicks
 
   const flushClicks = useCallback(() => {
     if (isFlushingRef.current) return
@@ -43,8 +45,18 @@ export function PopkaewGame() {
 
     mutate(clicks, {
       onSuccess: (res) => {
-        setConfirmedScore(res.data.score)
         setOptimisticClicks((prev) => Math.max(0, prev - clicks))
+        queryClient.setQueryData<{ data: PopkaewMeResponse }>(["popkaew", "me"], (current) =>
+          current
+            ? {
+                ...current,
+                data: {
+                  ...current.data,
+                  popkaewscore: res.data.score,
+                },
+              }
+            : current
+        )
       },
       onError: () => {
         pendingClicksRef.current += clicks
@@ -53,7 +65,7 @@ export function PopkaewGame() {
         isFlushingRef.current = false
       },
     })
-  }, [mutate])
+  }, [mutate, queryClient])
 
   useEffect(() => {
     if (!isPlayable) return

@@ -1,16 +1,14 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore"
 import { adminDb } from "@/firebase/admin"
+import { POPKAEW_BUCKET_CAPACITY, POPKAEW_REFILL_TIME_MS } from "@/services/popkaewConstants"
 import { popkaewPlayer } from "@/types/popkaewPlayer"
-
-const BUCKET_CAPACITY = 100
-const REFILL_TIME = 5000 // 5 seconds
 
 export async function click(playerId: string, clickCount: number) {
   if (clickCount <= 0) {
     throw new Error("Invalid click count")
   }
 
-  if (clickCount > BUCKET_CAPACITY) {
+  if (clickCount > POPKAEW_BUCKET_CAPACITY) {
     throw new Error("Click count exceeds bucket capacity")
   }
 
@@ -40,8 +38,8 @@ export async function click(playerId: string, clickCount: number) {
     const elapsed = now.toMillis() - lastClick.toMillis()
 
     // Refill bucket after 5 seconds
-    if (elapsed >= REFILL_TIME) {
-      token = BUCKET_CAPACITY
+    if (elapsed >= POPKAEW_REFILL_TIME_MS) {
+      token = POPKAEW_BUCKET_CAPACITY
     }
 
     // Not enough tokens
