@@ -13,7 +13,7 @@ export const PopkaewBottomsheet = () => {
 
   return (
     <motion.div
-      className="fixed inset-x-0 bottom-0 z-50 h-[90vh] rounded-t-3xl bg-cream-tanned shadow-2xl"
+      className="fixed left-1/2 -translate-x-1/2 inset-x-0 bottom-0 z-50 h-[90vh] w-full max-w-[820px] rounded-t-3xl bg-cream-tanned shadow-2xl"
       animate={{
         y: expanded ? 50 : collapsedY,
       }}
