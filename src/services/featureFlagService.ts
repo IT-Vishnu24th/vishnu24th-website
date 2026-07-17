@@ -8,7 +8,7 @@ const featureFlagCollection = adminDb.collection("featureFlags").withConverter({
 })
 
 // Per-instance TTL cache
-const CACHE_TTL_MS = Number(process.env.FLAG_CACHE_TTL_MS ?? 15000)
+const CACHE_TTL_MS = Number(process.env.FLAG_CACHE_TTL_MS ?? 10000)
 const cache = new Map<string, { flag: FeatureFlag | null; expires: number }>()
 
 const featureFlagsService = {

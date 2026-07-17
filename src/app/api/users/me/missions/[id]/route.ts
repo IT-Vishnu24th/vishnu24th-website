@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return failure(400, AppErrorCode.INVALID_QUESTION_ID, "Invalid question ID")
     }
 
-    const userAnswers = await userService.getUserAnswers(user.id)
+    const userAnswers = userService.normalizeAnswers(user.answers)
     const userAnswer = userAnswers[id as keyof UserAnswers]
 
     if (userAnswer === null) {
