@@ -17,7 +17,7 @@ export const YarnAnnouncementButton = () => {
 
   const yarnAccepted = userData?.data?.yarnAccepted ?? false
 
-  if (!showYarn) return null
+  if (!showYarn || !userData) return null
   return (
     <Link
       href="/yaan"

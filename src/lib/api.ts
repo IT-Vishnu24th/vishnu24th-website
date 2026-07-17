@@ -5,6 +5,11 @@ import { FeatureFlag } from "@/types/featureFlag"
 import { MultiLang } from "@/types/util"
 import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 import { LeaderboardResponse } from "@/types/leaderboard"
+import {
+  PopkaewClickResponse,
+  PopkaewLeaderboardResponse,
+  PopkaewMeResponse,
+} from "@/features/game/popkaew/types"
 
 export const userApi = {
   getMe: async () => {
@@ -53,6 +58,10 @@ export const featureFlagApi = {
     return api.get<{ data: FeatureFlag[] }>("/flags")
   },
 
+  getFeatureFlag: async (id: string) => {
+    return api.get<{ data: FeatureFlag }>(`/flags/${id}`)
+  },
+
   createFeatureFlag: async (body: { id: string; name: MultiLang; enabled?: boolean }) => {
     return api.post<{ data: FeatureFlag }>("/flags", body)
   },
@@ -81,7 +90,7 @@ export const phaseApi = {
     return api.get<{
       data: {
         regis: { current: RegistrationPhase }
-        vishnuMission: { current: VishnuMissionPhase }
+        vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase")
   },
@@ -89,15 +98,31 @@ export const phaseApi = {
   updatePhase: async (
     body: Partial<{
       regis: RegistrationPhase
-      vishnuMission: VishnuMissionPhase
+      vishnuMission: VishnuMissionPhase | null
     }>
   ) => {
     return api.patch<{
       data: {
         message: string
         regis: { current: RegistrationPhase }
-        vishnuMission: { current: VishnuMissionPhase }
+        vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase", body)
+  },
+}
+
+export const popkaewApi = {
+  getMe: async () => {
+    return api.get<{ data: PopkaewMeResponse }>("/popkaew/me")
+  },
+
+  getLeaderboard: async () => {
+    return api.get<{ data: PopkaewLeaderboardResponse }>("/popkaew/leaderboard")
+  },
+
+  click: async (click: number) => {
+    return api.post<{ data: PopkaewClickResponse }>("/popkaew/click", {
+      click,
+    })
   },
 }

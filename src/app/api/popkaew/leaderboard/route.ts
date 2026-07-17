@@ -11,6 +11,8 @@ export async function GET() {
     const [flagErr] = await requireFlag("game-popkaew")
     if (flagErr) return flagErr
 
+    await popkaewVesselService.ensureAllFromGroups()
+
     const [vessels, group] = await Promise.all([
       popkaewVesselService.leaderboard(),
       groupService.getById(user.group),

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { LoginButton } from "@/features/auth/components/LoginButton"
-import { LanguageChangerButton } from "@/features/i18n/components/LanguageChangerButton"
 import { UserInfoButton } from "@/features/auth/components/UserInfoButton"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
@@ -33,7 +32,7 @@ export const Header = () => {
 
   return (
     <div className="flex justify-between items-center px-4 py-4">
-      <LanguageChangerButton />
+      <div />
 
       <div className="flex items-center gap-2">
         {!loading && (isLoggedIn ? <UserInfoButton /> : <LoginButton />)}
