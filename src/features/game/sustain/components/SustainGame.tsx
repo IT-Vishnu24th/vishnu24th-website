@@ -13,17 +13,34 @@ import {
   SUSTAIN_GAME_DURATION,
   SUSTAIN_GAME_HEIGHT,
   SUSTAIN_GAME_WIDTH,
-  SUSTAIN_SCORE_PER_TRASH,
   SUSTAIN_TRASH_ITEMS,
 } from "../data/sustainGame"
-import { consumeSustainPlay, defaultPlaysState, fetchSustainPlays } from "../utils/plays"
-import type { SustainFallingTrash, SustainGamePhase, SustainPlaysResponse } from "../types/sustain"
+import { defaultPlaysState, fetchSustainPlays } from "../utils/plays"
+import { recordSustainRound } from "../utils/score"
+import type {
+  SustainFallingTrash,
+  SustainGamePhase,
+  SustainPlaysResponse,
+  SustainTrashType,
+} from "../types/sustain"
+
+const RANDOM_SCORES = [1]
+
+const randomScore = () => RANDOM_SCORES[Math.floor(Math.random() * RANDOM_SCORES.length)]
 
 type DragState = {
   id: string
   offsetX: number
   offsetY: number
   pointerId: number
+}
+
+type ScorePopup = {
+  id: string
+  x: number
+  y: number
+  label: string
+  isHit: boolean
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
@@ -58,6 +75,9 @@ const getBinUnderTrash = (trash: SustainFallingTrash) => {
   )
 }
 
+const getBinUnderX = (centerX: number) =>
+  SUSTAIN_BINS.find((bin) => centerX >= bin.x - 12 && centerX <= bin.x + bin.width + 12)
+
 export function SustainGame() {
   const stageRef = useRef<HTMLDivElement | null>(null)
   const dragRef = useRef<DragState | null>(null)
@@ -65,6 +85,7 @@ export function SustainGame() {
   const lastFrameAtRef = useRef(0)
   const startedAtRef = useRef(0)
   const spawnElapsedRef = useRef(0)
+  const hasSubmittedScoreRef = useRef(false)
 
   const [phase, setPhase] = useState<SustainGamePhase>("home")
   const [plays, setPlays] = useState<SustainPlaysResponse>(() => defaultPlaysState())
@@ -75,6 +96,8 @@ export function SustainGame() {
   const [showHowTo, setShowHowTo] = useState(false)
   const [isLoadingPlays, setIsLoadingPlays] = useState(true)
   const [isStarting, setIsStarting] = useState(false)
+  const [hoveredBinType, setHoveredBinType] = useState<SustainTrashType | null>(null)
+  const [popups, setPopups] = useState<ScorePopup[]>([])
 
   useEffect(() => {
     let isActive = true
@@ -126,6 +149,25 @@ export function SustainGame() {
 
     return () => window.clearInterval(interval)
   }, [phase])
+
+  // Fire once per finished round: record the score on the real backend.
+  // This is also what actually consumes today's play, server-side.
+  useEffect(() => {
+    if (phase !== "finished") {
+      hasSubmittedScoreRef.current = false
+      return
+    }
+    if (hasSubmittedScoreRef.current) return
+    hasSubmittedScoreRef.current = true
+
+    recordSustainRound(score).then((result) => {
+      if (result.plays) {
+        setPlays(result.plays)
+      } else {
+        syncPlays()
+      }
+    })
+  }, [phase, score, syncPlays])
 
   useEffect(() => {
     if (phase !== "playing") return
@@ -189,6 +231,8 @@ export function SustainGame() {
     setScore(0)
     setTrash([])
     setTimeLeft(SUSTAIN_GAME_DURATION)
+    setPopups([])
+    setHoveredBinType(null)
     dragRef.current = null
   }, [])
 
@@ -197,8 +241,13 @@ export function SustainGame() {
 
     setIsStarting(true)
     try {
-      const nextPlays = await consumeSustainPlay()
-      setPlays(nextPlays)
+      // Recheck against the server in case another tab/device already used
+      // a play — we no longer pre-consume one here, since the backend
+      // consumes it atomically when the round's score is recorded at finish.
+      const latest = await fetchSustainPlays()
+      setPlays(latest)
+      if (latest.remainingPlays <= 0) return
+
       resetRound()
       setCountdown(3)
       setPhase("countdown")
@@ -219,6 +268,20 @@ export function SustainGame() {
       y: ((event.clientY - rect.top) / rect.height) * SUSTAIN_GAME_HEIGHT,
     }
   }, [])
+
+  const spawnPopup = useCallback(
+    (bin: (typeof SUSTAIN_BINS)[number], label: string, isHit: boolean) => {
+      const id = `${bin.type}-${Date.now()}-${Math.random().toString(16).slice(2)}`
+      setPopups((current) => [
+        ...current,
+        { id, x: bin.x + bin.width / 2, y: bin.y - 12, label, isHit },
+      ])
+      window.setTimeout(() => {
+        setPopups((current) => current.filter((popup) => popup.id !== id))
+      }, 850)
+    },
+    []
+  )
 
   const handlePointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
@@ -261,17 +324,21 @@ export function SustainGame() {
       if (!drag || phase !== "playing") return
 
       const position = getPointerPosition(event)
+      let nextCenterX = position.x
+
       setTrash((current) =>
-        current.map((item) =>
-          item.instanceId === drag.id
-            ? {
-                ...item,
-                x: clamp(position.x - drag.offsetX, 0, SUSTAIN_GAME_WIDTH - item.size),
-                y: clamp(position.y - drag.offsetY, 0, SUSTAIN_GAME_HEIGHT - item.size),
-              }
-            : item
-        )
+        current.map((item) => {
+          if (item.instanceId !== drag.id) return item
+
+          const nextX = clamp(position.x - drag.offsetX, 0, SUSTAIN_GAME_WIDTH - item.size)
+          const nextY = clamp(position.y - drag.offsetY, 0, SUSTAIN_GAME_HEIGHT - item.size)
+          nextCenterX = nextX + item.size / 2
+          return { ...item, x: nextX, y: nextY }
+        })
       )
+
+      const bin = getBinUnderX(nextCenterX)
+      setHoveredBinType(bin?.type ?? null)
     },
     [getPointerPosition, phase]
   )
@@ -284,30 +351,41 @@ export function SustainGame() {
       const droppedTrash = trash.find((item) => item.instanceId === drag.id)
       const targetBin = droppedTrash ? getBinUnderTrash(droppedTrash) : undefined
 
-      if (droppedTrash && targetBin?.type === droppedTrash.type) {
-        setScore((current) => current + droppedTrash.score)
+      if (droppedTrash && targetBin) {
+        const isHit = targetBin.type === droppedTrash.type
+        if (isHit) {
+          setScore((current) => current + droppedTrash.score)
+        }
+        spawnPopup(targetBin, isHit ? `+${droppedTrash.score}` : "+0", isHit)
       }
 
       setTrash((current) => current.filter((item) => item.instanceId !== drag.id))
+      setHoveredBinType(null)
 
       if (event.currentTarget.hasPointerCapture(drag.pointerId)) {
         event.currentTarget.releasePointerCapture(drag.pointerId)
       }
       dragRef.current = null
     },
-    [phase, trash]
+    [phase, trash, spawnPopup]
   )
 
   const canStart = plays.remainingPlays > 0 && !isLoadingPlays && !isStarting
 
   return (
     <main className="min-h-[100svh] bg-[#f9f9f9] text-black">
-      <div className="mx-auto flex min-h-[100svh] w-full max-w-[393px] flex-col overflow-hidden bg-[#f9f9f9]">
+      <div className="mx-auto flex min-h-[100svh] w-full max-w-[393px] flex-col overflow-hidden bg-[#f9f9f9] font-mitr">
         <Header />
 
         <div
           ref={stageRef}
-          className="relative min-h-[600px] flex-1 overflow-hidden bg-[#cfcfcf] touch-none"
+          className="relative min-h-[600px] flex-1 overflow-hidden touch-none"
+          style={{
+            backgroundImage: "url('/game/sustain-game-bg.png')",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+          }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -319,61 +397,94 @@ export function SustainGame() {
             <SustainTrashItem key={item.instanceId} trash={item} />
           ))}
 
-          <SustainBins bins={SUSTAIN_BINS} />
+          {popups.map((popup) => (
+            <div
+              key={popup.id}
+              className={`pointer-events-none absolute z-30 -translate-x-1/2 font-mono text-xl font-extrabold drop-shadow animate-popup ${
+                popup.isHit ? "text-[#2fbf5c]" : "text-[#e0413a]"
+              }`}
+              style={{
+                left: `${(popup.x / SUSTAIN_GAME_WIDTH) * 100}%`,
+                top: `${(popup.y / SUSTAIN_GAME_HEIGHT) * 100}%`,
+              }}
+            >
+              {popup.label}
+            </div>
+          ))}
+
+          <SustainBins
+            bins={SUSTAIN_BINS}
+            hoveredBinType={phase === "playing" ? hoveredBinType : null}
+          />
+
+          {(phase === "home" || phase === "finished") && (
+            <div className="absolute inset-0 z-30 bg-black/45" />
+          )}
 
           {phase === "home" && (
-            <section className="absolute left-1/2 top-[82px] z-30 w-[268px] -translate-x-1/2 rounded-2xl bg-[#eeeeee] px-5 pb-5 pt-6 text-center shadow-sm">
+            <section className="absolute left-1/2 top-[100px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 pb-6 pt-8 text-center shadow-xl">
               <button
                 type="button"
                 aria-label="ดูวิธีเล่น"
                 onClick={() => setShowHowTo(true)}
-                className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full bg-black/10 text-black/65 transition active:scale-95"
+                className="absolute right-4 top-4 flex size-7 items-center justify-center rounded-full bg-[#8a3a2c]/10 text-[#8a3a2c] transition active:scale-95"
               >
                 <HelpCircle size={18} strokeWidth={2.2} />
               </button>
 
-              <h1 className="text-2xl font-semibold">เกมแยกขยะ</h1>
-              <p className="mt-6 text-sm font-semibold text-black/75">logo</p>
+              <h1 className="font-serif-th text-2xl font-bold leading-snug text-[#8a3a2c]">
+                ความจริงหน่ะ
+                <br />
+                มีเพียงถังเดียวเท่านั้น
+              </h1>
 
               <button
                 type="button"
                 disabled={!canStart}
                 onClick={startGame}
-                className="mt-7 rounded-full bg-[#e2383c] px-6 py-3 text-xl font-bold text-white transition active:scale-95 disabled:bg-white/45 disabled:text-black/15"
+                className="mt-6 rounded-full bg-[#e2683c] px-6 py-3 text-xl font-bold text-white shadow-sm transition active:scale-95 disabled:bg-black/10 disabled:text-black/25"
               >
                 {isStarting
                   ? "กำลังเริ่ม..."
                   : `เริ่มเกม (${plays.remainingPlays}/${plays.maxPlays})`}
               </button>
 
-              <Link
-                href="/game"
-                className="mx-auto mt-4 flex h-9 w-[134px] items-center justify-center rounded-full bg-[#2c2c2c] text-sm font-semibold text-white transition active:scale-95"
-              >
-                กลับหน้าหลัก
-              </Link>
-
-              <p className="mt-3 text-[11px] font-semibold text-black/65">
-                *เปิดให้เล่น 10:67-11:67
-              </p>
+              <div className="mt-4 flex items-center justify-center gap-4 text-sm font-semibold text-[#c96a4d]">
+                <Link href="/game" className="transition active:scale-95">
+                  กลับหน้าหลัก
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setShowHowTo(true)}
+                  className="flex items-center gap-1 transition active:scale-95"
+                >
+                  <HelpCircle size={14} strokeWidth={2.4} />
+                  วิธีเล่น
+                </button>
+              </div>
             </section>
           )}
 
           {phase === "countdown" && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center pb-20 text-4xl font-semibold">
-              {countdown}
+            <div className="absolute inset-0 z-40 flex items-center justify-center pb-20">
+              <span
+                key={countdown}
+                className="font-serif-th text-7xl font-bold text-white drop-shadow-lg animate-countdown"
+              >
+                {countdown}
+              </span>
             </div>
           )}
 
           {phase === "finished" && (
-            <section className="absolute left-1/2 top-[190px] z-30 w-[286px] -translate-x-1/2 rounded-2xl bg-[#eeeeee] px-6 py-6 text-center shadow-sm">
-              <h2 className="text-2xl font-semibold">สรุปคะแนน</h2>
-              <p className="mt-2 font-mono text-2xl font-semibold">{score}</p>
+            <section className="absolute left-1/2 top-[190px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 py-8 text-center shadow-xl">
+              <h2 className="font-serif-th text-2xl font-bold text-[#8a3a2c]">สรุปคะแนน</h2>
+              <p className="mt-2 font-mono text-4xl font-bold text-[#8a3a2c]">{score}</p>
 
-              <div className="mt-4 flex items-center justify-center gap-3">
+              <div className="mt-5 flex items-center justify-center gap-3">
                 <Link
                   href="/game"
-                  className="flex h-8 items-center justify-center rounded-full bg-[#2c2c2c] px-4 text-xs font-semibold text-white"
+                  className="flex h-9 items-center justify-center rounded-full bg-[#f1d9c6] px-4 text-sm font-semibold text-[#8a3a2c] transition active:scale-95"
                 >
                   กลับหน้าเกม
                 </Link>
@@ -381,7 +492,7 @@ export function SustainGame() {
                   type="button"
                   disabled={plays.remainingPlays <= 0 || isStarting}
                   onClick={startGame}
-                  className="flex h-8 items-center justify-center rounded-full bg-[#2c2c2c] px-4 text-xs font-semibold text-white transition active:scale-95 disabled:bg-black/20 disabled:text-black/30"
+                  className="flex h-9 items-center justify-center rounded-full bg-[#e2683c] px-4 text-sm font-semibold text-white transition active:scale-95 disabled:bg-[#f1d9c6] disabled:text-[#8a3a2c]/40"
                 >
                   เล่นต่อ ({plays.remainingPlays}/{plays.maxPlays})
                 </button>
@@ -392,6 +503,49 @@ export function SustainGame() {
           <HowToPlayModal open={showHowTo} onClose={() => setShowHowTo(false)} />
         </div>
       </div>
+
+      <style jsx global>{`
+        .font-mitr {
+          font-family: "Mitr", sans-serif;
+        }
+        .font-serif-th {
+          font-family: "Chonburi", serif;
+        }
+        @keyframes popup-float {
+          0% {
+            opacity: 0;
+            transform: translate(-50%, 6px) scale(0.8);
+          }
+          20% {
+            opacity: 1;
+            transform: translate(-50%, -4px) scale(1);
+          }
+          100% {
+            opacity: 0;
+            transform: translate(-50%, -34px) scale(1);
+          }
+        }
+        .animate-popup {
+          animation: popup-float 0.85s ease-out forwards;
+        }
+        @keyframes countdown-pop {
+          0% {
+            opacity: 0;
+            transform: scale(0.6);
+          }
+          40% {
+            opacity: 1;
+            transform: scale(1.1);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-countdown {
+          animation: countdown-pop 0.35s ease-out;
+        }
+      `}</style>
     </main>
   )
 }
