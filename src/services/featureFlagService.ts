@@ -7,6 +7,10 @@ const featureFlagCollection = adminDb.collection("featureFlags").withConverter({
   toFirestore: (data: FeatureFlag) => data,
 })
 
+// Per-instance TTL cache
+const CACHE_TTL_MS = Number(process.env.FLAG_CACHE_TTL_MS ?? 15000)
+const cache = new Map<string, { flag: FeatureFlag | null; expires: number }>()
+
 const featureFlagsService = {
   async listFlags(): Promise<FeatureFlag[]> {
     const coll = await featureFlagCollection.get()
@@ -14,15 +18,20 @@ const featureFlagsService = {
   },
 
   async getFlag(id: string): Promise<FeatureFlag | null> {
+    if (CACHE_TTL_MS > 0) {
+      const hit = cache.get(id)
+      if (hit && hit.expires > Date.now()) return hit.flag ? { ...hit.flag } : null
+    }
     const doc = await featureFlagCollection.doc(id).get()
-    const data = doc.data()
-    if (!data) return null
-    return data
+    const data = doc.data() ?? null
+    if (CACHE_TTL_MS > 0) cache.set(id, { flag: data, expires: Date.now() + CACHE_TTL_MS })
+    return data ? { ...data } : null
   },
 
   async createFlag(flag: FeatureFlag): Promise<FeatureFlag> {
     const ref = featureFlagCollection.doc(flag.id)
     await ref.create(flag)
+    cache.delete(flag.id)
 
     const result = await ref.get()
     const data = result.data()
@@ -39,6 +48,7 @@ const featureFlagsService = {
   async setFlag(id: string, enabled: boolean = false): Promise<FeatureFlag> {
     const ref = featureFlagCollection.doc(id)
     await ref.update({ id, enabled })
+    cache.delete(id)
 
     const result = await ref.get()
     const data = result.data()
@@ -53,6 +63,7 @@ const featureFlagsService = {
       batch.update(featureFlagCollection.doc(id), { enabled })
     }
     await batch.commit()
+    for (const id in flags) cache.delete(id)
   },
 }
 
