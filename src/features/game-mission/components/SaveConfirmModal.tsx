@@ -35,7 +35,7 @@ export function SaveConfirmModal({ period, onConfirm, isSubmitting }: SaveConfir
 
   return (
     <div className={`relative w-full max-w-sm px-6 py-8 text-center ${theme.text}`}>
-      <Image src="/game/save-box.png" alt="" fill className="-z-10 object-fill" />
+      <Image src={`/game/save-box-${period}.png`} alt="" fill className="-z-10 object-fill" />
 
       <Save className={`mx-auto mb-3 ${theme.accent}`} size={28} />
       <h2 className="font-fc-quantum text-2xl leading-snug">

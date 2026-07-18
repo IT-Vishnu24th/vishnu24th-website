@@ -14,15 +14,19 @@ const DAY_PILL = {
 
 const THEME = {
   morning: {
-    bg: "bg-cream-tanned",
+    bg: "bg-cream",
+    inset: "bg-cream-tanned",
     text: "text-brownie-dark",
-    accent: "text-brick-orange",
+    accent: "text-brownie",
+    border: "border-brownie-light/30",
     button: "bg-brick-orange text-cream",
   },
   evening: {
-    bg: "bg-mint",
+    bg: "bg-turqoise-light",
+    inset: "bg-mint",
     text: "text-midnight",
-    accent: "text-turqoise",
+    accent: "text-midnight-light",
+    border: "border-midnight-light/30",
     button: "bg-midnight text-mint",
   },
 } as const
@@ -35,23 +39,19 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
 
   return (
     <div className="absolute bottom-0 flex max-h-[95vh] w-full max-w-md pt-16 px-6 pb-20 flex-col rounded-3xl">
-      <Image src="/game/game-history.png" alt="" fill className="-z-10 object-fill" />
+      <Image src={`/game/game-history-${period}.png`} alt="" fill className="-z-10 object-fill" />
 
-      <h2 className="pt-4 pb-3 text-center font-sov-yeehor text-3xl text-brownie-dark">
+      <h2 className={`pt-4 pb-3 text-center font-sov-yeehor text-3xl ${THEME[period].text}`}>
         ประวัติการตอบ
       </h2>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-6">
-        {isLoading && (
-          <p className="py-8 text-center font-fc-quantum text-brownie-dark/70">กำลังโหลด...</p>
-        )}
+      <div className={`flex-1 overflow-y-auto px-5 pb-6 ${THEME[period].text}`}>
+        {isLoading && <p className={`py-8 text-center font-fc-quantum opacity-70`}>กำลังโหลด...</p>}
         {isError && (
           <p className="py-8 text-center font-fc-quantum text-status-red">โหลดประวัติไม่สำเร็จ</p>
         )}
         {!isLoading && !isError && (answers?.length ?? 0) === 0 && (
-          <p className="py-8 text-center font-fc-quantum text-brownie-dark/70">
-            ยังไม่มีคำตอบที่ส่งไป
-          </p>
+          <p className={`py-8 text-center font-fc-quantum opacity-70`}>ยังไม่มีคำตอบที่ส่งไป</p>
         )}
 
         <div className="flex flex-col gap-4">
@@ -93,7 +93,7 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
             return (
               <div
                 key={entry.id}
-                className="rounded-2xl border-2 border-brownie-light/30 bg-cream p-4"
+                className={`rounded-2xl border-2 ${THEME[period].border} ${THEME[period].bg} p-4`}
               >
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-fc-quantum text-sm ${DAY_PILL[question.period]}`}
@@ -102,21 +102,21 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                   DAY {question.day} {question.period === "morning" ? "ช่วงเช้า" : "ช่วงเย็น"}
                 </span>
 
-                <p className="mt-3 font-fc-quantum text-brownie-dark">{question.prompt}</p>
+                <p className="mt-3 font-fc-quantum">{question.prompt}</p>
                 {question.imageSrc && (
                   <div
-                    className={`my-2 h-32 w-full p-2 overflow-hidden rounded-2xl ${THEME[question.period].bg}`}
+                    className={`my-2 h-32 w-full p-2 overflow-hidden rounded-2xl ${THEME[period].inset}`}
                   >
                     <div className="relative h-full w-full">
                       <Image src={question.imageSrc} alt="" fill className="object-contain" />
                     </div>
                   </div>
                 )}
-                <p className="mt-2 font-fc-quantum text-lg text-brownie-dark">{userAnswer}</p>
+                <p className="mt-2 font-fc-quantum text-lg">{userAnswer}</p>
 
                 {entry.isRevealed ? (
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="font-fc-quantum text-sm text-brownie">
+                    <span className={`font-fc-quantum text-sm ${THEME[period].accent}`}>
                       เฉลย: {correctAnswer}
                     </span>
                     <span
@@ -132,7 +132,7 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                     </span>
                   </div>
                 ) : (
-                  <p className="mt-2 font-fc-quantum text-sm text-brownie-dark/60">รอการเฉลย</p>
+                  <p className="mt-2 font-fc-quantum text-sm opacity-70">รอการเฉลย</p>
                 )}
               </div>
             )
