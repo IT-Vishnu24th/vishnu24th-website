@@ -4,21 +4,21 @@ import { ParallaxLayer } from "@/components/ParallaxLayer"
 
 export default function Footer() {
   return (
-    <footer className="relative w-full overflow-visible pt-15 pb-50">
+    <footer className="relative w-full overflow-visible pt-15 pb-20">
       {/* bg สีส้ม */}
       <div className="absolute inset-0 z-0 bg-[#F0865C]" />
 
       {/* sponsor art*/}
       <ParallaxLayer
-        className="absolute left-1/2 top-[-76px] z-30 h-[893px] w-full max-w-[393px] -translate-x-1/2 overflow-visible"
+        className="object-contain absolute left-1/2 top-30 z-30 h-[893px] w-full max-w-[820px] -translate-x-1/2 overflow-visible"
         mode="local"
         speed={1.25}
       >
         <Image
           src="/landingpage/sponsor-art.png"
           fill
-          sizes="393px"
-          className="object-contain object-top"
+          sizes="820px"
+          className="object-fill object-top"
           alt=""
         />
       </ParallaxLayer>

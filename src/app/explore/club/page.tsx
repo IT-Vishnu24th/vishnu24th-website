@@ -80,28 +80,22 @@ export default function Page() {
 
   return (
     <div className="mx-auto min-h-screen w-full overflow-x-hidden bg-brownie-light font-sans">
-      <div className="relative z-20 overflow-hidden bg-[#f0b190] pb-12 text-center">
-        <Image
-          src="/club/club-top.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="pointer-events-none z-0 object-cover object-bottom"
-        />
-
-        <div className="relative z-10">
-          <Header2 url="/explore" title="สำรวจ" />
+      <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
+        <Header2 url="/explore" title="สำรวจ" />
+        <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-8 text-center">
+          <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
+            ชมรม
+          </h1>
         </div>
-
-        <div className="relative z-10 flex items-center justify-center px-4 pb-6 pt-1">
-          <h1 className="text-7xl font-sov-yeehor">ชมรม</h1>
+        <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+          <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-10" />
+          <img src="/explore/light_clay_curve.svg" alt="" className="w-full absolute z-20" />
         </div>
-      </div>
+      </section>
 
       {/* Hero: title + search + filter + category chips ทั้งหมดอยู่บนพื้นหลังส้มเข้ม */}
       <div
-        className="relative z-0 -mt-6 overflow-hidden pb-8"
+        className="relative z-0 pt-10 overflow-hidden pb-8"
         style={{
           background: "linear-gradient(180deg, #f0b190 0%, #f4c6aa 42%, #f7dfc4 76%, #f7edcf 100%)",
         }}

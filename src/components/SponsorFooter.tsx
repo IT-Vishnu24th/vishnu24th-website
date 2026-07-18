@@ -7,8 +7,15 @@ export default function Footer() {
   return (
     <footer className="relative w-full bg-brick-orange pt-10 pb-34">
       {/* เส้นลายกระดาษฉีกด้านบน */}
-      <div className="absolute top-0 left-0 z-40 h-12 w-full -translate-y-1/2 overflow-hidden">
-        <Image src="/sponsor/sponsor-line.svg" alt="" fill className="object-fill scale-x-105" />
+      <div className="absolute top-0 left-0 z-40 w-full -translate-y-1/2">
+        <Image
+          src="/sponsor/sponsor-line.svg"
+          alt=""
+          width={1920}
+          height={120}
+          className="h-auto w-full"
+          priority
+        />
       </div>
 
       <div className="mx-auto max-w-6xl px-3">

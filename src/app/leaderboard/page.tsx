@@ -78,32 +78,22 @@ export default function Page() {
   return (
     <>
       <div className="">
-        <div className="relative  bg-gradient-to-b from-midnight to-midnight-light ">
+        <section className="w-full bg-[linear-gradient(180deg,#2D3542_38.94%,#2D4B5F_100%)] text-black">
           <Header />
-
-          <motion.h1
-            className="mb-4 text-center font-sov-yeehor text-8xl text-turqoise"
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-          >
-            อันดับยาน
-          </motion.h1>
-          <motion.div
-            className="relative w-full h-10 overflow-hidden"
-            initial={{ opacity: 0, y: 18, scaleX: 0.92 }}
-            animate={{ opacity: 1, y: 0, scaleX: 1 }}
-            transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
-          >
-            <Image
-              src="/landingpage/blue-line.svg"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-fill scale-102 z-20"
-            />
-          </motion.div>
-        </div>
+          <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-5 text-center">
+            <h1 className="whitespace-nowrap text-[96px] font-sov-yeehor font-normal leading-none letter-spacing-[1.92px] text-turqoise-cream">
+              สำรวจ
+            </h1>
+            <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-turqoise">
+              ค้นพบชมรม กิจกรรม <br />
+              และข้อมูลต่างๆอีกมากมาย
+            </p>
+          </div>
+          <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+            <img src="/explore/dark_blue_curve.svg" alt="" className="w-full absolute z-10" />
+            <img src="/explore/blue_curve.svg" alt="" className="w-full absolute z-20" />
+          </div>
+        </section>
 
         <div className="relative bg-gradient-to-b from-cream-tanned to-clay-light -mt-5 overflow-hidden">
           <div className="relative">
