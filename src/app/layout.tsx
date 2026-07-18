@@ -90,10 +90,8 @@ const arthemis = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "Intania First Date 2026",
-  description: "Intania First Date 2026",
-  // title: "Vishnu 24th",
-  // description: "ค่ายวิษณุกรรมบุตรครั้งที่ 24",
+  title: "Vishnu 24th",
+  description: "ค่ายวิษณุกรรมบุตรครั้งที่ 24",
 }
 
 export default async function RootLayout({
