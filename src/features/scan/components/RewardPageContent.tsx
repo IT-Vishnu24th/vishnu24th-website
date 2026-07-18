@@ -44,21 +44,21 @@ export default function RewardPageContent() {
   return (
     <div className="mx-auto min-h-screen bg-brownie">
       {/* Header */}
-      <div className="relative bg-gradient-to-b from-midnight to-brownie">
+      <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
         <Header2 url="/game" title="เกมส์" />
-
-        <div className="relative px-4">
-          <div className="text-center">
-            <h1 className="text-6xl font-sov-yeehor">เช็คอินดาว</h1>
-
-            <p className="mt-4 text-2xl font-fc-quantum">{club?.name.th ?? code}</p>
-          </div>
+        <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-8 text-center">
+          <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
+            เช็คอินดาว
+          </h1>
+          <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-clay-light">
+            {club?.name.th ?? code}
+          </p>
         </div>
-
-        <div className="relative mt-3 h-10 w-full overflow-hidden">
-          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102 z-10" />
+        <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+          <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-20" />
+          <img src="/explore/light_clay_curve.svg" alt="" className="w-full absolute z-30" />
         </div>
-      </div>
+      </section>
 
       {/* Body */}
       <div className="relative -mt-5 bg-gradient-to-b from-brownie via-turqoise-light to-brownie pt-10 pb-16">
