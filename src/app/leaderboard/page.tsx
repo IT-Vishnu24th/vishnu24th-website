@@ -82,12 +82,8 @@ export default function Page() {
           <Header />
           <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-5 text-center">
             <h1 className="whitespace-nowrap text-[96px] font-sov-yeehor font-normal leading-none letter-spacing-[1.92px] text-turqoise-cream">
-              สำรวจ
+              อันดับกลุ่ม
             </h1>
-            <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-turqoise">
-              ค้นพบชมรม กิจกรรม <br />
-              และข้อมูลต่างๆอีกมากมาย
-            </p>
           </div>
           <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
             <img src="/explore/dark_blue_curve.svg" alt="" className="w-full absolute z-10" />
@@ -95,7 +91,7 @@ export default function Page() {
           </div>
         </section>
 
-        <div className="relative bg-gradient-to-b from-cream-tanned to-clay-light -mt-5 overflow-hidden">
+        <div className="relative bg-gradient-to-b from-cream-tanned to-clay-light pb-5 overflow-hidden">
           <div className="relative">
             <Image
               src="/leaderboard/leaderboard-bg.png"
