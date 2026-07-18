@@ -137,7 +137,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
           question={question}
           status={status}
           showTopBar
-          onHistoryClick={() => open(<HistoryModal />)}
+          onHistoryClick={() => open(<HistoryModal period={question.period} />)}
           onHelpClick={() => open(<HowToPlayModal period={question.period} />)}
         />
 
