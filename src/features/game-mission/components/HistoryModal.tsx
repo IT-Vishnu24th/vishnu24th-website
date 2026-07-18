@@ -103,6 +103,15 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                 </span>
 
                 <p className="mt-3 font-fc-quantum text-brownie-dark">{question.prompt}</p>
+                {question.imageSrc && (
+                  <div
+                    className={`my-2 h-32 w-full p-2 overflow-hidden rounded-2xl ${THEME[question.period].bg}`}
+                  >
+                    <div className="relative h-full w-full">
+                      <Image src={question.imageSrc} alt="" fill className="object-contain" />
+                    </div>
+                  </div>
+                )}
                 <p className="mt-2 font-fc-quantum text-lg text-brownie-dark">{userAnswer}</p>
 
                 {entry.isRevealed ? (
