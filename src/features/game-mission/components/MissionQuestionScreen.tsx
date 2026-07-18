@@ -130,7 +130,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
     <div
       className={`relative min-h-screen pb-56 ${BODY_BG[question.period]} ${BODY_TEXT[question.period]}`}
     >
-      <PageBottomGlobe />
+      <PageBottomGlobe period={question.period} />
 
       <div className="relative z-10">
         <MissionHeaderBanner
@@ -142,7 +142,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         />
 
         <div className="relative mt-8 flex flex-col items-center gap-6 px-24">
-          <BackgroundIllustration />
+          <BackgroundIllustration period={question.period} />
 
           <div className="relative mx-auto z-10 flex flex-col items-center gap-2">
             {status === "revealed" && (
