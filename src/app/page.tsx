@@ -83,17 +83,17 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative z-10 -mb-5 h-12 w-full md:h-14">
-          <Image src="/landingpage/blue-line.svg" alt="" fill className="object-fill" />
+        <div className="w-full relative h-3 [@media(min-width:480px)]:h-5 -top-3">
+          <img src="/landingpage/blue-line.svg" alt="" className="w-full absolute z-10" />
         </div>
 
         {/* <AuthResult isSucess={true} /> */}
 
-        <div className="z-20">
-          <div className="-mt-5 md:-mt-6 relative ">
+        <div className="z-20 bg-brick-orange">
+          <div className="relative">
             <SponsorFooter />
           </div>
-
+          {/* 
           <div className="relative -top-40 -mt-1 h-[72px] w-full md:h-20">
             <Image
               src="/landingpage/cream-line.svg"
@@ -101,9 +101,12 @@ export default function HomePage() {
               fill
               className="object-fill scale-105"
             />
+          </div> */}
+          <div className="w-full absolute h-3 -mt-9 [@media(min-width:480px)]:h-5">
+            <img src="/landingpage/cream-line.svg" alt="" className="w-full absolute z-10" />
           </div>
         </div>
-        <div className="relative -top-47 -mb-30">
+        <div className="relatives -mb-30">
           <FAQFooter />
         </div>
 
