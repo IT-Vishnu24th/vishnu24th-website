@@ -11,7 +11,7 @@ export async function GET() {
     const [flagErr] = await requireFlag("game-popkaew")
     if (flagErr) return flagErr
 
-    const player = await popkaewPlayerService.getById(user.id)
+    const player = await popkaewPlayerService.ensureForUser(user.id)
 
     if (!player) {
       return failure(404, AppErrorCode.PLAYER_NOT_FOUND, "Player not found")

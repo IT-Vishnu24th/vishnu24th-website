@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react"
 import { cn } from "@/utils/cn"
 import { scheduleStatusStyles } from "../const/schedule"
 import { StagePerformance } from "@/types/stagePerformance"
@@ -48,7 +47,7 @@ export const ScheduleCard = ({ stage, images }: ScheduleCardProps) => {
         >
           {stage.name.th}
         </div>
-        <div className="text-[14px] mt-3 font-fc-quantum line-clamp-2 hidden [@media(min-width:405px)]:block leading-[19.6px]">
+        <div className="text-[14px] mt-3 font-fc-quantum line-clamp-2 leading-[19.6px]">
           {stage.description.th}
         </div>
       </div>

@@ -13,9 +13,7 @@ export async function GET() {
   try {
     const user = await getAuthenticatedRawUser()
 
-    const userAnswers = user
-      ? await userService.getUserAnswers(user.id)
-      : ({} as Partial<UserAnswers>)
+    const userAnswers = userService.normalizeAnswers(user?.answers)
     const currentTime =
       process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
         ? new Date(process.env.MOCK_CURRENT_TIME)
@@ -96,7 +94,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const userAnswers = await userService.getUserAnswers(user.id)
+    const userAnswers = userService.normalizeAnswers(user.answers)
     if (userAnswers[id as keyof UserAnswers] !== null) {
       return failure(
         409,

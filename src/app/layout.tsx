@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 })
 
 const fcQuantum = localFont({
-  src: "../fonts/FC Quantum [Non-commercial].otf",
+  src: "../fonts/FC_Quantum.otf",
   variable: "--font-fc-quantum-family",
   display: "swap",
 })

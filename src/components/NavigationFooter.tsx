@@ -87,7 +87,7 @@ export default function FooterNavigation() {
   }
 
   return (
-    <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[825px] z-50 h-40">
+    <footer className="pointer-events-none fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[825px] z-50 h-40">
       <Image
         src="/navbar/navbar.svg"
         alt="navbar"
@@ -95,7 +95,7 @@ export default function FooterNavigation() {
         className="object-fill scale-103 translate-y-2 select-none pointer-events-none"
       />
 
-      <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 pb-4 pt-1.5 bg-[#2D3542]">
+      <div className="pointer-events-auto absolute bottom-0 left-0 w-full flex justify-between px-2 pb-4 pt-1.5 bg-[#2D3542]">
         {menus.map((item) => {
           const Icon = item.icon
           const selected = pathname === item.path || item?.subpaths?.includes(pathname)

@@ -1,4 +1,4 @@
-import { featureFlagApi, leaderboardApi, phaseApi, stageApi, userApi } from "@/lib/api"
+import { featureFlagApi, leaderboardApi, phaseApi, popkaewApi, stageApi, userApi } from "@/lib/api"
 import { StagePerformance } from "@/types/stagePerformance"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -97,6 +97,14 @@ export function useFeatureFlags() {
   })
 }
 
+export function useFeatureFlag(id: string) {
+  return useQuery({
+    queryKey: ["featureFlag", id],
+    queryFn: () => featureFlagApi.getFeatureFlag(id),
+    enabled: !!id,
+  })
+}
+
 export function useCreateFeatureFlag() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -144,6 +152,7 @@ export function usePhase() {
   })
 }
 
+// Popkaew API hooks
 export function useUpdatePhase() {
   const queryClient = useQueryClient()
 
@@ -154,5 +163,25 @@ export function useUpdatePhase() {
         queryKey: ["phase"],
       })
     },
+  })
+}
+
+export function usePopkaewMe() {
+  return useQuery({
+    queryKey: ["popkaew", "me"],
+    queryFn: () => popkaewApi.getMe(),
+  })
+}
+
+export function usePopkaewLeaderboard() {
+  return useQuery({
+    queryKey: ["popkaew", "leaderboard"],
+    queryFn: () => popkaewApi.getLeaderboard(),
+  })
+}
+
+export function usePopkaewClick() {
+  return useMutation({
+    mutationFn: (click: number) => popkaewApi.click(click),
   })
 }
