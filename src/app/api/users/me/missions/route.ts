@@ -9,6 +9,7 @@ import type { UserAnswers, UserAnswersResponse } from "@/types/user"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
 import { getAuthenticatedRawUser } from "@/lib/auth"
 
+// even if not logged in, should give correct answers to revealed questions
 export async function GET() {
   try {
     const user = await getAuthenticatedRawUser()
