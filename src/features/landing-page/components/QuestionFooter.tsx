@@ -15,7 +15,7 @@ export default function FAQFooter() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-cream pb-10 px-6">
+    <section className="relative overflow-hidden bg-cream pb-50 px-6">
       {/* ลายกระดาษฉีกมุมล่าง */}
       <ParallaxLayer
         className="absolute bottom-6 -right-10 z-0 h-40 w-140 opacity-90"
