@@ -1,15 +1,11 @@
-"use client"
-
 import { Download, FileText, Lock } from "lucide-react"
 import { Header2 } from "@/components/Headers"
 import { SLIDES } from "@/features/slide/const/mock"
-import { useRouter } from "next/navigation"
 import NavigationFooter from "@/components/NavigationFooter"
 import SponsorFooter from "@/components/SponsorFooter"
 import Image from "next/image"
 
 export default function DownloadPage() {
-  const router = useRouter()
   const now = new Date()
   return (
     <div className="w-full overflow-x-hidden">
