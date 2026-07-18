@@ -29,13 +29,13 @@ export function HowToPlayModal({ period }: HowToPlayModalProps) {
 
   return (
     <div
-      className={`mx-auto w-[92vw] max-w-md rounded-3xl ${theme.bg} ${theme.text} px-6 py-8 text-center shadow-2xl`}
+      className={`w-full max-w-md rounded-3xl ${theme.bg} ${theme.text} px-6 py-8 text-center shadow-2xl`}
     >
       <Sparkles className={`mx-auto mb-2 ${theme.accent}`} size={28} />
       <h2 className="font-sov-yeehor text-3xl">ปริศนาฟ้าลิขิต</h2>
 
       <div className="mt-6 text-left">
-        <h3 className="font-sov-yeehor text-xl">เล่นยังไง</h3>
+        <h3 className="font-sov-yeehor text-2xl">เล่นยังไง</h3>
         <p className="mt-2 font-fc-quantum text-sm leading-relaxed">
           ในแต่ละวัน จะมีคำถามช่วงเช้าและช่วงเย็น หน้าที่ของน้องคือการเขียนคำตอบสั้น ๆ เป็นคำทำนาย
           ก่อนเวลาที่กำหนด
@@ -50,7 +50,7 @@ export function HowToPlayModal({ period }: HowToPlayModalProps) {
           น้อง ๆ แต่ละคนสามารถทายตามที่ตัวเองชอบได้เลย โดยไม่ต้องตอบเหมือนกันทั้งยาน
         </p>
 
-        <h3 className="mt-6 font-sov-yeehor text-xl">ให้คะแนนยังไง</h3>
+        <h3 className="mt-6 font-sov-yeehor text-2xl">ให้คะแนนยังไง</h3>
         <p className="mt-2 font-fc-quantum text-sm leading-relaxed">
           จะนับคะแนนจากอันดับของจำนวนน้องที่ทายถูกในยาน
         </p>

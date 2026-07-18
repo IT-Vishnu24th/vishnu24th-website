@@ -15,7 +15,7 @@ export function Modal() {
           <Dialog.Portal forceMount>
             <Dialog.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-50 bg-black/50"
+                className="fixed inset-0 z-500 bg-black/50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -25,13 +25,15 @@ export function Modal() {
 
             <Dialog.Content asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-50 pointer-events-none focus-visible:outline-none"
+                className="fixed inset-0 z-500 pointer-events-none focus-visible:outline-none"
                 initial={{ opacity: 0, y: 24, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="pointer-events-auto">{component}</div>
+                <div className="w-full h-full p-8 pb-24 flex flex-col items-center justify-center pointer-events-auto">
+                  {component}
+                </div>
               </motion.div>
             </Dialog.Content>
           </Dialog.Portal>

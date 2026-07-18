@@ -29,7 +29,7 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     id: "q2",
     phaseId: "mission-2",
     type: "single-choice",
-    correctAnswer: "3",
+    correctAnswer: "red-pig",
     title: {
       th: "สีประจำคณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย คือสีอะไร?",
       en: "What is the official color of the Faculty of Engineering, Chulalongkorn University?",
@@ -44,7 +44,7 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     id: "q3",
     phaseId: "mission-3",
     type: "single-choice",
-    correctAnswer: "2",
+    correctAnswer: "lock",
     title: {
       th: "ทำไมจุฬาเข้าแล้วออกไม่ได้?",
       en: "Why can't you leave Chula?",
@@ -59,7 +59,7 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     id: "q4",
     phaseId: "mission-4",
     type: "multi-choice",
-    correctAnswer: ["0", "1", "2", "3"],
+    correctAnswer: ["magic", "late", "donut", "treasure"],
     title: {
       th: "ข้อใดไม่ใช่ภาควิชาของคณะวิศวกรรมศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย?",
       en: "Which of the following is NOT a department in the Faculty of Engineering, Chulalongkorn University?",
@@ -96,7 +96,7 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     id: "q6",
     phaseId: "mission-6",
     type: "single-choice",
-    correctAnswer: "0",
+    correctAnswer: "den-saeng",
     title: {
       th: "ทายเนื้อเพลง “ยังมีปราสาทสีแดง ดังศิลาแลงงดงาม.....แหล่งเมืองชมพู”",
       en: "Fill in the missing lyrics: “YangMi Prasat Si Daeng, Dang Silalaeng Ngotngam ..... Laeng Mueang Chomphu”",
@@ -111,14 +111,14 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     id: "q7",
     phaseId: "mission-7",
     type: "single-choice",
-    correctAnswer: "1",
+    correctAnswer: "intania",
     title: {
       th: "ชื่อจริง ๆ ของลานเกียร์คืออะไร?",
       en: "What is the actual name of Larn Gear?",
     },
     choices: {
-      th: ["ลาน inside out", "ลาน intania", "ก็ลานเกียร์ไง", "ลาน into the sun 💜"],
-      en: ["Larn Inside Out", "Larn Intania", "It is Larn Gear!", "Larn Into The Sun 💜"],
+      th: ["ลาน Inside Out", "ลาน Intania", "ก็ลานเกียร์ไง", "ลาน Into the Sun 💜"],
+      en: ["Larn Inside Out", "Larn Intania", "It is Larn Gear!", "Larn Into the Sun 💜"],
     },
     revealTime: "2026-07-24T12:30:00+07:00",
   },

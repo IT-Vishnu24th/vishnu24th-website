@@ -16,10 +16,6 @@ import type { MissionQuestion, MissionStatus } from "@/types/mission"
  * in — just don't set the var in production.
  */
 export function getMissionStatus(question: MissionQuestion, now: Date = new Date()): MissionStatus {
-  if (process.env.NEXT_PUBLIC_MISSION_DEV_PREVIEW === "open") {
-    return "open"
-  }
-
   const opens = new Date(question.opensAt).getTime()
   const closes = new Date(question.closesAt).getTime()
   const reveals = new Date(question.revealsAt).getTime()
