@@ -27,7 +27,7 @@ export default function DownloadPage() {
           </p>
         </div>
         <div className="relative w-full h-10 overflow-hidden mt-3">
-          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102 z-20" />
+          <Image src="/map/map-line.svg" alt="" fill className="object-fill scale-102 z-20" />
         </div>
       </div>
 
