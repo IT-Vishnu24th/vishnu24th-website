@@ -7,13 +7,15 @@ import userService from "@/services/userService"
 import { getMissionPhase } from "@/services/phaseService"
 import type { UserAnswers, UserAnswersResponse } from "@/types/user"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
+import { getAuthenticatedRawUser } from "@/lib/auth"
 
 export async function GET() {
   try {
-    const [error, user] = await protectRaw("participant")
-    if (error) return error
+    const user = await getAuthenticatedRawUser()
 
-    const userAnswers = await userService.getUserAnswers(user.id)
+    const userAnswers = user
+      ? await userService.getUserAnswers(user.id)
+      : ({} as Partial<UserAnswers>)
     const currentTime =
       process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
         ? new Date(process.env.MOCK_CURRENT_TIME)

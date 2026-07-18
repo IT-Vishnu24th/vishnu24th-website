@@ -19,6 +19,7 @@ import { TextAnswerInput } from "./TextAnswerInput"
 import { BackgroundIllustration } from "./BackgroundIllustration"
 import { PageBottomGlobe } from "./PageBottomGlobe"
 import { RevealAnswerModal } from "@/features/game-mission/components/RevealAnswerModal"
+import useAuth from "@/hooks/useAuth"
 
 interface MissionQuestionScreenProps {
   question: MissionQuestion
@@ -45,13 +46,16 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
   const { item: historyItem, isPending } = useMissionHistoryItem(question.id)
   const submitMutation = useSubmitMissionAnswer()
 
+  const { user, loading } = useAuth()
   const [singleValue, setSingleValue] = useState<string | null>(null)
   const [multiValues, setMultiValues] = useState<string[]>([])
   const [textValue, setTextValue] = useState("")
   const [isRevealed, setRevealed] = useState(false)
 
+  const isLoggedIn = !loading && !!user
+  const notLoggedIn = !loading && !user
   const hasSubmitted = !!historyItem?.userAnswer
-  const isLocked = status !== "open" || hasSubmitted
+  const isLocked = status !== "open" || hasSubmitted || notLoggedIn
 
   const currentAnswer: string | string[] | null =
     question.type === "single"
@@ -78,8 +82,15 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
 
   const canSave =
     status === "open" &&
+    isLoggedIn &&
     !hasSubmitted &&
     (question.type === "multi" ? multiValues.length > 0 : !!currentAnswer)
+
+  const canReveal =
+    status === "revealed" &&
+    correctAnswer &&
+    // situations without modal - if revealed, disable button
+    !(isRevealed && (question.type === "single" || question.type === "multi" || !hasSubmitted))
 
   function handleSaveClick() {
     if (!canSave || currentAnswer === null) return
@@ -223,6 +234,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
 
             <div className="mt-2 text-center font-fc-quantum opacity-80">
               <div className={`font-medium ${EMPHASIS_TEXT[question.period]}`}>
+                {status === "open" && notLoggedIn && <p className="mb-2">กรุณาเข้าสู่ระบบ</p>}
                 {status !== "revealed" && hasSubmitted && (
                   <p className="mb-2">บันทึกคำตอบเรียบร้อย!</p>
                 )}
@@ -230,10 +242,12 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
                 {status === "open" && !hasSubmitted && (
                   <p>ปิดรับคำตอบ {formatBangkokTime(question.closesAt)}</p>
                 )}
-                {status === "awaiting-reveal" && !isPending && !hasSubmitted && (
+                {status === "awaiting-reveal" && ((!isPending && !hasSubmitted) || notLoggedIn) && (
                   <p>ปิดรับคำตอบแล้ว</p>
                 )}
-                {status === "revealed" && !isPending && !hasSubmitted && <p>คุณไม่ได้ตอบ</p>}
+                {status === "revealed" && ((!isPending && !hasSubmitted) || notLoggedIn) && (
+                  <p>คุณไม่ได้ตอบ</p>
+                )}
               </div>
 
               {(status === "awaiting-reveal" || (status === "open" && hasSubmitted)) && (
@@ -269,11 +283,7 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
           <button
             type="button"
             onClick={handleRevealClick}
-            disabled={
-              !correctAnswer ||
-              (isRevealed && (question.type === "single" || question.type === "multi")) ||
-              (isRevealed && !hasSubmitted)
-            }
+            disabled={!canReveal}
             className={`items-center gap-2 rounded-full px-6 pb-4 font-sov-yeehor text-5xl shadow-xl enabled:cursor-pointer transition-opacity opacity-95 disabled:opacity-80 ${BODY_BG[question.period]}`}
           >
             <Eye className="inline size-7 align-middle" /> ดูเฉลย

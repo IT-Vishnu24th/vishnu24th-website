@@ -23,7 +23,7 @@ export function SingleChoiceList({
   isRevealed,
   isLocked,
 }: SingleChoiceListProps) {
-  const hasSubmitted = !!historyItem
+  const hasSubmitted = !!historyItem?.userAnswer
   const correctValue = isRevealed ? (historyItem?.correctAnswer as string | null) : null
   const submittedValue = hasSubmitted ? (historyItem?.userAnswer as string | null) : null
 
