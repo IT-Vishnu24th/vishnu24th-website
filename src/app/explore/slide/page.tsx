@@ -26,8 +26,8 @@ export default function DownloadPage() {
             สไลด์รวมข้อมูลที่ชาววิศวะจุฬาควรรู้ไว้ในที่เดียว
           </p>
         </div>
-        <div className="relative w-full h-10 overflow-hidden mt-3">
-          <Image src="/map/map-line.svg" alt="" fill className="object-fill scale-102 z-20" />
+        <div className="relative w-full h-12 overflow-hidden mt-3">
+          <Image src="/map/map-line.svg" alt="" fill className="object-fill scale-x-105 z-20" />
         </div>
       </div>
 
