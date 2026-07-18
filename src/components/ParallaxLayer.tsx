@@ -40,7 +40,7 @@ export function ParallaxLayer({
 
   return (
     <div ref={frameRef} className={cn("pointer-events-none overflow-hidden", className)}>
-      <motion.div className="absolute inset-0" style={{ y }}>
+      <motion.div className="pointer-events-none absolute inset-0" style={{ y }}>
         {children}
       </motion.div>
     </div>
