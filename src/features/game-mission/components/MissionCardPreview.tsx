@@ -7,6 +7,7 @@ import { MissionHeaderBanner } from "./MissionHeaderBanner"
 
 interface MissionCardPreviewProps {
   question: MissionQuestion
+  serverTime: Date
 }
 
 const STATUS_LABEL = {
@@ -16,8 +17,8 @@ const STATUS_LABEL = {
   revealed: "เฉลยแล้ว",
 } as const
 
-export function MissionCardPreview({ question }: MissionCardPreviewProps) {
-  const status = getMissionStatus(question)
+export function MissionCardPreview({ question, serverTime }: MissionCardPreviewProps) {
+  const status = getMissionStatus(question, serverTime)
 
   return (
     <Link href={`/game/${question.id}`} className="block">

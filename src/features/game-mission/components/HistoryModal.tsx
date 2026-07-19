@@ -8,6 +8,11 @@ import { useModalStore } from "@/stores/modalStore"
 import type { MissionPeriod } from "@/types/mission"
 import { getMissionStatus } from "@/features/game-mission/utils/schedule"
 
+interface HistoryModalProps {
+  period: MissionPeriod
+  serverTime: Date
+}
+
 const DAY_PILL = {
   morning: "bg-brick-orange text-cream",
   evening: "bg-midnight-light text-turqoise",
@@ -32,13 +37,13 @@ const THEME = {
   },
 } as const
 
-export function HistoryModal({ period }: { period: MissionPeriod }) {
+export function HistoryModal({ period, serverTime }: HistoryModalProps) {
   const close = useModalStore((s) => s.close)
   const { data: history, isLoading, isError } = useMissionHistory()
   const opened = history?.filter((item) => {
     const question = getMissionQuestionById(item.id)
     if (!question) return false
-    const status = getMissionStatus(question)
+    const status = getMissionStatus(question, serverTime)
     return status !== "locked"
   })
   const theme = THEME[period]

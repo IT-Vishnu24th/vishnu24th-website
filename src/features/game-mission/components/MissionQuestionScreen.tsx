@@ -23,6 +23,7 @@ import useAuth from "@/hooks/useAuth"
 
 interface MissionQuestionScreenProps {
   question: MissionQuestion
+  serverTime: Date
 }
 
 const BODY_BG = {
@@ -40,9 +41,9 @@ const EMPHASIS_TEXT = {
   evening: "text-midnight-light",
 } as const
 
-export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) {
+export function MissionQuestionScreen({ question, serverTime }: MissionQuestionScreenProps) {
   const open = useModalStore((s) => s.open)
-  const status = getMissionStatus(question)
+  const status = getMissionStatus(question, serverTime)
   const { item: historyItem, isPending } = useMissionHistoryItem(question.id)
   const submitMutation = useSubmitMissionAnswer()
 
@@ -136,7 +137,9 @@ export function MissionQuestionScreen({ question }: MissionQuestionScreenProps) 
         <MissionHeaderBanner
           question={question}
           showTopBar
-          onHistoryClick={() => open(<HistoryModal period={question.period} />)}
+          onHistoryClick={() =>
+            open(<HistoryModal period={question.period} serverTime={serverTime} />)
+          }
           onHelpClick={() => open(<HowToPlayModal period={question.period} />)}
         />
 
