@@ -1,13 +1,12 @@
 "use client"
 
 import { HelpCircle, History } from "lucide-react"
-import type { MissionPeriod, MissionQuestion, MissionStatus } from "@/types/mission"
+import type { MissionPeriod, MissionQuestion } from "@/types/mission"
 import { Header2 } from "@/components/Headers"
 import { TornPaperEdge } from "./TornPaperEdge"
 
 interface MissionHeaderBannerProps {
   question: MissionQuestion
-  status: MissionStatus
   onHistoryClick?: () => void
   onHelpClick?: () => void
   /** Compact mode is used for the /game list preview cards */
@@ -33,7 +32,6 @@ const ICON_BG: Record<MissionPeriod, string> = {
 
 export function MissionHeaderBanner({
   question,
-  status,
   onHistoryClick,
   onHelpClick,
   compact = false,
@@ -86,7 +84,7 @@ export function MissionHeaderBanner({
             ({question.hint})
           </p>
         )}
-        {type === "multi" && status === "open" && (
+        {type === "multi" && (
           <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
             เลือกได้หลายข้อ
           </p>

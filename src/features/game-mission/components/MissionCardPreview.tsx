@@ -21,7 +21,7 @@ export function MissionCardPreview({ question }: MissionCardPreviewProps) {
 
   return (
     <Link href={`/game/${question.id}`} className="block">
-      <MissionHeaderBanner question={question} status={status} compact />
+      <MissionHeaderBanner question={question} compact />
       <p
         className={`mt-2 text-center font-fc-quantum text-sm ${
           question.period === "morning" ? "text-brownie" : "text-midnight-light"
