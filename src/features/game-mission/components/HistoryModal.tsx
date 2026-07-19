@@ -1,11 +1,12 @@
 "use client"
 
-import { Check, Sun, Moon, X } from "lucide-react"
+import { Check, Sun, Moon, X, Minus } from "lucide-react"
 import { useMissionHistory } from "../hooks/useMissionHistory"
-import { MISSION_QUESTIONS } from "../constants/questions"
+import { getMissionQuestionById, MISSION_QUESTIONS } from "../constants/questions"
 import Image from "next/image"
 import { useModalStore } from "@/stores/modalStore"
 import type { MissionPeriod } from "@/types/mission"
+import { getMissionStatus } from "@/features/game-mission/utils/schedule"
 
 const DAY_PILL = {
   morning: "bg-brick-orange text-cream",
@@ -23,7 +24,7 @@ const THEME = {
   },
   evening: {
     bg: "bg-turqoise-light",
-    inset: "bg-mint",
+    inset: "bg-mint-tanned",
     text: "text-midnight",
     accent: "text-midnight-light",
     border: "border-midnight-light/30",
@@ -34,7 +35,12 @@ const THEME = {
 export function HistoryModal({ period }: { period: MissionPeriod }) {
   const close = useModalStore((s) => s.close)
   const { data: history, isLoading, isError } = useMissionHistory()
-  const answers = history?.filter((item) => item.userAnswer)
+  const opened = history?.filter((item) => {
+    const question = getMissionQuestionById(item.id)
+    if (!question) return false
+    const status = getMissionStatus(question)
+    return status !== "locked"
+  })
   const theme = THEME[period]
 
   return (
@@ -50,12 +56,12 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
         {isError && (
           <p className="py-8 text-center font-fc-quantum text-status-red">โหลดประวัติไม่สำเร็จ</p>
         )}
-        {!isLoading && !isError && (answers?.length ?? 0) === 0 && (
+        {!isLoading && !isError && (opened?.length ?? 0) === 0 && (
           <p className={`py-8 text-center font-fc-quantum opacity-70`}>ยังไม่มีคำตอบที่ส่งไป</p>
         )}
 
         <div className="flex flex-col gap-4">
-          {answers?.map((entry) => {
+          {opened?.map((entry) => {
             const question = MISSION_QUESTIONS.find((q) => q.id === entry.id)
             if (!question) return null
 
@@ -72,7 +78,7 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                 : Array.isArray(entry.userAnswer)
                   ? entry.userAnswer.join(", ")
                   : entry.userAnswer
-              : "-"
+              : null
 
             const correctAnswer =
               question.id === "q4"
@@ -112,7 +118,13 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                     </div>
                   </div>
                 )}
-                <p className="mt-2 font-fc-quantum text-lg">{userAnswer}</p>
+                <p className="mt-2 font-fc-quantum">
+                  {userAnswer ? (
+                    <span className="text-lg">{userAnswer}</span>
+                  ) : (
+                    <span className="text-sm">คุณไม่ได้ตอบ</span>
+                  )}
+                </p>
 
                 {entry.isRevealed ? (
                   <div className="mt-2 flex items-center justify-between">
@@ -121,13 +133,21 @@ export function HistoryModal({ period }: { period: MissionPeriod }) {
                     </span>
                     <span
                       className={`flex h-7 w-7 items-center justify-center rounded-full ${
-                        entry.isCorrect ? "bg-status-green" : "bg-status-red"
+                        userAnswer
+                          ? entry.isCorrect
+                            ? "bg-status-green"
+                            : "bg-status-red"
+                          : "bg-gray-400"
                       }`}
                     >
-                      {entry.isCorrect ? (
-                        <Check size={16} className="text-status-green-dark" strokeWidth={3} />
+                      {userAnswer ? (
+                        entry.isCorrect ? (
+                          <Check className="size-4 text-status-green-dark" strokeWidth={3} />
+                        ) : (
+                          <X className="size-4 text-status-red-dark" strokeWidth={3} />
+                        )
                       ) : (
-                        <X size={16} className="text-status-red-dark" strokeWidth={3} />
+                        <Minus className="size-4 text-gray-800" />
                       )}
                     </span>
                   </div>
