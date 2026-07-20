@@ -7,7 +7,7 @@ export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
 export interface MissionCardProps {
   title: string
-  reward: number
+  reward: number | string
   status: MissionStatus
   deadline: string
   banner?: ReactNode
@@ -78,6 +78,9 @@ export default function MissionCard({
   img,
   href,
 }: MissionCardProps) {
+  const hasFormulaReward = typeof reward === "string"
+  const rewardValue = typeof reward === "number" ? reward.toLocaleString() : reward
+
   return (
     <Link
       className={cn(
@@ -124,9 +127,15 @@ export default function MissionCard({
         </div>
 
         <div className="font-fc-quantum text-[20px]">
-          {status === "upcoming"
-            ? "????????????????????"
-            : `รางวัล: ${reward.toLocaleString()} เหรียญอวกาศ`}
+          {status === "upcoming" ? (
+            "????????????????????"
+          ) : (
+            <>
+              รางวัล:{" "}
+              <span className={hasFormulaReward ? "text-[16px]" : undefined}>{rewardValue}</span>{" "}
+              เหรียญทอง
+            </>
+          )}
         </div>
       </div>
     </Link>

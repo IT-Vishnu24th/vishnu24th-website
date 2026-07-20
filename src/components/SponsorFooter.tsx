@@ -23,18 +23,22 @@ export default function Footer() {
           </h2>
 
           {/* Diamond */}
-          <div className="mb-4 flex flex-wrap items-center justify-center gap-3">
-            {diamondSponsors.map((sponsor) => (
-              <div key={sponsor.name} className="relative h-13 w-18 overflow-hidden">
-                <Image
-                  src={`/sponsor/brand/${sponsor.image}`}
-                  alt={sponsor.name}
-                  fill
-                  sizes="96px"
-                  className="object-contain"
-                />
-              </div>
-            ))}
+          <div className="mb-3 flex flex-wrap items-center justify-center">
+            {diamondSponsors.map((sponsor) => {
+              const isGulf = sponsor.name === "gulf"
+              const sponsorImage = isGulf ? "gulf2.png" : sponsor.image
+
+              return (
+                <div key={sponsor.name} className="relative h-12 w-18 overflow-hidden">
+                  <Image
+                    src={`/sponsor/brand/${sponsorImage}`}
+                    alt={sponsor.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )
+            })}
           </div>
 
           {/* Gold */}

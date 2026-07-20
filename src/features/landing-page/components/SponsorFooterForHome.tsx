@@ -15,9 +15,9 @@ export default function Footer() {
 
       {/* sponsor art*/}
       <ParallaxLayer
-        className="object-contain absolute left-1/2 top-30 z-30 h-[893px] w-full max-w-[820px] -translate-x-1/2 overflow-visible"
+        className="object-contain absolute left-1/2 -top-3 z-30 h-[893px] w-full max-w-[820px] -translate-x-1/2 overflow-visible"
         mode="local"
-        speed={1.25}
+        speed={1.1}
       >
         <Image
           src="/landingpage/sponsor-art.png"

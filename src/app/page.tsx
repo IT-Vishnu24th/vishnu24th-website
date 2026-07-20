@@ -10,9 +10,9 @@ import { ParallaxLayer } from "@/components/ParallaxLayer"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#2D3542] to-[#2D4D61]">
+    <div className="min-h-screen relative overflow-hidden bg-[linear-gradient(180deg,#2D3542_0%,#2D4D61_30%)]">
       {/* พื้นหลังลายเฟือง */}
-      <ParallaxLayer className="absolute inset-0 z-0" speed={0.4}>
+      <ParallaxLayer className="absolute inset-0 z-0" speed={0.65}>
         <Image
           src="/landingpage/art-background.png"
           alt=""
@@ -22,7 +22,7 @@ export default function HomePage() {
       </ParallaxLayer>
 
       {/* ตึกซ้าย-ขวา + เฟืองมุมบน วางทับด้านหน้า */}
-      <ParallaxLayer className="absolute inset-0 z-10" speed={0.75}>
+      <ParallaxLayer className="absolute inset-0 z-10" speed={0.85}>
         <Image
           src="/landingpage/art-foreground.png"
           alt=""

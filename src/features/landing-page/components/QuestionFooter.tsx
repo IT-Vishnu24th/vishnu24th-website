@@ -20,7 +20,7 @@ export default function FAQFooter() {
       <ParallaxLayer
         className="absolute bottom-6 -right-10 z-0 h-40 w-140 opacity-90"
         mode="local"
-        speed={1.25}
+        speed={1.1}
       >
         <Image src="/landingpage/art-faq.png" alt="" fill className="object-contain" />
       </ParallaxLayer>
