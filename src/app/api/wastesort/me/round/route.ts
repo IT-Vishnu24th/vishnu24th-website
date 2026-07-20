@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const [flagErr] = await requireFlag("game-sustain")
   if (flagErr) return flagErr
 
-  const MAX_SCORE = 30
+  const MAX_SCORE = 90
   const body = await req.json()
   const score = Number(body?.score)
 
