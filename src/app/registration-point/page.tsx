@@ -213,9 +213,9 @@ function ResultView({
         <div className="relative z-10">
           <TopBar isLoggedIn={isLoggedIn} />
 
-          <h1 className="-mt-7 flex flex-col items-center font-sov-yeehor text-6xl leading-none md:text-6xl">
+          <h1 className="-mt-7 flex flex-col items-center font-sov-yeehor text-4xl leading-none md:text-6xl">
             <span>{heading}</span>
-            <span className="mt-3 font-fc-quantum text-2xl leading-none text-clay-light">
+            <span className="mt-3 font-fc-quantum text-5xl leading-none text-clay-light">
               {label}
             </span>
           </h1>
