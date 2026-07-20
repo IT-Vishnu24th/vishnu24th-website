@@ -90,7 +90,7 @@ export function PopkaewGame() {
   }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative min-h-[776px] w-full overflow-hidden">
       <PopkaewHeroSection />
       <PopkaewArtwork />
 
