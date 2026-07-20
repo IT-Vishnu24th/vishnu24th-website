@@ -136,6 +136,7 @@ export function MissionQuestionScreen({ question, serverTime }: MissionQuestionS
       <div className="relative z-10">
         <MissionHeaderBanner
           question={question}
+          status={status}
           showTopBar
           onHistoryClick={() =>
             open(<HistoryModal period={question.period} serverTime={serverTime} />)

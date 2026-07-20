@@ -1,12 +1,13 @@
 "use client"
 
 import { HelpCircle, History } from "lucide-react"
-import type { MissionPeriod, MissionQuestion } from "@/types/mission"
+import type { MissionPeriod, MissionQuestion, MissionStatus } from "@/types/mission"
 import { Header2 } from "@/components/Headers"
 import { TornPaperEdge } from "./TornPaperEdge"
 
 interface MissionHeaderBannerProps {
   question: MissionQuestion
+  status: MissionStatus
   onHistoryClick?: () => void
   onHelpClick?: () => void
   /** Compact mode is used for the /game list preview cards */
@@ -32,6 +33,7 @@ const ICON_BG: Record<MissionPeriod, string> = {
 
 export function MissionHeaderBanner({
   question,
+  status,
   onHistoryClick,
   onHelpClick,
   compact = false,
@@ -74,19 +76,33 @@ export function MissionHeaderBanner({
           )}
         </div>
 
-        <p
-          className={`mt-3 text-center font-fc-quantum text-base md:text-lg text-balance ${TITLE_COLOR[period]}`}
-        >
-          {prompt}
-        </p>
-        {hint && (
-          <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
-            ({question.hint})
-          </p>
-        )}
-        {type === "multi" && (
-          <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
-            เลือกได้หลายข้อ
+        {status !== "locked" ? (
+          <>
+            <p
+              className={`mt-3 text-center font-fc-quantum text-base md:text-lg text-balance ${TITLE_COLOR[period]}`}
+            >
+              {prompt}
+            </p>
+            {hint && (
+              <p
+                className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}
+              >
+                ({hint})
+              </p>
+            )}
+            {type === "multi" && (
+              <p
+                className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}
+              >
+                เลือกได้หลายข้อ
+              </p>
+            )}
+          </>
+        ) : (
+          <p
+            className={`mt-3 text-center font-fc-quantum text-base md:text-lg text-balance opacity-80 ${TITLE_COLOR[period]}`}
+          >
+            คำถามนี้ยังไม่เปิด
           </p>
         )}
       </div>
