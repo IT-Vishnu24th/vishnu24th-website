@@ -1,5 +1,4 @@
 import Image from "next/image"
-import { Trash2 } from "lucide-react"
 import { SUSTAIN_BINS, SUSTAIN_TRASH_ITEMS } from "../data/sustainGame"
 import type { SustainTrashType } from "../types/sustain"
 
@@ -47,21 +46,28 @@ export function HowToPlayModal({ open, onClose }: HowToPlayModalProps) {
         onClick={(event) => event.stopPropagation()}
         className="flex max-h-[80vh] w-full max-w-[280px] flex-col overflow-hidden rounded-[6px] bg-[url('/game/paper-texture.png')] bg-cover bg-center shadow-2xl"
       >
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3 pt-4 text-center">
-          <span className="mx-auto flex size-7 items-center justify-center rounded-full bg-[#e2703f]/15 text-[#e2703f]">
-            <Trash2 size={15} strokeWidth={2.4} />
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-4 mt-4 text-center">
+          <span className="relative mx-auto block size-6">
+            <Image
+              src="/game/sustain-tutorial-top.svg"
+              alt=""
+              fill
+              sizes="28px"
+              className="object-contain"
+            />
           </span>
 
-          <h1 className="font-sov-yeehor mt-1.5 text-5xl font-bold leading-tight text-[#8a3a2c]">
+          <h1 className="font-sov-yeehor -mt-1 text-5xl font-medium leading-tight text-[#934e43]">
             เล่นยังไง
           </h1>
 
-          <p className="font-fc-quantum  text-[10px] mx-auto text-4xl mt-1.5 max-w-[220px] text-[11px] leading-4 text-[#7a4a3a]">
-            จะมีขยะหลายๆชนิดตกลงมาจากด้านบน และมีถังขยะรองรับ จากข้างใต้
-            ให้น้องๆลากขยะลงมาในถังขยะที่ถูกต้อง มีเวลา 30 วินาที ลุยยยยยย!
+          <p className="mx-auto mt-1.5 max-w-[220px] text-left font-fc-quantum text-[12px] leading-4 text-[#ba604e]">
+            จะมีขยะหลาย ๆ ชนิดตกลงมาจากด้านบน <br />
+            และมีถังขยะรองรับจากข้างใต้ ให้น้องๆลากขยะลงมาในกลางถังขยะที่ถูกต้อง มีเวลาเล่น 90
+            วินาที ลุยยยยยย!
           </p>
 
-          <h3 className="font-sov-yeehor mt-3 text-2xl font-bold text-[#8a3a2c]">ประเภทขยะ</h3>
+          <h3 className="font-sov-yeehor mt-3 text-3xl font-medium text-[#934e43]">ประเภทขยะ</h3>
 
           <div className="font-sov-yeehor mt-2 flex flex-col gap-2 text-left">
             {SUSTAIN_BINS.map((bin) => {
@@ -126,7 +132,7 @@ export function HowToPlayModal({ open, onClose }: HowToPlayModalProps) {
                               {item.icon}
                             </span>
                           )}
-                          <p className="w-full text-center text-[7px] leading-[8px] text-[#7a4a3a]/90 break-words">
+                          <p className="w-full text-center text-[8px] leading-[8px] text-[#7a4a3a]/90 break-words">
                             {item.label}
                           </p>
                         </div>
@@ -139,11 +145,11 @@ export function HowToPlayModal({ open, onClose }: HowToPlayModalProps) {
           </div>
         </div>
 
-        <div className="font-sov-yeehor shrink-0 px-4 pb-4 pt-1 text-center">
+        <div className="shrink-0 px-4 pb-2 pt-2 -mt-4 mb-4 text-center">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-[#e2683c] px-6 py-2 text-xs font-bold text-white shadow-sm transition active:scale-95 text-[10px]"
+            className="font-fc-quantum text-[13px] rounded-full bg-[#e2683c] px-6 py-2 text-xs font-bold text-white shadow-sm transition active:scale-95"
           >
             ปิด
           </button>

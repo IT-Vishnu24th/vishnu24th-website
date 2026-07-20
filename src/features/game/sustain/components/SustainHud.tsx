@@ -17,7 +17,7 @@ export function SustainHud({ score, timeLeft }: SustainHudProps) {
             Score
           </span>
           <span className="font-fc-quantum  text-[20px] text-xl font-bold leading-none text-[#7c3324]">
-            {score.toString().padStart(6, "0")}
+            {score.toString().padStart(4, "0")}
           </span>
         </div>
       </div>
