@@ -78,10 +78,9 @@ const userService = {
     return populateGroup(data)
   },
 
-  async getUserAnswers(id: string): Promise<UserAnswers> {
-    const doc = await userCollection.doc(id).get()
-    const data = doc.data()
-    const ans = data?.answers
+  /** pure — fills gaps in an already-fetched RawUser's answers (e.g. from protectRaw),
+   * avoiding a redundant re-read of the same user doc just fetched */
+  normalizeAnswers(ans?: Partial<UserAnswers>): UserAnswers {
     return {
       q1: ans?.q1 ?? null,
       q2: ans?.q2 ?? null,

@@ -7,33 +7,32 @@ import userService from "@/services/userService"
 import { getMissionPhase } from "@/services/phaseService"
 import type { UserAnswers, UserAnswersResponse } from "@/types/user"
 import { QUESTIONS, evaluateAnswer } from "@/utils/questions"
+import { getAuthenticatedRawUser } from "@/lib/auth"
 
+// even if not logged in, should give correct answers to revealed questions
 export async function GET() {
   try {
-    const [error, user] = await protectRaw("participant")
-    if (error) return error
+    const user = await getAuthenticatedRawUser()
 
-    const userAnswers = await userService.getUserAnswers(user.id)
+    const userAnswers = userService.normalizeAnswers(user?.answers)
     const currentTime =
       process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
         ? new Date(process.env.MOCK_CURRENT_TIME)
         : new Date()
 
-    const historyList = Object.keys(QUESTIONS)
-      .filter((qId) => userAnswers[qId as keyof UserAnswers] !== null)
-      .map((qId) => {
-        const q = QUESTIONS[qId]
-        const userAnswer = userAnswers[qId as keyof UserAnswers]!
-        const isRevealed = currentTime >= new Date(q.revealTime)
+    const historyList = Object.keys(QUESTIONS).map((qId) => {
+      const q = QUESTIONS[qId]
+      const userAnswer = userAnswers[qId as keyof UserAnswers] ?? null
+      const isRevealed = currentTime >= new Date(q.revealTime)
 
-        return {
-          id: qId,
-          userAnswer,
-          isRevealed,
-          isCorrect: isRevealed ? evaluateAnswer(qId, userAnswer) : null,
-          correctAnswer: isRevealed ? q.correctAnswer : null,
-        }
-      })
+      return {
+        id: qId,
+        userAnswer,
+        isRevealed,
+        isCorrect: userAnswer && isRevealed ? evaluateAnswer(qId, userAnswer) : null,
+        correctAnswer: isRevealed ? q.correctAnswer : null,
+      }
+    })
 
     return success<UserAnswersResponse>({ answers: historyList })
   } catch (error) {
@@ -96,7 +95,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const userAnswers = await userService.getUserAnswers(user.id)
+    const userAnswers = userService.normalizeAnswers(user.answers)
     if (userAnswers[id as keyof UserAnswers] !== null) {
       return failure(
         409,

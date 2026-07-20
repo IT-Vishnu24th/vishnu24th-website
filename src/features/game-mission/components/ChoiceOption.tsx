@@ -78,7 +78,7 @@ export function ChoiceOption({ label, state, period, onClick, disabled }: Choice
       {showBullet && (
         <span className={`shrink-0 rounded-full ${bulletSize} ${BULLET_STYLES[period][state]}`} />
       )}
-      <span className="font-fc-quantum text-base md:text-lg">{label}</span>
+      <span className="font-fc-quantum text-base md:text-lg text-balance">{label}</span>
     </button>
   )
 }

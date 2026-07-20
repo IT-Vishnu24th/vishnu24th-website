@@ -20,6 +20,9 @@ export const UserProfileSection = ({ user }: UserProfileSectionProps) => {
         {nickname}
       </h1>
       <p className="mt-2 text-[24px] font-fc-quantum leading-none tracking-[-0.24px] text-turqoise">{`${title}${firstName} ${surname}`}</p>
+      <p className="mt-2 text-[24px] font-fc-quantum leading-none tracking-[-0.24px] text-turqoise">
+        กลุ่มที่ {user.group.registrationPoint.package}
+      </p>
     </section>
   )
 }

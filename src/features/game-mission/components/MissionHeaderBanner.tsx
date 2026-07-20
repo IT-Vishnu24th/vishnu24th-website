@@ -1,15 +1,12 @@
 "use client"
 
-import { HelpCircle, RotateCcw } from "lucide-react"
-import type { MissionPeriod } from "@/types/mission"
+import { HelpCircle, History } from "lucide-react"
+import type { MissionPeriod, MissionQuestion } from "@/types/mission"
 import { Header2 } from "@/components/Headers"
 import { TornPaperEdge } from "./TornPaperEdge"
 
 interface MissionHeaderBannerProps {
-  title: string
-  prompt: string
-  hint?: string
-  period: MissionPeriod
+  question: MissionQuestion
   onHistoryClick?: () => void
   onHelpClick?: () => void
   /** Compact mode is used for the /game list preview cards */
@@ -34,22 +31,16 @@ const ICON_BG: Record<MissionPeriod, string> = {
 }
 
 export function MissionHeaderBanner({
-  title,
-  prompt,
-  hint,
-  period,
+  question,
   onHistoryClick,
   onHelpClick,
   compact = false,
   showTopBar = false,
 }: MissionHeaderBannerProps) {
+  const { title, prompt, hint, period, type } = question
   return (
     <div>
-      <div
-        className={`${GRADIENTS[period]} ${compact ? "rounded-2xl" : "rounded-b-3xl"} px-5 ${
-          compact ? "py-2 pb-5" : "pb-10"
-        }`}
-      >
+      <div className={`${GRADIENTS[period]} px-5 ${compact ? "py-2 pb-5" : "pb-10"}`}>
         {/* Rendered inside the gradient (not above it) so the color stretches
             all the way to the very top of the screen, behind the back button
             and user chip. */}
@@ -63,11 +54,13 @@ export function MissionHeaderBanner({
               className={`flex h-10 w-10 items-center justify-center rounded-full ${ICON_BG[period]}`}
               aria-label="ประวัติการตอบ"
             >
-              <RotateCcw size={18} strokeWidth={2.5} />
+              <History size={18} strokeWidth={2.5} />
             </button>
           )}
 
-          <h1 className={`font-sov-yeehor text-4xl md:text-5xl ${TITLE_COLOR[period]}`}>{title}</h1>
+          <h1 className={`font-sov-yeehor mb-2 text-4xl md:text-5xl ${TITLE_COLOR[period]}`}>
+            {title}
+          </h1>
 
           {onHelpClick && (
             <button
@@ -82,13 +75,18 @@ export function MissionHeaderBanner({
         </div>
 
         <p
-          className={`mt-3 text-center font-fc-quantum text-base md:text-lg ${TITLE_COLOR[period]}`}
+          className={`mt-3 text-center font-fc-quantum text-base md:text-lg text-balance ${TITLE_COLOR[period]}`}
         >
           {prompt}
         </p>
         {hint && (
           <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
-            {hint}
+            ({question.hint})
+          </p>
+        )}
+        {type === "multi" && (
+          <p className={`text-center font-fc-quantum text-sm opacity-80 ${TITLE_COLOR[period]}`}>
+            เลือกได้หลายข้อ
           </p>
         )}
       </div>

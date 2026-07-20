@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Image from "next/image"
-import { ChevronDown, ChevronUp, Search, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { Header2 } from "@/components/Headers"
 
 import { club_data } from "@/features/clubs/const/club-data"
@@ -10,7 +10,6 @@ import { CATEGORIES } from "@/features/clubs/const/categories"
 import { useClubFilter, type BoothFilter } from "@/features/clubs/hooks/useClubFilter"
 import ClubBottomSheet from "@/features/clubs/components/bottomsheet"
 import type { Club } from "@/features/clubs/types/club"
-import { useRouter } from "next/navigation"
 import Sponsor from "@/components/SponsorFooter"
 import NavigationFooter from "@/components/NavigationFooter"
 
@@ -34,7 +33,6 @@ export default function Page() {
   const [filterOpen, setFilterOpen] = useState(false)
   const [boothFilter, setBoothFilter] = useState<BoothFilter>("all")
   const [selectedClub, setSelectedClub] = useState<Club | null>(null)
-  const router = useRouter()
 
   const clubs = useClubFilter(club_data, query, selectedCategories, boothFilter)
 
@@ -82,43 +80,77 @@ export default function Page() {
 
   return (
     <div className="mx-auto min-h-screen w-full overflow-x-hidden bg-brownie-light font-sans">
-      <div className="text-center bg-gradient-to-b from-midnight to-brownie">
+      <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
         <Header2 url="/explore" title="สำรวจ" />
-
-        <div className="relative flex items-center justify-center px-4 pb-2 ">
-          <h1 className="text-7xl font-sov-yeehor">ชมรม</h1>
+        <div className="px-4 pb-8 flex w-full flex-col items-center justify-center gap-8 text-center">
+          <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
+            ชมรม
+          </h1>
+          <p className="max-w-75 text-[15px] font-normal font-fc-quantum leading-none text-clay-light">
+            ดูข้อมูลชมรมทั้งหมด พร้อมค้นหา <br />
+            และกรองตามหมวดหมู่ที่สนใจ
+          </p>
         </div>
-        <div className="relative w-full h-8 overflow-hidden mt-3">
-          <Image src="/map/map-line.png" alt="" fill className="object-fill scale-102 " />
+        <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+          <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-10" />
+          <img src="/explore/light_clay_curve.svg" alt="" className="w-full absolute z-20" />
         </div>
-      </div>
+      </section>
 
       {/* Hero: title + search + filter + category chips ทั้งหมดอยู่บนพื้นหลังส้มเข้ม */}
-      <div className="bg-gradient-to-b from-brick-orange to-cream pb-10 -mt-5">
+      <div
+        className="relative z-0 pt-10 overflow-hidden pb-8"
+        style={{
+          background: "linear-gradient(180deg, #f0b190 0%, #f4c6aa 42%, #f7dfc4 76%, #f7edcf 100%)",
+        }}
+      >
+        <Image
+          src="/club/bg.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="pointer-events-none z-0 object-cover object-top opacity-45"
+        />
         {/* Search + filter row */}
-        <div className="flex items-center gap-2 px-4 pt-12 pb-3">
-          <div className="flex flex-1 items-center gap-2 rounded-full border border-white/40 bg-white/90 px-4 py-2.5">
+        <div className="relative z-50 flex items-center gap-2 px-5 pt-12 pb-3">
+          <div className="relative flex min-h-11 flex-1 items-center gap-2 px-4 py-2.5">
+            <Image src="/club/filter_all.png" alt="" fill className="object-fill" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="ค้นหา"
-              className="flex-1 bg-transparent font-fc-quantum text-sm text-brick-orange outline-none placeholder:text-brick-orange"
+              className="relative z-10 flex-1 bg-transparent font-fc-quantum text-sm text-brick-orange outline-none placeholder:text-brick-orange"
             />
-            <Search size={18} className="text-brick-orange" />
+            <Image
+              src="/club/search.svg"
+              alt=""
+              width={20}
+              height={20}
+              className="relative z-10 shrink-0"
+            />
           </div>
 
           <div className="relative">
             <button
               type="button"
               onClick={() => setFilterOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-4 py-2.5 font-fc-quantum text-sm text-brownie"
+              className="relative flex min-h-11 min-w-32 items-center justify-center gap-2 px-4 py-2.5 font-fc-quantum text-sm text-brick-orange"
             >
-              <span>{BOOTH_OPTIONS.find((o) => o.id === boothFilter)?.label}</span>
-              {filterOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <Image src="/club/filter_all.png" alt="" fill className="object-fill" />
+              <span className="relative z-10 whitespace-nowrap">
+                {BOOTH_OPTIONS.find((o) => o.id === boothFilter)?.label}
+              </span>
+              <Image
+                src="/club/dropdown-arrow.svg"
+                alt=""
+                width={13}
+                height={8}
+                className={`relative z-10 shrink-0 transition-transform ${filterOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {filterOpen && (
-              <ul className="absolute right-0 top-full z-10 mt-2 w-36 overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+              <ul className="absolute right-0 top-full z-50 mt-2 w-36 overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
                 {BOOTH_OPTIONS.map((option) => {
                   const isActive = boothFilter === option.id
                   return (
@@ -143,7 +175,7 @@ export default function Page() {
         </div>
 
         {/* Category chips */}
-        <div className="grid grid-cols-2 gap-2 px-4">
+        <div className="relative z-10 grid grid-cols-2 gap-2 px-5">
           {CATEGORIES.map((cat) => {
             const isActive = selectedCategories.includes(cat.id)
             const Icon = cat.icon
@@ -153,15 +185,23 @@ export default function Page() {
                 key={cat.id}
                 type="button"
                 onClick={() => toggleCategory(cat.id)}
-                className={[
-                  "flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 py-2.5 font-fc-quantum text-sm transition-colors",
-                  isActive
-                    ? "bg-brick-orange text-brick"
-                    : "border border-white/40 bg-white/90 text-brownie",
-                ].join(" ")}
+                className="relative flex min-h-10 min-w-0 items-center justify-center gap-2 px-3 py-2 font-fc-quantum text-sm text-brick-orange transition-transform active:scale-[0.98]"
               >
-                <Icon size={14} className={isActive ? "text-cream-tanned" : "text-brownie"} />
-                <span className="truncate">{cat.label}</span>
+                <Image
+                  src={isActive ? "/club/club-tag-selected.png" : "/club/club-tag.png"}
+                  alt=""
+                  fill
+                  className="object-fill"
+                />
+                <Icon
+                  size={15}
+                  className={
+                    isActive ? "relative z-10 text-cream-tanned" : "relative z-10 text-brick-orange"
+                  }
+                />
+                <span className={`relative z-10 truncate ${isActive ? "text-cream-tanned" : ""}`}>
+                  {cat.label}
+                </span>
               </button>
             )
           })}
@@ -169,15 +209,27 @@ export default function Page() {
       </div>
 
       {/* Club list grouped by category */}
-      <div className="flex flex-col gap-8 px-4 bg-cream -mt-1 pb-20">
+      <div
+        className="-mt-1 flex flex-col gap-8 bg-cream px-4 pb-20 pt-2"
+        style={{
+          backgroundImage: "url('/club/bg.png')",
+          backgroundPosition: "center -170px",
+          backgroundRepeat: "repeat-y",
+          backgroundSize: "100% auto",
+        }}
+      >
         {groupedClubs.length > 0 ? (
           groupedClubs.map((group) => (
             <section key={group.category}>
-              <h2 className="mb-3 text-center font-sov-yeehor text-4xl italic text-brownie">
+              <h2
+                className={`mb-3 text-center text-4xl text-[#3C2927] ${
+                  group.category === "Innovation" ? "font-arthemis" : "font-sov-yeehor"
+                }`}
+              >
                 {group.title}
               </h2>
 
-              <ul className="overflow-hidden rounded-2xl bg-cream-tanned">
+              <ul className="flex flex-col gap-2">
                 {group.clubs.map((club) => {
                   const hasImage = club.imageUrl && club.imageUrl !== "you check by your own"
 
@@ -185,13 +237,15 @@ export default function Page() {
                     <li
                       key={club.id}
                       onClick={() => setSelectedClub(club)}
-                      className="flex items-center gap-4 border-b border-gray-100 px-3 py-3 last:border-b-0"
+                      className="relative flex min-h-[77px] items-center gap-4 px-3 py-3"
                     >
-                      <span className="w-4 shrink-0 font-sov-yeehor text-4xl text-brownie -translate-2 pl-2">
+                      <Image src="/club/club-card.png" alt="" fill className="z-0 object-fill" />
+
+                      <span className="relative z-10 w-7 shrink-0 pl-2 font-sov-yeehor text-3xl text-brick-orange">
                         {club.id}
                       </span>
 
-                      <div className="h-14 w-14 shrink-0 overflow-hidden bg-white p-1.5 ring-1 ring-gray-100">
+                      <div className="relative z-10 h-16 w-16 shrink-0 overflow-hidden bg-white p-1.5">
                         {hasImage && (
                           <Image
                             src={`/club/clublogo/${club.imageUrl}`}
@@ -203,7 +257,7 @@ export default function Page() {
                         )}
                       </div>
 
-                      <div className="min-w-0 flex-1">
+                      <div className="relative z-10 min-w-0 flex-1">
                         <h3 className="truncate font-fc-quantum text-lg font-medium text-brownie">
                           {club.name.th}
                         </h3>
@@ -215,9 +269,9 @@ export default function Page() {
                       <button
                         type="button"
                         aria-label={`ดูรายละเอียด ${club.name}`}
-                        className="shrink-0 rounded-full p-1.5 text-brick-orange transition-colors"
+                        className="relative z-10 shrink-0 p-1.5 transition-transform active:scale-95"
                       >
-                        <ChevronDown size={18} />
+                        <Image src="/club/dropdown-arrow.svg" alt="" width={13} height={8} />
                       </button>
                     </li>
                   )

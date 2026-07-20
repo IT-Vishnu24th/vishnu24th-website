@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { faqData } from "@/features/landing-page/const/FAQdata"
+import { ParallaxLayer } from "@/components/ParallaxLayer"
 
 export default function FAQFooter() {
   // key: "categoryIndex-itemIndex" ของ item ที่เปิดอยู่ (เปิดได้ทีละ 1 อัน)
@@ -14,11 +15,15 @@ export default function FAQFooter() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-cream pb-20 px-6">
+    <section className="relative overflow-hidden bg-cream pb-50 px-6">
       {/* ลายกระดาษฉีกมุมล่าง */}
-      <div className="absolute bottom-6 -right-10 w-140 h-40 pointer-events-none opacity-90">
+      <ParallaxLayer
+        className="absolute bottom-6 -right-10 z-0 h-40 w-140 opacity-90"
+        mode="local"
+        speed={1.1}
+      >
         <Image src="/landingpage/art-faq.png" alt="" fill className="object-contain" />
-      </div>
+      </ParallaxLayer>
 
       <div className="relative z-10 max-w-md mx-auto mt-10">
         <h2 className="text-center text-5xl font-sov-yeehor font-bold text-brownie-light mb-6">

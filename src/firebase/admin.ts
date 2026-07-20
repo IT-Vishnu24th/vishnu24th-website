@@ -29,5 +29,7 @@ function initFirebaseAdmin() {
 const app = initFirebaseAdmin()
 const databaseId = cleanEnvValue(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID)
 
+const databaseId = cleanEnvValue(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID)
+
 export const adminAuth = getAuth(app)
 export const adminDb = databaseId ? getFirestore(app, databaseId) : getFirestore(app)

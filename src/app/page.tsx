@@ -1,34 +1,35 @@
 import Image from "next/image"
 import Link from "next/link"
-import SponsorFooter from "@/features/landing-page/components/SponsorFooterForHome"
+import SponsorFooterHome from "@/features/landing-page/components/SponsorFooterForHome"
 import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
-import { MapPin, Ship } from "lucide-react"
+import { MapPin } from "lucide-react"
 import FAQFooter from "@/features/landing-page/components/QuestionFooter"
 import { YarnAnnouncementButton } from "@/features/announcement/components/YarnAnnouncementButton"
+import { ParallaxLayer } from "@/components/ParallaxLayer"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#2D3542] to-[#2D4D61]">
+    <div className="min-h-screen relative overflow-hidden bg-[linear-gradient(180deg,#2D3542_0%,#2D4D61_30%)]">
       {/* พื้นหลังลายเฟือง */}
-      <div className="absolute inset-0 z-0">
+      <ParallaxLayer className="absolute inset-0 z-0" speed={0.65}>
         <Image
           src="/landingpage/art-background.png"
           alt=""
           fill
           className="pointer-events-none object-contain object-[center_6%]"
         />
-      </div>
+      </ParallaxLayer>
 
       {/* ตึกซ้าย-ขวา + เฟืองมุมบน วางทับด้านหน้า */}
-      <div className="pointer-events-none absolute inset-0 z-10">
+      <ParallaxLayer className="absolute inset-0 z-10" speed={0.85}>
         <Image
           src="/landingpage/art-foreground.png"
           alt=""
           fill
           className="pointer-events-none object-contain object-top object-[center_22%]"
         />
-      </div>
+      </ParallaxLayer>
 
       <div className="relative z-10">
         <Header />
@@ -49,7 +50,7 @@ export default function HomePage() {
           <h2 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">
             Intania First Date 2026
           </h2>
-          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">19 กรกฎาคม 2569</h3>
+          <h3 className="text-base md:text-2xl text-[#74DDCF] font-fc-quantum">18 กรกฎาคม 2569</h3>
 
           {/* Vishnu 24th logo */}
           <div className="relative w-full max-w-[300px] md:max-w-[420px] mt-10 mb-3">
@@ -82,27 +83,30 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative w-full h-6 md:h-8 z-10">
-          <Image src="/landingpage/blue-line.png" alt="" fill className="object-fill" />
+        <div className="w-full relative h-3 [@media(min-width:480px)]:h-5 -top-3">
+          <img src="/landingpage/blue-line.svg" alt="" className="w-full absolute z-10" />
         </div>
 
         {/* <AuthResult isSucess={true} /> */}
 
-        <div className="z-20">
-          <div className="-mt-3 md:-mt-4 relative ">
-            <SponsorFooter />
+        <div className="z-20 bg-brick-orange">
+          <div className="relative">
+            <SponsorFooterHome />
           </div>
-
-          <div className="relative -top-40 w-full h-10 md:h-8 -mt-1">
+          {/* 
+          <div className="relative -top-40 -mt-1 h-[72px] w-full md:h-20">
             <Image
-              src="/landingpage/cream-line.png"
+              src="/landingpage/cream-line.svg"
               alt=""
               fill
               className="object-fill scale-105"
             />
+          </div> */}
+          <div className="w-full absolute h-3 -mt-9 [@media(min-width:480px)]:h-5">
+            <img src="/landingpage/cream-line.svg" alt="" className="w-full absolute z-10" />
           </div>
         </div>
-        <div className="relative -top-44 -mb-30">
+        <div className="relatives -mb-30">
           <FAQFooter />
         </div>
 

@@ -21,6 +21,7 @@ export interface RawGroup extends Group {
     day1Score: number
     day2AMScore: number
     day2PMScore: number
+    specialMissionScore: number
   }
 }
 
@@ -59,6 +60,7 @@ const groupService = {
         day1Score: 0,
         day2AMScore: 0,
         day2PMScore: 0,
+        specialMissionScore: 0,
       },
     })
 

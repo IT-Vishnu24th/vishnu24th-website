@@ -1,18 +1,17 @@
 export type MissionPeriod = "morning" | "evening"
 
-export type MissionQuestionType = "number" | "text" | "single" | "multi"
+export type MissionQuestionType = MissionQuestion["type"]
 
 export interface MissionOption {
   value: string
   label: string
 }
 
-export interface MissionQuestion {
+export type MissionQuestion = {
   /** Matches the backend mission id, e.g. "q1".."q7" */
   id: string
   day: 1 | 2 | 3 | 4
   period: MissionPeriod
-  type: MissionQuestionType
   /** "ปริศนาช่วงเช้า" | "ปริศนาช่วงเย็น" */
   title: string
   prompt: string
@@ -20,7 +19,6 @@ export interface MissionQuestion {
   hint?: string
   /** Public path to an illustration shown above the input, e.g. "/game/ikyu.png" */
   imageSrc?: string
-  options?: MissionOption[]
   /** Max character/digit length for number & text inputs */
   maxLength?: number
   /** Bangkok-local ISO date key, e.g. "2026-07-21" — used to find "today's" questions */
@@ -29,7 +27,15 @@ export interface MissionQuestion {
   opensAt: string
   closesAt: string
   revealsAt: string
-}
+} & (
+  | {
+      type: "number" | "text"
+    }
+  | {
+      type: "single" | "multi"
+      options: MissionOption[]
+    }
+)
 
 export type MissionStatus = "locked" | "open" | "awaiting-reveal" | "revealed"
 
