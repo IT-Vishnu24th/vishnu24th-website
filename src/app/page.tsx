@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import SponsorFooter from "@/features/landing-page/components/SponsorFooterForHome"
+import SponsorFooterHome from "@/features/landing-page/components/SponsorFooterForHome"
 import NavigationFooter from "@/components/NavigationFooter"
 import { Header } from "@/components/Headers"
 import { MapPin } from "lucide-react"
@@ -91,7 +91,7 @@ export default function HomePage() {
 
         <div className="z-20 bg-brick-orange">
           <div className="relative">
-            <SponsorFooter />
+            <SponsorFooterHome />
           </div>
           {/* 
           <div className="relative -top-40 -mt-1 h-[72px] w-full md:h-20">

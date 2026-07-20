@@ -3,7 +3,7 @@ export type Sponsor = {
   image: string
 }
 
-export const bigSponsors: Sponsor[] = [
+export const diamondSponsors: Sponsor[] = [
   {
     name: "Pocari",
     image: "pocari.png",
@@ -18,7 +18,7 @@ export const bigSponsors: Sponsor[] = [
   },
 ]
 
-export const mediumSponsors: Sponsor[] = [
+export const goldSponsors: Sponsor[] = [
   {
     name: "Helu",
     image: "helu.png",
@@ -29,7 +29,7 @@ export const mediumSponsors: Sponsor[] = [
   },
 ]
 
-export const smallSponsors: Sponsor[] = [
+export const silverSponsors: Sponsor[] = [
   {
     name: "ธรรมสรณ์",
     image: "dos.png",
@@ -49,5 +49,32 @@ export const smallSponsors: Sponsor[] = [
   {
     name: "เจ๊บึก",
     image: "jaybuk.png",
+  },
+]
+
+export const bronzeSponsors: Sponsor[] = [
+  {
+    name: "yanhee",
+    image: "yanhee.png",
+  },
+  {
+    name: "boonyavej",
+    image: "boonyavej.png",
+  },
+  {
+    name: "red",
+    image: "red.png",
+  },
+  {
+    name: "welding",
+    image: "welding.png",
+  },
+  {
+    name: "asiaSudure",
+    image: "asiaSudure.png",
+  },
+  {
+    name: "castolin",
+    image: "castolin.png",
   },
 ]
