@@ -19,8 +19,8 @@ export type RecordRoundResult = {
  * only checks remaining plays (via GET) before starting; it doesn't
  * pre-decrement anything client-side.
  *
- * Heads up: your handler rejects any score outside 0–30
- * (`MAX_SCORE = 30`). The current game's scoring can add up past that in a
+ * Heads up: your handler rejects any score outside 0–90
+ * (`MAX_SCORE = 90`). The current game's scoring can add up past that in a
  * single round, so as-is this will 400 on plenty of finished rounds. Worth
  * deciding whether to raise MAX_SCORE server-side or rescale the client
  * scoring before relying on this in production.

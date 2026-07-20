@@ -27,6 +27,7 @@ function initFirebaseAdmin() {
 }
 
 const app = initFirebaseAdmin()
+const databaseId = cleanEnvValue(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID)
 
 const databaseId = cleanEnvValue(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID)
 

@@ -13,11 +13,11 @@ export function SustainHud({ score, timeLeft }: SustainHudProps) {
       <div className="relative h-[58px] w-[128px]">
         <Image src="/game/plaque-score.png" alt="" fill className="object-contain drop-shadow-md" />
         <div className="absolute inset-0 flex flex-col items-start justify-center pl-3.5">
-          <span className="text-[10px] font-bold uppercase tracking-wide text-[#8a3a2c]">
+          <span className="font-fc-quantum  text-[20px]font-bold uppercase tracking-wide text-[#8a3a2c]">
             Score
           </span>
-          <span className="font-mono text-xl font-bold leading-none text-[#7c3324]">
-            {score.toString().padStart(6, "0")}
+          <span className="font-fc-quantum  text-[20px] text-xl font-bold leading-none text-[#7c3324]">
+            {score.toString().padStart(4, "0")}
           </span>
         </div>
       </div>
@@ -25,7 +25,9 @@ export function SustainHud({ score, timeLeft }: SustainHudProps) {
       <div className="relative h-[58px] w-[94px]">
         <Image src="/game/plaque-time.png" alt="" fill className="object-contain drop-shadow-md" />
         <div className="absolute inset-0 flex flex-col items-end justify-center pr-3.5">
-          <span className="text-[10px] font-bold uppercase tracking-wide text-[#8a3a2c]">Time</span>
+          <span className="font-fc-quantum  text-[15px] font-bold uppercase tracking-wide text-[#8a3a2c]">
+            Time
+          </span>
           <span className="font-mono text-xl font-bold leading-none text-[#7c3324]">
             {timeLeft}
           </span>

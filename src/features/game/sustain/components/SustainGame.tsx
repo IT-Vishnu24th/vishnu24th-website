@@ -1,5 +1,5 @@
 "use client"
-
+import { Header2 } from "@/components/Headers"
 import Link from "next/link"
 import { HelpCircle } from "lucide-react"
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react"
@@ -57,7 +57,7 @@ const getRandomTrash = (): SustainFallingTrash => {
     x,
     y: -size,
     size,
-    speed: 92,
+    speed: 35,
     isDragging: false,
   }
 }
@@ -190,8 +190,8 @@ export function SustainGame() {
       }
 
       spawnElapsedRef.current += deltaSeconds * 1000
-      const spawnInterval = Math.max(430, 940 - elapsedSeconds * 18)
-      const fallSpeed = Math.min(310, 92 + elapsedSeconds * 8.8)
+      const spawnInterval = Math.max(1400, 1700 - elapsedSeconds * 3)
+      const fallSpeed = Math.min(75, 35 + elapsedSeconds * 0.35)
       const spawnedTrash: SustainFallingTrash[] = []
 
       while (spawnElapsedRef.current >= spawnInterval) {
@@ -375,7 +375,14 @@ export function SustainGame() {
   return (
     <main className="min-h-[100svh] bg-[#f9f9f9] text-black">
       <div className="mx-auto flex min-h-[100svh] w-full max-w-[393px] flex-col overflow-hidden bg-[#f9f9f9] font-mitr">
-        <Header />
+        <section className="w-full bg-[linear-gradient(180deg,#2D3542_0%,#934E43_100%)] text-black">
+          <Header2 title="เกมส์" url="/game" />
+          <div className="w-full h-7"></div>
+          <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
+            <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-10" />
+            <img src="/explore/light_clay_curve.svg" alt="" className="w-full absolute z-20" />
+          </div>
+        </section>
 
         <div
           ref={stageRef}
@@ -422,17 +429,8 @@ export function SustainGame() {
           )}
 
           {phase === "home" && (
-            <section className="absolute left-1/2 top-[100px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 pb-6 pt-8 text-center shadow-xl">
-              <button
-                type="button"
-                aria-label="ดูวิธีเล่น"
-                onClick={() => setShowHowTo(true)}
-                className="absolute right-4 top-4 flex size-7 items-center justify-center rounded-full bg-[#8a3a2c]/10 text-[#8a3a2c] transition active:scale-95"
-              >
-                <HelpCircle size={18} strokeWidth={2.2} />
-              </button>
-
-              <h1 className="font-serif-th text-2xl font-bold leading-snug text-[#8a3a2c]">
+            <section className=" absolute left-1/2 top-[100px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 pb-6 pt-8 text-center shadow-xl">
+              <h1 className="font-sov-yeehor text-[40px] font-medium leading-snug text-[#8a3a2c]">
                 ความจริงหน่ะ
                 <br />
                 มีเพียงถังเดียวเท่านั้น
@@ -442,21 +440,26 @@ export function SustainGame() {
                 type="button"
                 disabled={!canStart}
                 onClick={startGame}
-                className="mt-6 rounded-full bg-[#e2683c] px-6 py-3 text-xl font-bold text-white shadow-sm transition active:scale-95 disabled:bg-black/10 disabled:text-black/25"
+                className="font-sov-yeehor relative mt-4 mb-2 h-14 rounded-full bg-[#e2683c] px-20 text-[30px] font-medium text-white shadow-sm transition active:scale-95 disabled:bg-black/10 disabled:text-black/25"
               >
-                {isStarting
-                  ? "กำลังเริ่ม..."
-                  : `เริ่มเกม (${plays.remainingPlays}/${plays.maxPlays})`}
+                <span className="absolute inset-0 flex items-center justify-center leading-none -translate-y-[4px]">
+                  {isStarting
+                    ? "กำลังเริ่ม..."
+                    : `เริ่มเกม (${plays.remainingPlays}/${plays.maxPlays})`}
+                </span>
               </button>
 
-              <div className="mt-4 flex items-center justify-center gap-4 text-sm font-semibold text-[#c96a4d]">
-                <Link href="/game" className="transition active:scale-95">
+              <div className="font-fc-quantum mt-4 flex items-center justify-center gap-3 text-[13px] font-medium text-[#c96a4d]">
+                <Link
+                  href="/game"
+                  className="flex h-9 items-center justify-center rounded-full bg-[#f1d9c6] px-4 transition active:scale-95"
+                >
                   กลับหน้าหลัก
                 </Link>
                 <button
                   type="button"
                   onClick={() => setShowHowTo(true)}
-                  className="flex items-center gap-1 transition active:scale-95"
+                  className="flex h-9 items-center justify-center gap-1.5 rounded-full border-2 border-[#f1d9c6] px-4 transition active:scale-95"
                 >
                   <HelpCircle size={14} strokeWidth={2.4} />
                   วิธีเล่น
@@ -478,10 +481,12 @@ export function SustainGame() {
 
           {phase === "finished" && (
             <section className="absolute left-1/2 top-[190px] z-40 w-[280px] -translate-x-1/2 rounded-[4px] bg-[url('/game/paper-texture.png')] bg-cover bg-center px-6 py-8 text-center shadow-xl">
-              <h2 className="font-serif-th text-2xl font-bold text-[#8a3a2c]">สรุปคะแนน</h2>
-              <p className="mt-2 font-mono text-4xl font-bold text-[#8a3a2c]">{score}</p>
+              <h2 className="font-sov-yeehor  text-[51px] font-medium text-[#BA604E]">สรุปคะแนน</h2>
+              <p className="font-sov-yeehor -mt-8 text-[100px] font-sov-yeehor text-4xl font-medium text-[#8a3a2c]">
+                {score}
+              </p>
 
-              <div className="mt-5 flex items-center justify-center gap-3">
+              <div className="font-fc-quantum  text-[30px] mt-5 flex items-center justify-center gap-3">
                 <Link
                   href="/game"
                   className="flex h-9 items-center justify-center rounded-full bg-[#f1d9c6] px-4 text-sm font-semibold text-[#8a3a2c] transition active:scale-95"
