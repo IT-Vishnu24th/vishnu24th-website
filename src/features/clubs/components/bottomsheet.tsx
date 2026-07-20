@@ -72,7 +72,7 @@ export default function ClubBottomSheet({ club, onClose }: Props) {
                 {club.name.en || club.name.th}
               </h2>
 
-              <div className="relative h-6 w-25">
+              <div className="relative h-6 w-30">
                 <Image src="/club/club-tag-selected.png" alt="" fill className="object-fill" />
                 <span className="relative z-10 flex h-full items-center justify-center font-quantum text-[15px] leading-none text-cream-tanned">
                   {getCategoryLabel(club.category)}

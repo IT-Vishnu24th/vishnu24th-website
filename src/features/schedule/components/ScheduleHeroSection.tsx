@@ -10,10 +10,10 @@ export const ScheduleHeroSection = () => {
           <br />
           เวทีลานเกียร์
         </h1>
-        <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-clay-light">
+        <p className="max-w-75 text-[15px] font-normal font-fc-quantum leading-none text-clay-light">
           ดูรายชื่อกิจกรรม และรอบเวลา
           <br />
-          ของเวทีลานเกียร์
+          ที่แสดงที่เวทีลานเกียร์
         </p>
       </div>
       <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">

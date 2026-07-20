@@ -15,7 +15,7 @@ export default function DownloadPage() {
           <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
             ดาวน์โหลด
           </h1>
-          <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-clay-light">
+          <p className="max-w-75 text-[15px] font-normal font-fc-quantum leading-none text-clay-light">
             สไลด์รวมข้อมูลที่ชาววิศวะจุฬาควรรู้ไว้ในที่เดียว
           </p>
         </div>

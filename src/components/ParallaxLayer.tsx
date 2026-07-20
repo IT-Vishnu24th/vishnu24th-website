@@ -25,6 +25,7 @@ export function ParallaxLayer({
 
   const y = useTransform(scrollY, (latest) => {
     if (shouldReduceMotion) return 0
+
     if (mode === "local") {
       const frame = frameRef.current
       if (!frame || typeof window === "undefined") return 0

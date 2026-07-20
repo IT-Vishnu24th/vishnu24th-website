@@ -86,6 +86,10 @@ export default function Page() {
           <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
             ชมรม
           </h1>
+          <p className="max-w-75 text-[15px] font-normal font-fc-quantum leading-none text-clay-light">
+            ดูข้อมูลชมรมทั้งหมด พร้อมค้นหา <br />
+            และกรองตามหมวดหมู่ที่สนใจ
+          </p>
         </div>
         <div className="w-full relative h-3 [@media(min-width:480px)]:h-5">
           <img src="/explore/clay_curve.svg" alt="" className="w-full absolute z-10" />

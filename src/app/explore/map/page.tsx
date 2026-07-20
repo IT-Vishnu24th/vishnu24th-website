@@ -16,7 +16,7 @@ export default function MapPage() {
           <h1 className="whitespace-nowrap text-[64px] font-sov-yeehor font-normal leading-12.5 letter-spacing-[1.92px] text-cream">
             แผนที่
           </h1>
-          <p className="max-w-75 text-[20px] font-normal font-fc-quantum leading-none text-clay-light">
+          <p className="max-w-75 text-[15px] font-normal font-fc-quantum leading-none text-clay-light">
             ดูตำแหน่งสถานที่ต่าง ๆ ในคณะวิศวกรรมศาสตร์ <br />
             จุดพยาบาล 24 ชั่วโมงที่ตึก 3 ชั้น 4 ห้อง 406
           </p>

@@ -40,7 +40,7 @@ export const YaanScoreSection = () => {
               {showYarn && yarnAccepted ? yarnName : "กลุ่มที่..."}
             </div>
             <div className="text-brick-orange font-sov-yeehor text-[48px] w-full leading-10">
-              {showYarn && yarnAccepted ? `${score} คะแนน` : "XXXX"}
+              {showYarn && yarnAccepted ? `${score} เหรียญทอง` : "XXXX"}
             </div>
           </div>
         </div>

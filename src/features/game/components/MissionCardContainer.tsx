@@ -9,7 +9,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   {
     title: "เสี่ยงโชคปล้นจักรวาล",
     id: "game-clubscan",
-    reward: 50000,
+    reward: 20000,
     img: "/game/treasure_banner.png",
     status: "locked" as MissionStatus,
     openTime: "2026-07-18T16:10:00+07:00",
@@ -19,7 +19,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   {
     title: "ปริศนาฟ้าลิขิต",
     id: "game-mission",
-    reward: 50000,
+    reward: 290000,
     banner: "",
     status: "locked" as MissionStatus,
     openTime: "2026-07-21T16:08:00+07:00",
@@ -29,7 +29,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   {
     title: "Pop Kaew",
     id: "game-popkaew",
-    reward: 50000,
+    reward: 2000,
     img: "/game/popkaew_banner.png",
     status: "locked" as MissionStatus,
     openTime: "2026-07-21T16:18:00+07:00",
@@ -39,7 +39,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
   {
     title: "ความจริงน่ะมีเพียง\nหนึ่งเดียวเท่านั้น",
     id: "game-sustain",
-    reward: 50000,
+    reward: "100 x ขยะที่แยกถูก",
     img: "/game/trash_banner.png",
     status: "locked" as MissionStatus,
     openTime: "2026-07-21T16:11:50+07:00",
