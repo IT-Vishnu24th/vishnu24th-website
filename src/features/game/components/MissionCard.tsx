@@ -15,12 +15,13 @@ export interface MissionCardProps {
   banner?: ReactNode
   img?: string
   href: string
+  id?: string
 }
 
 const formatRemainingTimeTH = (now: Date, deadline: string | undefined) => {
   if (!deadline) return "-"
 
-  const diff = new Date(deadline).getTime() - Date.now()
+  const diff = new Date(deadline).getTime() - now.getTime()
 
   if (diff <= 0) return "หมดเวลา"
 
@@ -90,25 +91,27 @@ export default function MissionCard({
   img,
   href,
   gameState,
+  id,
 }: MissionCardProps & { gameState?: GameState }) {
   const hasFormulaReward = typeof reward === "string"
   const rewardValue = typeof reward === "number" ? reward.toLocaleString() : reward
   const { data: serverTime } = useServerTime()
+  // game-mission stays clickable outside "active" (e.g. between question windows) so
+  // users can still view history - only "upcoming" (before the whole mission starts) blocks it
+  const alwaysNavigable = id === "game-mission"
+  const isBlocked = status === "upcoming" || (!alwaysNavigable && status !== "active")
 
   return (
     <Link
-      className={cn(
-        "relative w-93.5 h-125 cursor-pointer",
-        status !== "active" && "cursor-not-allowed"
-      )}
+      className={cn("relative w-93.5 h-125 cursor-pointer", isBlocked && "cursor-not-allowed")}
       href={href}
       onClick={(e) => {
-        if (status !== "active") e.preventDefault()
+        if (isBlocked) e.preventDefault()
       }}
     >
       <img
         src={
-          status === "locked"
+          status === "locked" && !alwaysNavigable
             ? "/game/locked_sheet.png"
             : status === "upcoming"
               ? "/game/upcoming_sheet.png"
