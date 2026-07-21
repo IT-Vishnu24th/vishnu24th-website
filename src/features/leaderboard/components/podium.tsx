@@ -109,7 +109,7 @@ export default function Podium({ top3 }: Props) {
               className={`
                 ${style.size}
                 relative
-                flex flex-col items-center gap-2
+                flex flex-col items-center gap-1
                 overflow-hidden rounded-sm
                 px-3 py-3
                 shadow-[3px_4px_0_rgba(0,0,0,0.15)]
@@ -140,7 +140,7 @@ export default function Podium({ top3 }: Props) {
                     alt={item.vesselName?.th ?? "Vessel"}
                     fill
                     sizes="128px"
-                    className="object-contain p-2"
+                    className="object-contain"
                   />
                 )}
               </div>
@@ -151,9 +151,9 @@ export default function Podium({ top3 }: Props) {
               </p>
 
               {/* Score */}
-              <span className="text-xl font-sov-yeehor text-brick-orange -mt-5">
+              <p className="text-xl font-sov-yeehor text-brick-orange -mt-3 text-balance text-center leading-[0.8]">
                 {item.score.toLocaleString()} เหรียญทอง
-              </span>
+              </p>
             </div>
           </motion.div>
         )
