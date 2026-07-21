@@ -106,7 +106,7 @@ const wasteSortPlayerService = {
         })
 
         tx.update(groupRef, {
-          "scoreSources.sustainScore": FieldValue.increment(safeScore * 100),
+          "scoreSources.sustainScore": FieldValue.increment(safeScore),
         })
         return
       }
@@ -125,7 +125,7 @@ const wasteSortPlayerService = {
       } as unknown as Partial<wasteSortPlayer>)
 
       tx.update(groupRef, {
-        "scoreSources.sustainScore": FieldValue.increment(safeScore * 100),
+        "scoreSources.sustainScore": FieldValue.increment(safeScore),
       })
     })
 
