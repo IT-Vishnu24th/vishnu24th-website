@@ -39,6 +39,11 @@ export type MissionQuestion = {
 
 export type MissionStatus = "locked" | "open" | "awaiting-reveal" | "revealed"
 
+export interface MissionGameState {
+  opensAt: string
+  closesAt: string
+}
+
 export interface UserAnswerHistoryItem {
   id: string
   userAnswer: string | string[] | null
