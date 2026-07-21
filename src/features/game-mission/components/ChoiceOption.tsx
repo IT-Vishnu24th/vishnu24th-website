@@ -16,6 +16,7 @@ export type ChoiceVisualState = "default" | "active" | "locked" | "correct" | "i
 interface ChoiceOptionProps {
   label: string
   state: ChoiceVisualState
+  hidden: boolean
   period: MissionPeriod
   onClick?: () => void
   disabled?: boolean
@@ -58,7 +59,14 @@ const BULLET_STYLES: Record<
   },
 }
 
-export function ChoiceOption({ label, state, period, onClick, disabled }: ChoiceOptionProps) {
+export function ChoiceOption({
+  label,
+  state,
+  hidden,
+  period,
+  onClick,
+  disabled,
+}: ChoiceOptionProps) {
   const pillClass = PILL_STYLES[period][state]
   const showBullet =
     state === "default" || state === "active" || state === "locked" || state === "muted"
@@ -78,7 +86,9 @@ export function ChoiceOption({ label, state, period, onClick, disabled }: Choice
       {showBullet && (
         <span className={`shrink-0 rounded-full ${bulletSize} ${BULLET_STYLES[period][state]}`} />
       )}
-      <span className="font-fc-quantum text-base md:text-lg text-balance">{label}</span>
+      <span className="font-fc-quantum text-base md:text-lg text-balance">
+        {hidden ? "?????" : label}
+      </span>
     </button>
   )
 }

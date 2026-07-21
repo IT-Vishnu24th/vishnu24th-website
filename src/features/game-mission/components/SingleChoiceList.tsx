@@ -1,10 +1,11 @@
 "use client"
 
 import { ChoiceOption, type ChoiceVisualState } from "./ChoiceOption"
-import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, MissionStatus, UserAnswerHistoryItem } from "@/types/mission"
 
 interface SingleChoiceListProps {
   question: Extract<MissionQuestion, { type: "single" | "multi" }>
+  status: MissionStatus
   /** Locally-picked value, before saving */
   selectedValue: string | null
   onSelect: (value: string) => void
@@ -17,6 +18,7 @@ interface SingleChoiceListProps {
 
 export function SingleChoiceList({
   question,
+  status,
   selectedValue,
   onSelect,
   historyItem,
@@ -49,6 +51,7 @@ export function SingleChoiceList({
             key={option.value}
             label={option.label}
             state={state}
+            hidden={status === "locked"}
             period={question.period}
             disabled={disabled}
             onClick={() => !disabled && onSelect(option.value)}

@@ -1,10 +1,11 @@
 "use client"
 
 import { ChoiceOption, type ChoiceVisualState } from "./ChoiceOption"
-import type { MissionQuestion, UserAnswerHistoryItem } from "@/types/mission"
+import type { MissionQuestion, MissionStatus, UserAnswerHistoryItem } from "@/types/mission"
 
 interface MultiChoiceListProps {
   question: Extract<MissionQuestion, { type: "single" | "multi" }>
+  status: MissionStatus
   /** Locally-picked values, before saving */
   selectedValues: string[]
   onToggle: (value: string) => void
@@ -15,6 +16,7 @@ interface MultiChoiceListProps {
 
 export function MultiChoiceList({
   question,
+  status,
   selectedValues,
   onToggle,
   historyItem,
@@ -49,6 +51,7 @@ export function MultiChoiceList({
             key={option.value}
             label={option.label}
             state={state}
+            hidden={status === "locked"}
             period={question.period}
             disabled={disabled}
             onClick={() => !disabled && onToggle(option.value)}

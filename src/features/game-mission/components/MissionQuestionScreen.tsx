@@ -161,6 +161,7 @@ export function MissionQuestionScreen({ question, serverTime }: MissionQuestionS
               {question.type === "single" && (
                 <SingleChoiceList
                   question={question}
+                  status={status}
                   selectedValue={singleValue}
                   onSelect={setSingleValue}
                   historyItem={historyItem}
@@ -172,6 +173,7 @@ export function MissionQuestionScreen({ question, serverTime }: MissionQuestionS
               {question.type === "multi" && (
                 <MultiChoiceList
                   question={question}
+                  status={status}
                   selectedValues={multiValues}
                   onToggle={(value) =>
                     setMultiValues((prev) =>
