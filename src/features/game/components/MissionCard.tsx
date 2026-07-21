@@ -2,6 +2,8 @@ import { cn } from "@/utils/cn"
 import { Calendar, Check, Clock, Lock } from "lucide-react"
 import Link from "next/link"
 import { ReactNode } from "react"
+import { GameState } from "../types/game"
+import { useServerTime } from "@/utils/useServerTime"
 
 export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
@@ -15,7 +17,9 @@ export interface MissionCardProps {
   href: string
 }
 
-const formatRemainingTimeTH = (deadline: string | Date) => {
+const formatRemainingTimeTH = (now: Date, deadline: string | undefined) => {
+  if (!deadline) return "-"
+
   const diff = new Date(deadline).getTime() - Date.now()
 
   if (diff <= 0) return "หมดเวลา"
@@ -30,7 +34,7 @@ const formatRemainingTimeTH = (deadline: string | Date) => {
 const statusConfig = {
   active: {
     Icon: Clock,
-    text: (deadline: string) => formatRemainingTimeTH(deadline),
+    text: (now: Date, deadline?: string) => formatRemainingTimeTH(now, deadline),
     className: "bg-brownie-light",
   },
   locked: {
@@ -52,12 +56,20 @@ const statusConfig = {
   MissionStatus,
   {
     Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
-    text: (deadline: string) => string
+    text: (now: Date, deadline?: string) => string
     className: string
   }
 >
 
-const StatusPill = ({ status, deadline }: { status: MissionStatus; deadline: string }) => {
+const StatusPill = ({
+  status,
+  gameState,
+  now,
+}: {
+  status: MissionStatus
+  gameState?: GameState
+  now?: Date
+}) => {
   const { Icon, text, className } = statusConfig[status]
 
   return (
@@ -65,7 +77,7 @@ const StatusPill = ({ status, deadline }: { status: MissionStatus; deadline: str
       className={`${className} w-fit items-center border-brownie border-3 rounded-full px-1.5 text-[14px] text-cream font-fc-quantum flex gap-2`}
     >
       <Icon className="size-4" strokeWidth={3} />
-      <div className="mb-0.75">{text(deadline)}</div>
+      <div className="mb-0.75">{text(now ?? new Date(), gameState?.closesAt)}</div>
     </div>
   )
 }
@@ -77,9 +89,11 @@ export default function MissionCard({
   banner,
   img,
   href,
-}: MissionCardProps) {
+  gameState,
+}: MissionCardProps & { gameState?: GameState }) {
   const hasFormulaReward = typeof reward === "string"
   const rewardValue = typeof reward === "number" ? reward.toLocaleString() : reward
+  const { data: serverTime } = useServerTime()
 
   return (
     <Link
@@ -118,7 +132,7 @@ export default function MissionCard({
             />
           )}
           <div className="bottom-2 left-1/2 -translate-x-1/2 absolute w-full flex justify-center">
-            <StatusPill status={status} deadline={deadline} />
+            <StatusPill status={status} gameState={gameState} now={serverTime} />
           </div>
         </div>
 

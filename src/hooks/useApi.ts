@@ -1,6 +1,7 @@
 import {
   featureFlagApi,
   leaderboardApi,
+  missionApi,
   phaseApi,
   popkaewApi,
   stageApi,
@@ -157,6 +158,14 @@ export function usePhase() {
   return useQuery({
     queryKey: ["phase"],
     queryFn: () => phaseApi.getPhase(),
+  })
+}
+
+// Sustain API hooks
+export function useMissionsState() {
+  return useQuery({
+    queryKey: ["missions", "state"],
+    queryFn: () => missionApi.getState(),
   })
 }
 

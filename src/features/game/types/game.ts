@@ -1,3 +1,5 @@
+import { string } from "zod"
+
 export type TrashType = "recycle" | "general" | "food"
 
 export type TrashItem = {
@@ -52,4 +54,9 @@ export type GameResult = {
 export type PlayHistory = {
   date: string
   plays: number
+}
+
+export type GameState = {
+  opensAt?: string
+  closesAt?: string
 }

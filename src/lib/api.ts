@@ -12,6 +12,7 @@ import {
 } from "@/features/game/popkaew/types"
 import { WasteSortGameState } from "@/types/wasteSort"
 import { PopkaewGameState } from "@/types/popkaewPlayer"
+import { MissionGameState } from "@/types/mission"
 
 export const userApi = {
   getMe: async () => {
@@ -110,6 +111,12 @@ export const phaseApi = {
         vishnuMission: { current: VishnuMissionPhase | null }
       }
     }>("/phase", body)
+  },
+}
+
+export const missionApi = {
+  getState: async () => {
+    return api.get<{ data: MissionGameState }>("/missions/state")
   },
 }
 

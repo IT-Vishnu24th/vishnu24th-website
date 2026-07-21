@@ -1,51 +1,17 @@
 "use client"
 
-import { useFeatureFlags, useMyMissions, usePhase } from "@/hooks/useApi"
+import {
+  useFeatureFlags,
+  useMissionsState,
+  useMyMissions,
+  usePhase,
+  usePopkaewState,
+  useSustainState,
+} from "@/hooks/useApi"
 import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
-
-const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[] = [
-  {
-    title: "เสี่ยงโชคปล้นจักรวาล",
-    id: "game-clubscan",
-    reward: 20000,
-    img: "/game/treasure_banner.png",
-    status: "locked",
-    openTime: "2026-07-18T16:10:00+07:00",
-    deadline: "2026-07-18T21:00:00+07:00",
-    href: "/scan",
-  },
-  {
-    title: "ปริศนาฟ้าลิขิต",
-    id: "game-mission",
-    reward: 290000,
-    banner: "",
-    status: "locked",
-    openTime: "2026-07-21T08:00:00+07:00",
-    deadline: "2026-07-24T12:30:00+07:00",
-    href: "",
-  },
-  {
-    title: "Pop Kaew",
-    id: "game-popkaew",
-    reward: 2000,
-    img: "/game/popkaew_banner.png",
-    status: "locked",
-    openTime: "2026-07-21T16:18:00+07:00",
-    deadline: "2026-07-22T16:08:00+07:00",
-    href: "/game/popkaew",
-  },
-  {
-    title: "ความจริงน่ะมีเพียง\nหนึ่งเดียวเท่านั้น",
-    id: "game-sustain",
-    reward: "100 x ขยะที่แยกถูก",
-    img: "/game/trash_banner.png",
-    status: "locked",
-    openTime: "2026-07-21T16:11:50+07:00",
-    deadline: "2026-07-24T16:13:30+07:00",
-    href: "/game/sustain",
-  },
-]
+import { useServerTime } from "@/utils/useServerTime"
+import { GameState } from "../types/game"
 
 const QuestionBanner = ({ day }: { day: number }) => {
   return (
@@ -94,6 +60,10 @@ export const MissionCardContainer = () => {
   const { data: featureFlagsData } = useFeatureFlags()
   const { data: phaseData } = usePhase()
   const { data: missionData } = useMyMissions()
+  const { data: popkaewStateData } = usePopkaewState()
+  const { data: sustainStateData } = useSustainState()
+  const { data: missionStateData } = useMissionsState()
+  const { data: serverTime } = useServerTime()
 
   // day 0 = missions disabled (phase null/missing) or phase not yet loaded
   const value = Number(phaseData?.data?.vishnuMission?.current?.at(-1) ?? "0")
@@ -113,10 +83,62 @@ export const MissionCardContainer = () => {
 
   const latestAnswerId = latestAnswer?.id[1] ?? undefined
 
-  const missions = useMemo(() => {
-    const now = new Date()
+  const defaultMissions: (MissionCardProps & {
+    id?: string
+    openTime?: string
+    gameState?: GameState
+  } & { now?: Date })[] = useMemo(
+    () => [
+      {
+        title: "เสี่ยงโชคปล้นจักรวาล",
+        id: "game-clubscan",
+        reward: 20000,
+        img: "/game/treasure_banner.png",
+        status: "locked",
+        openTime: "2026-07-18T16:10:00+07:00",
+        deadline: "2026-07-18T21:00:00+07:00",
+        href: "/scan",
+      },
+      {
+        title: "ปริศนาฟ้าลิขิต",
+        id: "game-mission",
+        reward: 290000,
+        banner: "",
+        status: "locked",
+        openTime: "2026-07-21T08:00:00+07:00",
+        deadline: "2026-07-24T12:30:00+07:00",
+        href: "",
+        gameState: missionStateData?.data,
+      },
+      {
+        title: "Pop Kaew",
+        id: "game-popkaew",
+        reward: 2000,
+        img: "/game/popkaew_banner.png",
+        status: "locked",
+        openTime: "2026-07-21T16:18:00+07:00",
+        deadline: "2026-07-22T16:08:00+07:00",
+        href: "/game/popkaew",
+        gameState: popkaewStateData?.data,
+      },
+      {
+        title: "ความจริงน่ะมีเพียง\nหนึ่งเดียวเท่านั้น",
+        id: "game-sustain",
+        reward: "100 x ขยะที่แยกถูก",
+        img: "/game/trash_banner.png",
+        status: "locked",
+        openTime: "2026-07-21T16:11:50+07:00",
+        deadline: "2026-07-24T16:13:30+07:00",
+        href: "/game/sustain",
+        gameState: sustainStateData?.data,
+      },
+    ],
+    [popkaewStateData?.data, sustainStateData?.data, missionStateData?.data]
+  )
 
+  const missions = useMemo(() => {
     return defaultMissions.map((mission) => {
+      const now = serverTime !== undefined ? serverTime : new Date()
       const flag = featureFlagsData?.data.find((f) => f.id === mission.id)
 
       const openTime = mission.openTime ? new Date(mission.openTime) : null
@@ -124,20 +146,17 @@ export const MissionCardContainer = () => {
 
       let status: MissionStatus = "locked"
 
+      console.log(mission.id, mission.gameState)
+
       if (flag?.enabled) {
         status = "active"
       } else if (openTime && now < openTime) {
         status = "upcoming"
+      } else if (mission?.gameState === undefined) {
+        status = "locked"
       } else if (deadline && now > deadline) {
         status = "completed"
-      } else if (mission.id === "game-mission") {
-        if (day === 0) {
-          status = "locked"
-        } else if (latestAnswerId === day.toString()) {
-          status = "completed"
-        } else status = "active"
-      }
-
+      } else status = "active"
       const href = mission.id === "game-mission" && day ? `/game/q${day}` : mission.href
 
       return {
@@ -146,7 +165,9 @@ export const MissionCardContainer = () => {
         href,
       }
     })
-  }, [featureFlagsData?.data, missionData?.data, latestAnswerId, day])
+  }, [featureFlagsData?.data, missionData?.data, latestAnswerId, day, defaultMissions])
+
+  console.log(missions)
 
   return (
     <section className="w-full pb-6">
