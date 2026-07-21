@@ -1,7 +1,13 @@
+import { z } from "zod"
 import { click } from "@/services/popkaewClickService"
-import { success, failure, protectRaw, requireFlag } from "@/utils/apiHelpers"
+import { success, failure, protectRaw, requireFlag, parseBody } from "@/utils/apiHelpers"
 import { AppErrorCode } from "@/types/appErrorCode"
 import { NextRequest } from "next/server"
+import { POPKAEW_BUCKET_CAPACITY } from "@/services/popkaewConstants"
+
+const clickSchema = z.object({
+  click: z.number().int().positive().max(POPKAEW_BUCKET_CAPACITY),
+})
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,9 +17,11 @@ export async function POST(req: NextRequest) {
     const [flagErr] = await requireFlag("game-popkaew")
     if (flagErr) return flagErr
 
-    const { click: clickCount } = await req.json()
+    const [parseErr, body] = await parseBody(req, clickSchema)
+    if (parseErr) return parseErr
+
     const playerId = user.id
-    const result = await click(playerId, clickCount)
+    const result = await click(playerId, body.click)
 
     return success(result)
   } catch (error) {

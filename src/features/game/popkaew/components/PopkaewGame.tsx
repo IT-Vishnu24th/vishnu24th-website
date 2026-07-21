@@ -59,7 +59,7 @@ export function PopkaewGame() {
         )
       },
       onError: () => {
-        pendingClicksRef.current += clicks
+        pendingClicksRef.current += Math.min(clicks, CLICK_THRESHOLD)
       },
       onSettled: () => {
         isFlushingRef.current = false

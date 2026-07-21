@@ -1,7 +1,16 @@
 import { NextRequest } from "next/server"
-import { success, failure, protectRaw, requireFlag } from "@/utils/apiHelpers"
+import { z } from "zod"
+import { success, failure, protectRaw, requireFlag, parseBody } from "@/utils/apiHelpers"
 import { AppErrorCode } from "@/types/appErrorCode"
 import wasteSortPlayerService, { MAX_PLAYS_PER_DAY } from "@/services/wasteSortPlayerService"
+
+// game caps at 1 point per caught item, 90s round can spawn at most 57
+// (spawnInterval decays 1700ms -> 1400ms floor, frame-rate independent)
+const MAX_SCORE = 57
+
+const roundSchema = z.object({
+  score: z.number().int().min(0).max(MAX_SCORE),
+})
 
 // GET /api/wasteSortPlayer/me/round
 // Check how many rounds the player has left today, without playing one.
@@ -30,17 +39,10 @@ export async function POST(req: NextRequest) {
   const [flagErr] = await requireFlag("game-sustain")
   if (flagErr) return flagErr
 
-  const MAX_SCORE = 90
-  const body = await req.json()
-  const score = Number(body?.score)
+  const [parseErr, body] = await parseBody(req, roundSchema)
+  if (parseErr) return parseErr
 
-  if (!Number.isFinite(score)) {
-    return failure(400, AppErrorCode.INVALID_BODY, "score must be a number")
-  }
-
-  if (score < 0 || score > MAX_SCORE) {
-    return failure(400, AppErrorCode.INVALID_BODY, `score must be between 0 and ${MAX_SCORE}`)
-  }
+  const { score } = body
 
   try {
     const player = await wasteSortPlayerService.recordRound(user.id, score)
