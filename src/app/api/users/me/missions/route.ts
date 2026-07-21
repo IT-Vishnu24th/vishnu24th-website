@@ -43,7 +43,7 @@ export async function GET() {
 
 const submitAnswerSchema = z.object({
   id: z.string(),
-  answer: z.union([z.string(), z.array(z.string()).min(1)]),
+  answer: z.union([z.string().trim().min(1), z.array(z.string()).min(1)]),
 })
 
 export async function POST(req: NextRequest) {

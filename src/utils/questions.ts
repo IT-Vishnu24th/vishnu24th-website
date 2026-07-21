@@ -158,6 +158,14 @@ export function evaluateAnswer(questionId: string, userAnswer: string | string[]
 
   const userStr = userAnswer.trim().toLowerCase()
 
+  if (q.type === "numeric") {
+    const userNum = Number(userStr)
+    const correctVals = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer]
+    return (
+      !Number.isNaN(userNum) && correctVals.some((correctVal) => Number(correctVal) === userNum)
+    )
+  }
+
   if (Array.isArray(q.correctAnswer)) {
     return q.correctAnswer.some((correctVal) => String(correctVal).trim().toLowerCase() === userStr)
   }
