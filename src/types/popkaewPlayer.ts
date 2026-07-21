@@ -1,6 +1,11 @@
 import { Timestamp } from "firebase-admin/firestore"
 import type { MultiLang } from "@/types/util"
 
+export interface PopkaewGameState {
+  opensAt: string
+  closesAt: string
+}
+
 export interface popkaewPlayer {
   /** group label (doc id in `groups` and `popkaewVessel`); server-side only — never return in API responses */
   group: string
