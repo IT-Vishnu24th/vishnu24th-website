@@ -15,6 +15,11 @@ export type wasteSortPlayer = {
   lastPlayDate: string
 }
 
+export interface WasteSortGameState {
+  opensAt: string
+  closesAt: string
+}
+
 export type wasteSortGroup = {
   vesselName: MultiLang
   scoreSources: {

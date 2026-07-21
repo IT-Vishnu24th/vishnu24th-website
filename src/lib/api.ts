@@ -10,6 +10,9 @@ import {
   PopkaewLeaderboardResponse,
   PopkaewMeResponse,
 } from "@/features/game/popkaew/types"
+import { WasteSortGameState } from "@/types/wasteSort"
+import { PopkaewGameState } from "@/types/popkaewPlayer"
+import { MissionGameState } from "@/types/mission"
 
 export const userApi = {
   getMe: async () => {
@@ -111,6 +114,18 @@ export const phaseApi = {
   },
 }
 
+export const missionApi = {
+  getState: async () => {
+    return api.get<{ data: MissionGameState }>("/missions/state")
+  },
+}
+
+export const sustainApi = {
+  getState: async () => {
+    return api.get<{ data: WasteSortGameState }>("/wastesort/state")
+  },
+}
+
 export const popkaewApi = {
   getMe: async () => {
     return api.get<{ data: PopkaewMeResponse }>("/popkaew/me")
@@ -124,5 +139,9 @@ export const popkaewApi = {
     return api.post<{ data: PopkaewClickResponse }>("/popkaew/click", {
       click,
     })
+  },
+
+  getState: async () => {
+    return api.get<{ data: PopkaewGameState }>("/popkaew/state")
   },
 }
