@@ -4,14 +4,6 @@ import { POPKAEW_BUCKET_CAPACITY, POPKAEW_REFILL_TIME_MS } from "@/services/popk
 import { popkaewPlayer } from "@/types/popkaewPlayer"
 
 export async function click(playerId: string, clickCount: number) {
-  if (clickCount <= 0) {
-    throw new Error("Invalid click count")
-  }
-
-  if (clickCount > POPKAEW_BUCKET_CAPACITY) {
-    throw new Error("Click count exceeds bucket capacity")
-  }
-
   const playerRef = adminDb.collection("popkaewPlayer").doc(playerId)
 
   let newScore = 0
