@@ -1,4 +1,12 @@
-import { featureFlagApi, leaderboardApi, phaseApi, popkaewApi, stageApi, userApi } from "@/lib/api"
+import {
+  featureFlagApi,
+  leaderboardApi,
+  phaseApi,
+  popkaewApi,
+  stageApi,
+  sustainApi,
+  userApi,
+} from "@/lib/api"
 import { StagePerformance } from "@/types/stagePerformance"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -152,6 +160,14 @@ export function usePhase() {
   })
 }
 
+// Sustain API hooks
+export function useSustainState() {
+  return useQuery({
+    queryKey: ["sustain", "state"],
+    queryFn: () => sustainApi.getState(),
+  })
+}
+
 // Popkaew API hooks
 export function useUpdatePhase() {
   const queryClient = useQueryClient()
@@ -183,5 +199,12 @@ export function usePopkaewLeaderboard() {
 export function usePopkaewClick() {
   return useMutation({
     mutationFn: (click: number) => popkaewApi.click(click),
+  })
+}
+
+export function usePopkaewState() {
+  return useQuery({
+    queryKey: ["popkaew", "state"],
+    queryFn: () => popkaewApi.getState(),
   })
 }
