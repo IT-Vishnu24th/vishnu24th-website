@@ -146,8 +146,6 @@ export const MissionCardContainer = () => {
 
       let status: MissionStatus = "locked"
 
-      console.log(mission.id, mission.gameState)
-
       if (flag?.enabled) {
         status = "active"
       } else if (openTime && now < openTime) {
@@ -166,8 +164,6 @@ export const MissionCardContainer = () => {
       }
     })
   }, [featureFlagsData?.data, missionData?.data, latestAnswerId, day, defaultMissions])
-
-  console.log(missions)
 
   return (
     <section className="w-full pb-6">
