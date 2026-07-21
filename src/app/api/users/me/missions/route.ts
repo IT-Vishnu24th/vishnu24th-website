@@ -23,7 +23,7 @@ export async function GET() {
     const historyList = Object.keys(QUESTIONS).map((qId) => {
       const q = QUESTIONS[qId]
       const userAnswer = userAnswers[qId as keyof UserAnswers] ?? null
-      const isRevealed = currentTime >= new Date(q.revealTime)
+      const isRevealed = currentTime >= new Date(q.revealsAt)
 
       return {
         id: qId,
@@ -53,6 +53,11 @@ export async function POST(req: NextRequest) {
 
     const [parseErr, payload] = await parseBody(req, submitAnswerSchema)
     if (parseErr) return parseErr
+
+    const currentTime =
+      process.env.NODE_ENV === "development" && process.env.MOCK_CURRENT_TIME
+        ? new Date(process.env.MOCK_CURRENT_TIME)
+        : new Date()
 
     const { id, answer } = payload
     const question = QUESTIONS[id]
@@ -87,7 +92,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (missionPhase.current !== question.phaseId) {
+    if (
+      missionPhase.current !== question.phaseId ||
+      currentTime < new Date(question.opensAt) ||
+      currentTime >= new Date(question.closesAt)
+    ) {
       return failure(
         403,
         AppErrorCode.SUBMISSION_CLOSED,

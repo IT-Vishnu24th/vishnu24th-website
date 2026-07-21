@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         ? new Date(process.env.MOCK_CURRENT_TIME)
         : new Date()
 
-    const isRevealed = currentTime >= new Date(q.revealTime)
+    const isRevealed = currentTime >= new Date(q.revealsAt)
 
     return success<UserAnswerHistoryItem>({
       id,

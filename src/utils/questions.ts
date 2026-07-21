@@ -10,7 +10,9 @@ export interface QuestionDef {
   title: MultiLang
   choices?: MultiLang<string[]>
   imageAsset?: string
-  revealTime: string // ISO 8601 string
+  opensAt: string // ISO 8601 string
+  closesAt: string // ISO 8601 string
+  revealsAt: string // ISO 8601 string
 }
 
 export const QUESTIONS: Record<string, QuestionDef> = {
@@ -23,7 +25,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       th: "ค่ายวิษณุกรรมบุตรปีนี้เป็นครั้งที่เท่าไหร่?",
       en: "Which edition is this year's Vishnu Camp?",
     },
-    revealTime: "2026-07-21T12:30:00+07:00",
+    opensAt: "2026-07-21T08:00:00+07:00",
+    closesAt: "2026-07-21T12:00:00+07:00",
+    revealsAt: "2026-07-21T12:30:00+07:00",
   },
   q2: {
     id: "q2",
@@ -38,7 +42,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       th: ["สีเเดงเลือดนก", "สีเเดงเลือดหมี", "สีแดงเลือดกวาง", "สีเเดงเลือดหมู"],
       en: ["Crimson", "Bear-blood", "Deer-blood", "Maroon"],
     },
-    revealTime: "2026-07-21T18:30:00+07:00",
+    opensAt: "2026-07-21T14:00:00+07:00",
+    closesAt: "2026-07-21T18:00:00+07:00",
+    revealsAt: "2026-07-21T18:30:00+07:00",
   },
   q3: {
     id: "q3",
@@ -53,7 +59,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       th: ["จุฬาลงบรรได", "จุฬาลงลิฟต์", "จุฬาลงกลอน", "จุฬาลงวิชาเรียน"],
       en: ["Chulalongbandai", "Chulalonglift", "Chulalongklon", "Chulalongwicharian"],
     },
-    revealTime: "2026-07-22T12:30:00+07:00",
+    opensAt: "2026-07-22T08:00:00+07:00",
+    closesAt: "2026-07-22T12:00:00+07:00",
+    revealsAt: "2026-07-22T12:30:00+07:00",
   },
   q4: {
     id: "q4",
@@ -78,7 +86,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
         "Department of Treasure and Dark Continent Engineering",
       ],
     },
-    revealTime: "2026-07-22T18:30:00+07:00",
+    opensAt: "2026-07-22T14:00:00+07:00",
+    closesAt: "2026-07-22T18:00:00+07:00",
+    revealsAt: "2026-07-22T18:30:00+07:00",
   },
   q5: {
     id: "q5",
@@ -90,7 +100,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       en: "Guess the character from the color stripes",
     },
     imageAsset: "ikkyusan.png",
-    revealTime: "2026-07-23T12:30:00+07:00",
+    opensAt: "2026-07-23T08:00:00+07:00",
+    closesAt: "2026-07-23T12:00:00+07:00",
+    revealsAt: "2026-07-23T12:30:00+07:00",
   },
   q6: {
     id: "q6",
@@ -105,7 +117,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       th: ["เด่นแซง", "ดินแดง", "เปล่งแสง", "พริกแกง"],
       en: ["Den Saeng", "Din Daeng", "Pleng Saeng", "Prik Gaeng"],
     },
-    revealTime: "2026-07-23T18:30:00+07:00",
+    opensAt: "2026-07-23T14:00:00+07:00",
+    closesAt: "2026-07-23T18:00:00+07:00",
+    revealsAt: "2026-07-23T18:30:00+07:00",
   },
   q7: {
     id: "q7",
@@ -120,7 +134,9 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       th: ["ลาน Inside Out", "ลาน Intania", "ก็ลานเกียร์ไง", "ลาน Into the Sun 💜"],
       en: ["Larn Inside Out", "Larn Intania", "It is Larn Gear!", "Larn Into the Sun 💜"],
     },
-    revealTime: "2026-07-24T12:30:00+07:00",
+    opensAt: "2026-07-24T08:00:00+07:00",
+    closesAt: "2026-07-24T12:00:00+07:00",
+    revealsAt: "2026-07-24T12:30:00+07:00",
   },
 }
 
