@@ -150,10 +150,10 @@ export const MissionCardContainer = () => {
         status = "active"
       } else if (openTime && now < openTime) {
         status = "upcoming"
-      } else if (mission?.gameState === undefined) {
-        status = "locked"
       } else if (deadline && now > deadline) {
         status = "completed"
+      } else if (mission?.gameState === undefined) {
+        status = "locked"
       } else status = "active"
       const href = mission.id === "game-mission" && day ? `/game/q${day}` : mission.href
 
