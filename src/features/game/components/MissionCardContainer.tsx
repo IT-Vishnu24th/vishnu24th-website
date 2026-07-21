@@ -3,7 +3,6 @@
 import { useFeatureFlags, useMyMissions, usePhase } from "@/hooks/useApi"
 import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
-import { RegistrationPhase, VishnuMissionPhase } from "@/types/phase"
 
 const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[] = [
   {
@@ -11,7 +10,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
     id: "game-clubscan",
     reward: 20000,
     img: "/game/treasure_banner.png",
-    status: "locked" as MissionStatus,
+    status: "locked",
     openTime: "2026-07-18T16:10:00+07:00",
     deadline: "2026-07-18T21:00:00+07:00",
     href: "/scan",
@@ -21,17 +20,17 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
     id: "game-mission",
     reward: 290000,
     banner: "",
-    status: "locked" as MissionStatus,
-    openTime: "2026-07-21T16:08:00+07:00",
-    deadline: "2026-07-24T16:12:00+07:00",
-    href: "/",
+    status: "locked",
+    openTime: "2026-07-21T08:00:00+07:00",
+    deadline: "2026-07-24T12:30:00+07:00",
+    href: "",
   },
   {
     title: "Pop Kaew",
     id: "game-popkaew",
     reward: 2000,
     img: "/game/popkaew_banner.png",
-    status: "locked" as MissionStatus,
+    status: "locked",
     openTime: "2026-07-21T16:18:00+07:00",
     deadline: "2026-07-22T16:08:00+07:00",
     href: "/game/popkaew",
@@ -41,7 +40,7 @@ const defaultMissions: (MissionCardProps & { id?: string; openTime?: string })[]
     id: "game-sustain",
     reward: "100 x ขยะที่แยกถูก",
     img: "/game/trash_banner.png",
-    status: "locked" as MissionStatus,
+    status: "locked",
     openTime: "2026-07-21T16:11:50+07:00",
     deadline: "2026-07-24T16:13:30+07:00",
     href: "/game/sustain",
@@ -70,10 +69,10 @@ const QuestionBanner = ({ day }: { day: number }) => {
         ))}
       </div>
       <div className="flex">
-        {[2, 4, 6, 8].map((num) => (
+        {[2, 4, 6].map((num) => (
           <div key={num}>
             <div className="flex items-center flex-col w-[60.75px]">
-              <img src="/game/sun.png" />
+              <img src="/game/moon.png" />
               <img
                 src={
                   day === num
@@ -139,12 +138,16 @@ export const MissionCardContainer = () => {
         } else status = "active"
       }
 
+      const href = mission.id === "game-mission" && day ? `/game/q${day}` : mission.href
+
       return {
         ...mission,
         status,
+        href,
       }
     })
   }, [featureFlagsData?.data, missionData?.data, latestAnswerId, day])
+
   return (
     <section className="w-full pb-6">
       <div className="w-full grid grid-cols-1 place-items-center pb-15 [@media(min-width:748px)]:grid-cols-2">
