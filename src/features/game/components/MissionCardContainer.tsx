@@ -66,11 +66,9 @@ export const MissionCardContainer = () => {
 
   const latestAnswerId = latestAnswer?.id[1] ?? undefined
 
-  const defaultMissions: (MissionCardProps & {
-    id?: string
+  const defaultMissions: (Omit<MissionCardProps, "serverTime"> & {
     openTime?: string
-    gameState?: GameState
-  } & { now?: Date })[] = useMemo(
+  })[] = useMemo(
     () => [
       {
         title: "เสี่ยงโชคปล้นจักรวาล",
@@ -133,7 +131,7 @@ export const MissionCardContainer = () => {
         status = "active"
       } else if (openTime && now < openTime) {
         status = "upcoming"
-      } else if (deadline && now > deadline) {
+      } else if (deadline && now >= deadline) {
         status = "completed"
       } else if (mission?.gameState === undefined) {
         status = "locked"
@@ -155,6 +153,7 @@ export const MissionCardContainer = () => {
           <MissionCard
             key={mission.title}
             {...mission}
+            serverTime={serverTime}
             banner={
               mission.id === "game-mission" ? (
                 <QuestionBanner day={day} serverTime={serverTime ?? new Date()} />
