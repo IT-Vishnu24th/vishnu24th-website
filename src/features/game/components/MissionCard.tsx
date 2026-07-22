@@ -3,7 +3,6 @@ import { Calendar, Check, Clock, Lock } from "lucide-react"
 import Link from "next/link"
 import { ReactNode } from "react"
 import { GameState } from "../types/game"
-import { useServerTime } from "@/utils/useServerTime"
 
 export type MissionStatus = "active" | "locked" | "completed" | "upcoming"
 
@@ -15,7 +14,9 @@ export interface MissionCardProps {
   banner?: ReactNode
   img?: string
   href: string
+  gameState?: GameState
   id?: string
+  serverTime: Date | undefined
 }
 
 const formatRemainingTimeTH = (now: Date, deadline: string | undefined) => {
@@ -92,10 +93,10 @@ export default function MissionCard({
   href,
   gameState,
   id,
+  serverTime,
 }: MissionCardProps & { gameState?: GameState }) {
   const hasFormulaReward = typeof reward === "string"
   const rewardValue = typeof reward === "number" ? reward.toLocaleString() : reward
-  const { data: serverTime } = useServerTime()
   // game-mission stays clickable outside "active" (e.g. between question windows) so
   // users can still view history - only "upcoming" (before the whole mission starts) blocks it
   const alwaysNavigable = id === "game-mission"
