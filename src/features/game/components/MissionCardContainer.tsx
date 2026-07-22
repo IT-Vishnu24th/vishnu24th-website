@@ -12,39 +12,22 @@ import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
 import { useServerTime } from "@/utils/useServerTime"
 import { GameState } from "../types/game"
+import { MISSION_QUESTIONS } from "@/features/game-mission/constants/questions"
 
-const QuestionBanner = ({ day }: { day: number }) => {
+const QuestionBanner = ({ day, serverTime }: { day: number; serverTime: Date }) => {
   return (
     <div className="p-5">
-      <div className="flex">
-        {[1, 3, 5, 7].map((num) => (
-          <div key={num}>
+      <div className="grid grid-flow-col grid-rows-2">
+        {MISSION_QUESTIONS.map((q) => (
+          <div key={q.id}>
             <div className="flex items-center flex-col w-[60.75px]">
-              <img src="/game/sun.png" />
+              <img src={q.period === "morning" ? "/game/sun.png" : "/game/moon.png"} />
               <img
                 src={
-                  day === num
-                    ? "/game/unanswered_card.png"
-                    : day < num
-                      ? "/game/future_card.png"
-                      : "/game/done_card.png"
-                }
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="flex">
-        {[2, 4, 6].map((num) => (
-          <div key={num}>
-            <div className="flex items-center flex-col w-[60.75px]">
-              <img src="/game/moon.png" />
-              <img
-                src={
-                  day === num
-                    ? "/game/unanswered_card.png"
-                    : day < num
-                      ? "/game/future_card.png"
+                  serverTime < new Date(q.opensAt)
+                    ? "/game/future_card.png"
+                    : serverTime < new Date(q.revealsAt)
+                      ? "/game/unanswered_card.png"
                       : "/game/done_card.png"
                 }
               />
@@ -172,7 +155,11 @@ export const MissionCardContainer = () => {
           <MissionCard
             key={mission.title}
             {...mission}
-            banner={mission.id === "game-mission" ? <QuestionBanner day={day} /> : undefined}
+            banner={
+              mission.id === "game-mission" ? (
+                <QuestionBanner day={day} serverTime={serverTime ?? new Date()} />
+              ) : undefined
+            }
           />
         ))}
       </div>
