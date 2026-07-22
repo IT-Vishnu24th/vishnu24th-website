@@ -11,10 +11,9 @@ import {
 import MissionCard, { MissionCardProps, MissionStatus } from "./MissionCard"
 import { useMemo } from "react"
 import { useServerTime } from "@/utils/useServerTime"
-import { GameState } from "../types/game"
 import { MISSION_QUESTIONS } from "@/features/game-mission/constants/questions"
 
-const QuestionBanner = ({ day, serverTime }: { day: number; serverTime: Date }) => {
+const QuestionBanner = ({ serverTime }: { serverTime: Date }) => {
   return (
     <div className="p-5">
       <div className="grid grid-flow-col grid-rows-2">
@@ -156,7 +155,7 @@ export const MissionCardContainer = () => {
             serverTime={serverTime}
             banner={
               mission.id === "game-mission" ? (
-                <QuestionBanner day={day} serverTime={serverTime ?? new Date()} />
+                <QuestionBanner serverTime={serverTime ?? new Date()} />
               ) : undefined
             }
           />
